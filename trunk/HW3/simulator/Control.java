@@ -39,9 +39,9 @@ public class Control {
 		//sched.add(new Event("D", 3.7));
 		while(time < SimTime)
 		{
-			System.out.println("time: " + time);
-			System.out.println("n: " + numInQueue + "\n");
-			
+			//System.out.println("time: " + time);
+			//System.out.println("n: " + numInQueue + "\n");
+			System.out.println(numInQueue);
 			
 			
 			//check for nulls
@@ -78,33 +78,33 @@ public class Control {
 	{
 		if(e.getType() == "A")
 		{
-			System.out.println("Arrival! @ " + time);
+			//System.out.println("Arrival! @ " + time);
 			
 			numInQueue++;
 			if(numInQueue == 1)
 			{
-				Event myDeparture = new Event("D", time+randTime());
+				Event myDeparture = new Event("D", e.getTime()+randTime());
 				sched.add(myDeparture);
-				System.out.println("DDD: " + myDeparture);
+				//System.out.println("DDD: " + myDeparture);
 			}
 			//schedule next arrival
-			Event nextArrival = new Event("A", time+randTime());
+			Event nextArrival = new Event("A", e.getTime()+randTime());
 			sched.add(nextArrival);
-			System.out.println("AAA: " + nextArrival);
+			//System.out.println("AAA: " + nextArrival);
 			
 		}else if(e.getType() == "D")
 		{
-			System.out.println("Departure! @ " + time);
+			//System.out.println("Departure! @ " + time);
 			
 			numInQueue--;
 			
 			if(numInQueue>0)
 			{
 				//schedule next departure
-				Event nextDeparture = new Event("D", time+1);
-				//Event nextDeparture = new Event("D", time+randTime());
+				//Event nextDeparture = new Event("D", time+1);
+				Event nextDeparture = new Event("D", e.getTime()+randTime());
 				sched.add(nextDeparture);
-				System.out.println("DDD: " + nextDeparture);
+				//System.out.println("DDD: " + nextDeparture);
 			}
 			
 		}
