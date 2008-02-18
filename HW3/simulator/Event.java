@@ -22,6 +22,12 @@ public class Event {
 		return type;
 	}
 
+	public boolean hasNext()
+	{
+		if(next == null){return false;}
+		else{return true;}
+	}
+	
 	public Event getNext() {
 		return next;
 	}
