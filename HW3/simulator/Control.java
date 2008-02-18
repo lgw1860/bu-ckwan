@@ -149,9 +149,9 @@ public class Control {
 	public static void main(String[] args)
 	{
 		Control c = new Control(5.5, 6.8, 10);
-		System.out.println(c.Lambda + " " +  c.Ts + " " + c.SimTime);
+		//System.out.println(c.Lambda + " " +  c.Ts + " " + c.SimTime);
 		
 		c.simulate();
-		System.out.println(c.randTime());
+		//System.out.println(c.randTime());
 	}
 }
