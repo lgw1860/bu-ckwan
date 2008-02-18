@@ -16,8 +16,42 @@ public class Control {
 		this.Lambda = Lambda;
 		this.Ts = Ts;
 		this.SimTime = SimTime;
+		initialize();
 		
 	}
+	
+	public void initialize()
+	{
+		time = 0;	//initialize time to 0
+		
+		//schedule and execute first arrival
+		sched = new Schedule(new Event("A", 3.6));
+		currentEvent = sched.getFirstEvent();
+		execute(currentEvent);
+	}
+	
+	
+	public void simulate()
+	{
+		sched.add(new Event("A", 15));
+		sched.add(new Event("D", 92.6));
+		while(time < SimTime)
+		{
+			System.out.println("time: " + time);
+			//check for nulls
+			if(currentEvent.getNext() != null)
+			{
+				currentEvent = currentEvent.getNext();
+				time = currentEvent.getTime();
+				execute(currentEvent);
+			}
+			//!!!!
+			time ++;
+			//!!!!
+		}
+		
+	}
+	
 	
 	/**
 	 * Based on event type
@@ -27,39 +61,22 @@ public class Control {
 	{
 		if(e.getType() == "A")
 		{
-			System.out.println("Arrival!");
+			System.out.println("Arrival! @ " + time);
 		}else if(e.getType() == "D")
 		{
-			System.out.println("Departure!");
+			System.out.println("Departure! @ " + time);
 		}
 	}
+	
+	
+	
 	
 	public static void main(String[] args)
 	{
 		Control c = new Control(5.5, 6.8, 100);
 		System.out.println(c.Lambda + " " +  c.Ts + " " + c.SimTime);
-		//c.doStuff();
 		
-		Schedule s = new Schedule(new Event("A", 5.5));
-		s.add(new Event("A", 8.8));
-		
-		c.currentEvent = s.getFirstEvent();
-		c.execute(c.currentEvent);
-		
-		/*
-		for(int i=0; i<10; i++)
-		{
-			double time = Math.random() * 100;
-			int tempTime = (int)(time);
-			time = (double)tempTime / 100.00;
-			
-			Event e = new Event("J", time);
-			s.add(e);
-		}
-		*/
-		
-		System.out.println(s.toString());
-		
+		c.simulate();
 		
 	}
 }
