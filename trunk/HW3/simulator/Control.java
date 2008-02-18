@@ -90,7 +90,7 @@ public class Control {
 				System.out.println("DDD: " + myDeparture);
 				
 				//advanceArrival();
-				
+				arrivalNeedingDeparture = e;
 				
 			}
 			//schedule next arrival
@@ -104,23 +104,25 @@ public class Control {
 			
 			if(numInQueue>0)
 			{
-				//numInQueue--;
+				numInQueue--;
 				//schedule next departure
 				//Event nextDeparture = new Event("D", time+1);
 				
-				if(numInQueue > 1)
+				if(numInQueue > 0)
 				{
+				//Stats
 				advanceArrival();
-				Event nextDeparture = new Event("D", arrivalNeedingDeparture.getTime()+randTime());
+				//Event nextDeparture = new Event("D", arrivalNeedingDeparture.getTime()+randTime());
+				Event nextDeparture = new Event("D", e.getTime()+randTime());
 				//Event nextDeparture = new Event("D", e.getTime()+randTime());
-				System.out.println("DD: " + nextDeparture);
+				System.out.println("DD: " + nextDeparture + "arrivalNeeding: " + arrivalNeedingDeparture);
 				
 				sched.add(nextDeparture);
 				}
 				//advanceArrival();
 				
 				//System.out.println("DDD: " + nextDeparture);
-				numInQueue--;
+				//numInQueue--;
 			
 			}
 			
