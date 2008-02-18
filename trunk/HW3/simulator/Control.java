@@ -40,6 +40,10 @@ public class Control {
 		while(time < SimTime)
 		{
 			System.out.println("time: " + time);
+			System.out.println("n: " + numInQueue + "\n");
+			
+			
+			
 			//check for nulls
 			if(currentEvent.getNext() != null)
 			{
@@ -91,6 +95,18 @@ public class Control {
 		}else if(e.getType() == "D")
 		{
 			System.out.println("Departure! @ " + time);
+			
+			numInQueue--;
+			
+			if(numInQueue>0)
+			{
+				//schedule next departure
+				Event nextDeparture = new Event("D", time+1);
+				//Event nextDeparture = new Event("D", time+randTime());
+				sched.add(nextDeparture);
+				System.out.println("DDD: " + nextDeparture);
+			}
+			
 		}
 	}
 	
