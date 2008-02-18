@@ -43,7 +43,7 @@ public class Control {
 		{
 			//System.out.println("time: " + time);
 			//System.out.println("n: " + numInQueue + "\n");
-			System.out.println(numInQueue);
+			//System.out.println(numInQueue);
 			
 			
 			//check for nulls
@@ -80,28 +80,29 @@ public class Control {
 	{
 		if(e.getType() == "A")
 		{
-			System.out.println("Arrival! @ " + time);
+			//System.out.println("Arrival! @ " + time);
 			
 			numInQueue++;
 			if(numInQueue == 1)
 			{
-				Event myDeparture = new Event("D", e.getTime()+randTime());
+				Event myDeparture = new Event("D", cleanDouble(e.getTime()+randTime()));
 				sched.add(myDeparture);
-				System.out.println("DDD: " + myDeparture);
+				//System.out.println("DDD: " + myDeparture);
 				
 				//advanceArrival();
 				arrivalNeedingDeparture = e;
 				
 			}
 			//schedule next arrival
-			Event nextArrival = new Event("A", e.getTime()+randTime());
+			Event nextArrival = new Event("A", cleanDouble( e.getTime()+randTime() ));
 			sched.add(nextArrival);
 			//System.out.println("AAA: " + nextArrival);
 			
 		}else if(e.getType() == "D")
 		{
-			System.out.println("Departure! @ " + time + "My arrival: " + arrivalNeedingDeparture);
-			
+			//System.out.println("Departure! @ " + time + "My arrival: " + arrivalNeedingDeparture);
+			System.out.println(111 + "\t" + 555 + "\t" + arrivalNeedingDeparture.getTime() + "\t" + e.getTime() + "\t"
+					+ cleanDouble( (e.getTime() - arrivalNeedingDeparture.getTime()) ) );
 			if(numInQueue>0)
 			{
 				numInQueue--;
@@ -113,9 +114,9 @@ public class Control {
 				//Stats
 				advanceArrival();
 				//Event nextDeparture = new Event("D", arrivalNeedingDeparture.getTime()+randTime());
-				Event nextDeparture = new Event("D", e.getTime()+randTime());
+				Event nextDeparture = new Event("D", cleanDouble( e.getTime()+randTime() ));
 				//Event nextDeparture = new Event("D", e.getTime()+randTime());
-				System.out.println("DD: " + nextDeparture + "arrivalNeeding: " + arrivalNeedingDeparture);
+				//System.out.println("DD: " + nextDeparture + "arrivalNeeding: " + arrivalNeedingDeparture);
 				
 				sched.add(nextDeparture);
 				}
@@ -148,12 +149,23 @@ public class Control {
 		}
 	}
 	
+	private double cleanDouble(double number)
+	{
+		double cleanNumber = number * 100.0;
+		cleanNumber = ((int)cleanNumber) / 100.0;
+		return cleanNumber;
+	}
+	
 	public static void main(String[] args)
 	{
 		Control c = new Control(5.5, 6.8, 10);
 		//System.out.println(c.Lambda + " " +  c.Ts + " " + c.SimTime);
 		
+		System.out.println("IAT\tTs\tArr\tDep\tTq");
+		
 		c.simulate();
 		//System.out.println(c.randTime());
+		
+		System.out.println(c.cleanDouble(55.625));
 	}
 }
