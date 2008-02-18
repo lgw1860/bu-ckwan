@@ -9,6 +9,7 @@ public class Control {
 	private double time;
 	private Schedule sched;		//schedule of arrivals/departures
 	private Event currentEvent;	//current arr/dep being processed
+	private Event arrivalNeedingDeparture;
 	
 	private int numInQueue = 0;
 	
@@ -30,6 +31,7 @@ public class Control {
 		currentEvent = sched.getFirstEvent();
 		time = currentEvent.getTime();
 		execute(currentEvent);
+		arrivalNeedingDeparture = currentEvent;
 	}
 	
 	
@@ -78,14 +80,18 @@ public class Control {
 	{
 		if(e.getType() == "A")
 		{
-			//System.out.println("Arrival! @ " + time);
+			System.out.println("Arrival! @ " + time);
 			
 			numInQueue++;
 			if(numInQueue == 1)
 			{
 				Event myDeparture = new Event("D", e.getTime()+randTime());
 				sched.add(myDeparture);
-				//System.out.println("DDD: " + myDeparture);
+				System.out.println("DDD: " + myDeparture);
+				
+				//advanceArrival();
+				
+				
 			}
 			//schedule next arrival
 			Event nextArrival = new Event("A", e.getTime()+randTime());
@@ -94,24 +100,51 @@ public class Control {
 			
 		}else if(e.getType() == "D")
 		{
-			//System.out.println("Departure! @ " + time);
-			
-			numInQueue--;
+			System.out.println("Departure! @ " + time + "My arrival: " + arrivalNeedingDeparture);
 			
 			if(numInQueue>0)
 			{
+				//numInQueue--;
 				//schedule next departure
 				//Event nextDeparture = new Event("D", time+1);
-				Event nextDeparture = new Event("D", e.getTime()+randTime());
+				
+				if(numInQueue > 1)
+				{
+				advanceArrival();
+				Event nextDeparture = new Event("D", arrivalNeedingDeparture.getTime()+randTime());
+				//Event nextDeparture = new Event("D", e.getTime()+randTime());
+				System.out.println("DD: " + nextDeparture);
+				
 				sched.add(nextDeparture);
+				}
+				//advanceArrival();
+				
 				//System.out.println("DDD: " + nextDeparture);
+				numInQueue--;
+			
 			}
 			
 		}
 	}
 	
 	
-	
+	private void advanceArrival()
+	{
+		if(arrivalNeedingDeparture != null && arrivalNeedingDeparture.getNext() != null)
+		{
+			if(arrivalNeedingDeparture.getNext().getType() == "A")
+			{
+				arrivalNeedingDeparture = arrivalNeedingDeparture.getNext();
+			}else
+			{
+				while(arrivalNeedingDeparture.getNext().getType() != "A")
+				{
+					arrivalNeedingDeparture = arrivalNeedingDeparture.getNext();
+				}
+				arrivalNeedingDeparture = arrivalNeedingDeparture.getNext();
+			}
+		}
+	}
 	
 	public static void main(String[] args)
 	{
