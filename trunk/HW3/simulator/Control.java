@@ -19,6 +19,17 @@ public class Control {
 	private double currentQ = 0.0;
 	private double currentW = 0.0;
 	
+	private int sumInQueue = 0;
+	private double sumIAT = 0.0;
+	private double sumTs = 0.0;
+	private double sumTq = 0.0;
+	private double sumTw = 0.0;
+	private double sumQ = 0.0;
+	private double sumW = 0.0;
+	
+	private int numRequests = 0;
+	private int numTs = 0;
+	
 	public Control(double Lambda, double Ts, int SimTime)
 	{
 		this.Lambda = Lambda;
@@ -92,6 +103,10 @@ public class Control {
 			if(numInQueue == 1)
 			{
 				currentTs = randExp(Ts);
+				sumTs += currentTs;
+				numTs ++;
+				
+				
 				Event myDeparture = new Event("D", e.getTime()+currentTs);
 				sched.add(myDeparture);
 				//System.out.println("DDD: " + myDeparture);
@@ -110,8 +125,14 @@ public class Control {
 		{
 			//System.out.println("Departure! @ " + time + "My arrival: " + arrivalNeedingDeparture);
 			
+			numRequests ++; //a request has finished, increment counter
+			
 			currentTq = e.getTime() - arrivalNeedingDeparture.getTime();
-			currentTw = currentTq - currentTs;
+			sumTq += currentTq;
+			
+			currentTw = currentTq - currentTs;	//Tq = Tw + Ts
+			currentQ = Lambda * currentTq;		//q = Lambda * Tq
+			currentW = Lambda * currentTw;		//w = Lambda * Tw
 			
 			System.out.println(
 					  cleanDouble(currentIAT) + "\t"
@@ -120,6 +141,8 @@ public class Control {
 					+ cleanDouble(e.getTime()) + "\t"
 					+ cleanDouble(currentTq ) + "\t" 
 					+ cleanDouble(currentTw ) + "\t"
+					+ (int)(currentQ) + "\t"
+					+ (int)(currentW) + "\t"
 					+ numInQueue);
 			if(numInQueue>0)
 			{
@@ -132,6 +155,9 @@ public class Control {
 				//Stats
 				advanceArrival();
 				currentTs = randExp(Ts);
+				sumTs += currentTs;
+				numTs ++;
+				
 				//Event nextDeparture = new Event("D", arrivalNeedingDeparture.getTime()+randTime());
 				
 				//MAX
@@ -196,16 +222,29 @@ public class Control {
 		return cleanNumber;
 	}
 	
-	
+	public String endStats()
+	{
+		String report = "";
+		report += "sumTs: " + sumTs;
+		report += "\nnumRequests: " + numRequests;
+		report += "\nnumTs: " + numTs;
+		report += "\nmeanR: " + (sumTs/numRequests);
+		report += "\nmeanS: " + (sumTs/numTs);
+		
+		return report;
+	}
 	
 	public static void main(String[] args)
 	{
-		Control c = new Control(5.0, 0.15, 10);
+		Control c = new Control(5.0, 0.15, 1000);
 		System.out.println(c.Lambda + " " +  c.Ts + " " + c.SimTime);
 		
-		System.out.println("IAT\tTs\tArr\tDep\tTq\tTw\tn");
+		System.out.println("IAT \tTs \tArr \tDep \tTq \tTw \tq \tw \tn");
 		
 		c.simulate();
+		
+		System.out.println(c.endStats());
+		
 		//System.out.println(c.randTime());
 		
 		//System.out.println(c.cleanDouble(55.625));
