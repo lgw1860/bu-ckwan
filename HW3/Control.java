@@ -15,7 +15,8 @@ import java.io.*;
 public class Control {
 
 	static FileOutputStream file;	//a file output object
-	static PrintStream ps; 			//a print stream object
+	static PrintStream psDataTable; //a print stream object
+	static PrintStream psNumQueue;
 	
 	private double Lambda = 0.0;	//mean rate of arrivals
 	private double Ts = 0.0;		//mean time of service
@@ -161,7 +162,7 @@ public class Control {
 			//This is commented because it makes run time very slow.
 			//dataTable = dataTable + (
 			//System.out.println(
-			ps.println(
+			psDataTable.println(
 					+ cleanDouble(currentIAT) + "\t"
 					+ cleanDouble(currentTs) + "\t" 
 					+ cleanDouble(arrivalNeedingDeparture.getTime()) + "\t" 
@@ -278,13 +279,14 @@ public class Control {
 	 */
 	public String endStats()
 	{
-		String report = "\nIAT \tTs \tArr \tDep \tTq \tTw \tq \tw \tn \n";
+		String report = "\nIAT   \tTs     \tArr   \tDep   \tTq     " +
+					"\tTw     \tq \tw \tn \n";
 
 		report += "\nMeans from data:\n";
 		report += cleanDouble( sumIAT / numRequests) + "\t";
 		report += cleanDouble( sumTs / numRequests) + "\t";
 		report += "\t";
-		report += "\t";
+		report += "\t\t\t";
 		report += cleanDouble( sumTq / numRequests) + "\t";
 		report += cleanDouble( sumTw / numRequests) + "\t";
 		report += (int)( sumQ / numRequests) + "\t";
@@ -296,7 +298,7 @@ public class Control {
 		report += cleanDouble( 1.0 / Lambda) + "\t";
 		report += cleanDouble( Ts ) + "\t";
 		report += "\t";
-		report += "\t";
+		report += "\t\t\t";
 
 		//Calculations from parameters
 		double Rho = Lambda*Ts;				//Rho = Lambda / Mew, Rho = Lambda * Ts
@@ -345,13 +347,21 @@ public class Control {
 			file = new FileOutputStream("blackjackreport.txt");
 			
 			//Connect print stream to output stream
-			ps = new PrintStream(file);
+			psDataTable = new PrintStream(file);
+			
+			psDataTable.println("Lambda: " + c.Lambda + "\t" 
+					+  "Ts: " + c.Ts + "\t" 
+					+  "Simulation Time: " + c.SimTime);
+			
+			psDataTable.println("IAT   \tTs     \tArr   \tDep   \tTq     " +
+					"\tTw     \tq \tw \tn \n");
 			
 			c.simulate();
 			
 			//ps.println (report);
 			
-			ps.close();
+			psDataTable.println(c.endStats());
+			psDataTable.close();
 		}
 		catch (Exception e)
 		{
