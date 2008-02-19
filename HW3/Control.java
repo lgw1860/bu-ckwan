@@ -16,10 +16,10 @@ public class Control {
 
 	static FileOutputStream fileDataTable;	//a file output object
 	static PrintStream psDataTable; //a print stream object
-	
+
 	static FileOutputStream fileMonitorLog;
 	static PrintStream psMonitorLog;
-	
+
 	private double Lambda = 0.0;	//mean rate of arrivals
 	private double Ts = 0.0;		//mean time of service
 	private double SimTime = 0;		//max time to run simulation
@@ -67,7 +67,7 @@ public class Control {
 	public void initialize()
 	{
 		sched = new Schedule(new Event("M", monitorInc));
-		
+
 		/*
 		//fill schedule with Monitor events
 		for(double i = monitorInc+monitorInc; i<SimTime; i=i+monitorInc)
@@ -75,7 +75,7 @@ public class Control {
 			//System.out.println(i);
 			sched.add(new Event("M", i));
 		}
-		*/
+		 */
 		time = 0;	//initialize time to 0
 
 		//schedule and execute first arrival
@@ -119,7 +119,7 @@ public class Control {
 		if(e.getType() == "A")
 		{	
 			//System.out.println("\t" + e.toString());
-			
+
 			numInQueue++;
 
 			//if this is only request in queue, schedule its departure
@@ -145,7 +145,7 @@ public class Control {
 		}else if(e.getType() == "D")
 		{
 			//System.out.println("\t" + e.toString());
-			
+
 			numRequests ++; //a request has finished, increment counter
 
 			currentTq = e.getTime() - arrivalNeedingDeparture.getTime();
@@ -184,7 +184,7 @@ public class Control {
 				if(numInQueue > 0)
 				{
 					advanceArrival();	//the arrival needing departure has been served, so update to next
-					
+
 					currentTs = randExp(Ts);
 					sumTs += currentTs;
 
@@ -192,7 +192,7 @@ public class Control {
 					//and for the arrival needing departure to actually arrive
 					//so take the later of the two
 					double actualServiceStart = max(e.getTime(), arrivalNeedingDeparture.getTime());
-					
+
 					Event nextDeparture = new Event("D", actualServiceStart+currentTs);
 					sched.add(nextDeparture);
 				}//end if
@@ -202,15 +202,15 @@ public class Control {
 		else if(e.getType() == "M")
 		{
 			//System.out.println(numInQueue);
-			
+
 			//System.out.println("\t" + e.toString());
-			
+
 			if(psMonitorLog != null)
 			{
 				psMonitorLog.println(cleanDouble(e.getTime()) + "\t\t" + numInQueue);
 			}
-			
-			
+
+
 			sched.add(new Event("M", e.getTime()+monitorInc));
 		}
 	}
@@ -288,7 +288,7 @@ public class Control {
 	public String endStats()
 	{
 		String report = "\nIAT   \tTs     \tArr   \tDep   \tTq     " +
-					"\tTw     \tq \tw \tn \n";
+		"\tTw     \tq \tw \tn \n";
 
 		report += "\nMeans from data:\n";
 		report += cleanDouble( sumIAT / numRequests) + "\t";
@@ -334,55 +334,91 @@ public class Control {
 		return report;
 	}
 
-	
-	
-	
-	public static void main(String[] args)
+
+	public void run()
 	{
-		//Control c = new Control(5, 0.15, 1000);
-		Control c = new Control(100, 0.0085, 100);
-		//Control c = new Control(100, 0.02, 100);
-		
-		System.out.println("Lambda: " + c.Lambda + "\t" 
-							+  "Ts: " + c.Ts + "\t" 
-							+  "Simulation Time: " + c.SimTime);
+		System.out.println("Lambda: " + Lambda + "\t" 
+				+  "Ts: " + Ts + "\t" 
+				+  "Simulation Time: " + SimTime);
 
 		try
 		{
 			fileDataTable = new FileOutputStream("DataTable.txt");
 			fileMonitorLog = new FileOutputStream("MonitorLog.txt");
-			
-			//Connect print stream to output stream
+
+//			Connect print stream to output stream
 			psDataTable = new PrintStream(fileDataTable);
 			psMonitorLog = new PrintStream(fileMonitorLog);
-			
+
 			psMonitorLog.println("Time \tNumber in Queue");
-			
-			psDataTable.println("Lambda: " + c.Lambda + "\t" 
-					+  "Ts: " + c.Ts + "\t" 
-					+  "Simulation Time: " + c.SimTime + "\n");
-			
+
+			psDataTable.println("Lambda: " + Lambda + "\t" 
+					+  "Ts: " + Ts + "\t" 
+					+  "Simulation Time: " + SimTime + "\n");
+
 			psDataTable.println("IAT   \tTs     \tArr   \tDep   \tTq     " +
-					"\tTw     \tq \tw \tn \n");
-			
-			c.simulate();
-			
-			//ps.println (report);
-			
-			psDataTable.println(c.endStats());
-			
+			"\tTw     \tq \tw \tn \n");
+
+			simulate();
+
+//			ps.println (report);
+
+			psDataTable.println(endStats());
+
 			psMonitorLog.close();
-			
+
 			psDataTable.close();
-			
+
 		}
 		catch (Exception e)
 		{
 			System.err.println("Error.");
 		}
-		
-		
-		//c.simulate();
+	}
+
+	public static void main(String[] args)
+	{
+		//Control c = new Control(5, 0.15, 1000);
+		Control c = new Control(100, 0.0085, 100);
+		//Control c = new Control(100, 0.02, 100);
+
+		System.out.println("Lambda: " + c.Lambda + "\t" 
+				+  "Ts: " + c.Ts + "\t" 
+				+  "Simulation Time: " + c.SimTime);
+
+		try
+		{
+			fileDataTable = new FileOutputStream("DataTable.txt");
+			fileMonitorLog = new FileOutputStream("MonitorLog.txt");
+
+			//Connect print stream to output stream
+			psDataTable = new PrintStream(fileDataTable);
+			psMonitorLog = new PrintStream(fileMonitorLog);
+
+			psMonitorLog.println("Time \tNumber in Queue");
+
+			psDataTable.println("Lambda: " + c.Lambda + "\t" 
+					+  "Ts: " + c.Ts + "\t" 
+					+  "Simulation Time: " + c.SimTime + "\n");
+
+			psDataTable.println("IAT   \tTs     \tArr   \tDep   \tTq     " +
+			"\tTw     \tq \tw \tn \n");
+
+			c.simulate();
+
+			//ps.println (report);
+
+			psDataTable.println(c.endStats());
+
+			psMonitorLog.close();
+
+			psDataTable.close();
+
+		}
+		catch (Exception e)
+		{
+			System.err.println("Error.");
+		}
 
 		System.out.println(c.toString());
 	}
