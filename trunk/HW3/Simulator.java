@@ -1,4 +1,14 @@
 
+/**
+ * @author Christopher Kwan  ckwan@bu.edu  U37-02-3645
+ * @name CS350 HW3 Problem 4 M/M/1 Queue Simulator
+ * @date 2-19-2008
+ * @class Simulator.java - Simulator of M/M/1 Queue
+ * 			compile:	"javac Simulator.java"
+ * 			run:		"java Simulator Lambda<double> Ts<double> SimTime<int>"
+ *					ie: "java Simulator 100.0 0.0085 100"
+ */
+ 
 public class Simulator {
 
 	public static void main(String[] args)
