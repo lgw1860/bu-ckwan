@@ -1,3 +1,4 @@
+
 /**
  * @author Christopher Kwan  ckwan@bu.edu  U37-02-3645
  * @name CS350 HW3 Problem 4 M/M/1 Queue Simulator
@@ -7,7 +8,7 @@
  * 			run:		"java Schedule"
  */
 
-package simulator;
+//package simulator;
 
 public class Schedule {
 

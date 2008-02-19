@@ -1,3 +1,4 @@
+
 /**
  * @author Christopher Kwan  ckwan@bu.edu  U37-02-3645
  * @name CS350 HW3 Problem 4 M/M/1 Queue Simulator
@@ -7,16 +8,20 @@
  * 			run:		"java Control"
  */
 
-package simulator;
+//package simulator;
+
+import java.io.*;
 
 public class Control {
 
+	static FileOutputStream file;	//a file output object
+	static PrintStream ps; 			//a print stream object
+	
 	private double Lambda = 0.0;	//mean rate of arrivals
 	private double Ts = 0.0;		//mean time of service
 	private double SimTime = 0;		//max time to run simulation
 
 	private double monitorInc = 0.1;	//Time between monitor events
-	private String dataTable = "";	//data table of all requests
 
 	private double time;			//current simulation time
 	private Schedule sched;			//schedule of arrivals/departures
@@ -155,7 +160,8 @@ public class Control {
 			//Data table of stats for all requests so far.
 			//This is commented because it makes run time very slow.
 			//dataTable = dataTable + (
-			System.out.println(
+			//System.out.println(
+			ps.println(
 					+ cleanDouble(currentIAT) + "\t"
 					+ cleanDouble(currentTs) + "\t" 
 					+ cleanDouble(arrivalNeedingDeparture.getTime()) + "\t" 
@@ -318,6 +324,9 @@ public class Control {
 		return report;
 	}
 
+	
+	
+	
 	public static void main(String[] args)
 	{
 		//Control c = new Control(5, 0.15, 1000);
@@ -328,7 +337,29 @@ public class Control {
 							+  "Ts: " + c.Ts + "\t" 
 							+  "Simulation Time: " + c.SimTime);
 
-		c.simulate();
+		
+		
+		
+		try
+		{
+			file = new FileOutputStream("blackjackreport.txt");
+			
+			//Connect print stream to output stream
+			ps = new PrintStream(file);
+			
+			c.simulate();
+			
+			//ps.println (report);
+			
+			ps.close();
+		}
+		catch (Exception e)
+		{
+			System.err.println("Error.");
+		}
+		
+		
+		//c.simulate();
 
 		System.out.println(c.toString());
 	}

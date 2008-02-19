@@ -7,7 +7,7 @@
  * 			run:		"java Event"
  */
 
-package simulator;
+//package simulator;
 
 public class Event {
 
