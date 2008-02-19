@@ -141,7 +141,7 @@ public class Control {
 			currentW = Lambda * currentTw;		//w = Lambda * Tw
 			sumW += currentW;
 			
-			dataTable = dataTable + (
+			/*dataTable = dataTable + (
 			//System.out.println(
 					+ cleanDouble(currentIAT) + "\t"
 					+ cleanDouble(currentTs) + "\t" 
@@ -152,7 +152,7 @@ public class Control {
 					+ (int)(currentQ) + "\t"
 					+ (int)(currentW) + "\t"
 					+ numInQueue
-					+ "\n");
+					+ "\n");*/
 			
 			
 			if(numInQueue>0)
@@ -234,7 +234,9 @@ public class Control {
 	
 	public String endStats()
 	{
-		String report = "Means:\n";
+		String report = "\nIAT \tTs \tArr \tDep \tTq \tTw \tq \tw \tn \n";
+		
+		report += "\nMeans from data:\n";
 		report += cleanDouble( sumIAT / numRequests) + "\t";
 		report += cleanDouble( sumTs / numRequests) + "\t";
 		report += "\t";
@@ -243,6 +245,29 @@ public class Control {
 		report += cleanDouble( sumTw / numRequests) + "\t";
 		report += (int)( sumQ / numRequests) + "\t";
 		report += (int)( sumW / numRequests) + "\t";
+		
+		
+		
+		report += "\n\nMeans from calculation of parameters:\n";
+		report += cleanDouble( 1.0 / Lambda) + "\t";
+		report += cleanDouble( Ts ) + "\t";
+		report += "\t";
+		report += "\t";
+		
+		//Calculations from parameters
+		double Rho = Lambda*Ts;				//Rho = Lambda / Mew, Rho = Lambda * Ts
+		double myQ = Rho / (1.0 - Rho);		//q = Rho / (1 - Rho)
+		double myTq = myQ / Lambda; 		//q = Lambda * Tq, Tq = q / Lambda
+		double myTw = myTq - Ts;			//Tq = Tw + Ts, Tw = Tq - Ts
+		double myW = Lambda * myTw;			//w = Lambda * Tw
+		
+		report += cleanDouble(myTq) + "\t";
+		report += cleanDouble(myTw) + "\t"; 
+		report += (int)myQ + "\t";
+		report += (int)myW + "\t";
+		
+		
+		
 		return report;
 	}
 	
@@ -256,7 +281,7 @@ public class Control {
 	
 	public static void main(String[] args)
 	{
-		Control c = new Control(5.0, 0.15, 10);
+		Control c = new Control(100, 0.02, 100);
 		System.out.println(c.Lambda + " " +  c.Ts + " " + c.SimTime);
 		
 		c.simulate();
