@@ -14,9 +14,11 @@ import java.io.*;
 
 public class Control {
 
-	static FileOutputStream file;	//a file output object
+	static FileOutputStream fileDataTable;	//a file output object
 	static PrintStream psDataTable; //a print stream object
-	static PrintStream psNumQueue;
+	
+	static FileOutputStream fileMonitorLog;
+	static PrintStream psMonitorLog;
 	
 	private double Lambda = 0.0;	//mean rate of arrivals
 	private double Ts = 0.0;		//mean time of service
@@ -203,6 +205,12 @@ public class Control {
 			
 			//System.out.println("\t" + e.toString());
 			
+			if(psMonitorLog != null)
+			{
+				psMonitorLog.println(cleanDouble(e.getTime()) + "\t\t" + numInQueue);
+			}
+			
+			
 			sched.add(new Event("M", e.getTime()+monitorInc));
 		}
 	}
@@ -339,19 +347,20 @@ public class Control {
 							+  "Ts: " + c.Ts + "\t" 
 							+  "Simulation Time: " + c.SimTime);
 
-		
-		
-		
 		try
 		{
-			file = new FileOutputStream("blackjackreport.txt");
+			fileDataTable = new FileOutputStream("DataTable.txt");
+			fileMonitorLog = new FileOutputStream("MonitorLog.txt");
 			
 			//Connect print stream to output stream
-			psDataTable = new PrintStream(file);
+			psDataTable = new PrintStream(fileDataTable);
+			psMonitorLog = new PrintStream(fileMonitorLog);
+			
+			psMonitorLog.println("Time \tNumber in Queue");
 			
 			psDataTable.println("Lambda: " + c.Lambda + "\t" 
 					+  "Ts: " + c.Ts + "\t" 
-					+  "Simulation Time: " + c.SimTime);
+					+  "Simulation Time: " + c.SimTime + "\n");
 			
 			psDataTable.println("IAT   \tTs     \tArr   \tDep   \tTq     " +
 					"\tTw     \tq \tw \tn \n");
@@ -361,7 +370,11 @@ public class Control {
 			//ps.println (report);
 			
 			psDataTable.println(c.endStats());
+			
+			psMonitorLog.close();
+			
 			psDataTable.close();
+			
 		}
 		catch (Exception e)
 		{
