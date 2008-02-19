@@ -6,6 +6,8 @@ public class Control {
 	private double Ts = 0.0;
 	private double SimTime = 0;	//max time to run simulation
 	
+	private String dataTable = "";
+	
 	private double time;
 	private Schedule sched;		//schedule of arrivals/departures
 	private Event currentEvent;	//current arr/dep being processed
@@ -28,7 +30,6 @@ public class Control {
 	private double sumW = 0.0;
 	
 	private int numRequests = 0;
-	private int numTs = 0;
 	
 	public Control(double Lambda, double Ts, int SimTime)
 	{
@@ -104,7 +105,6 @@ public class Control {
 			{
 				currentTs = randExp(Ts);
 				sumTs += currentTs;
-				numTs ++;
 				
 				
 				Event myDeparture = new Event("D", e.getTime()+currentTs);
@@ -117,6 +117,8 @@ public class Control {
 			}
 			//schedule next arrival
 			currentIAT = randExp(1.0 / Lambda);
+			sumIAT += currentIAT;
+			
 			Event nextArrival = new Event("A", e.getTime()+currentIAT);
 			sched.add(nextArrival);
 			//System.out.println("AAA: " + nextArrival);
@@ -131,11 +133,17 @@ public class Control {
 			sumTq += currentTq;
 			
 			currentTw = currentTq - currentTs;	//Tq = Tw + Ts
-			currentQ = Lambda * currentTq;		//q = Lambda * Tq
-			currentW = Lambda * currentTw;		//w = Lambda * Tw
+			sumTw += currentTw;
 			
-			System.out.println(
-					  cleanDouble(currentIAT) + "\t"
+			currentQ = Lambda * currentTq;		//q = Lambda * Tq
+			sumQ += currentQ;
+			
+			currentW = Lambda * currentTw;		//w = Lambda * Tw
+			sumW += currentW;
+			
+			dataTable = dataTable + (
+			//System.out.println(
+					+ cleanDouble(currentIAT) + "\t"
 					+ cleanDouble(currentTs) + "\t" 
 					+ cleanDouble(arrivalNeedingDeparture.getTime()) + "\t" 
 					+ cleanDouble(e.getTime()) + "\t"
@@ -143,7 +151,10 @@ public class Control {
 					+ cleanDouble(currentTw ) + "\t"
 					+ (int)(currentQ) + "\t"
 					+ (int)(currentW) + "\t"
-					+ numInQueue);
+					+ numInQueue
+					+ "\n");
+			
+			
 			if(numInQueue>0)
 			{
 				numInQueue--;
@@ -156,7 +167,6 @@ public class Control {
 				advanceArrival();
 				currentTs = randExp(Ts);
 				sumTs += currentTs;
-				numTs ++;
 				
 				//Event nextDeparture = new Event("D", arrivalNeedingDeparture.getTime()+randTime());
 				
@@ -224,26 +234,34 @@ public class Control {
 	
 	public String endStats()
 	{
-		String report = "";
-		report += "sumTs: " + sumTs;
-		report += "\nnumRequests: " + numRequests;
-		report += "\nnumTs: " + numTs;
-		report += "\nmeanR: " + (sumTs/numRequests);
-		report += "\nmeanS: " + (sumTs/numTs);
-		
+		String report = "Means:\n";
+		report += cleanDouble( sumIAT / numRequests) + "\t";
+		report += cleanDouble( sumTs / numRequests) + "\t";
+		report += "\t";
+		report += "\t";
+		report += cleanDouble( sumTq / numRequests) + "\t";
+		report += cleanDouble( sumTw / numRequests) + "\t";
+		report += (int)( sumQ / numRequests) + "\t";
+		report += (int)( sumW / numRequests) + "\t";
+		return report;
+	}
+	
+	public String toString()
+	{
+		String report = "IAT \tTs \tArr \tDep \tTq \tTw \tq \tw \tn \n";
+		report += dataTable;
+		report += endStats();
 		return report;
 	}
 	
 	public static void main(String[] args)
 	{
-		Control c = new Control(5.0, 0.15, 1000);
+		Control c = new Control(5.0, 0.15, 10);
 		System.out.println(c.Lambda + " " +  c.Ts + " " + c.SimTime);
-		
-		System.out.println("IAT \tTs \tArr \tDep \tTq \tTw \tq \tw \tn");
 		
 		c.simulate();
 		
-		System.out.println(c.endStats());
+		System.out.println(c.toString());
 		
 		//System.out.println(c.randTime());
 		
