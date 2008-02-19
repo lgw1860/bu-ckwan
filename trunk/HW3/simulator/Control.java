@@ -15,6 +15,7 @@ public class Control {
 	private double Ts = 0.0;		//mean time of service
 	private double SimTime = 0;		//max time to run simulation
 
+	private double monitorInc = 0.1;	//Time between monitor events
 	private String dataTable = "";	//data table of all requests
 
 	private double time;			//current simulation time
@@ -57,11 +58,22 @@ public class Control {
 	 */
 	public void initialize()
 	{
+		sched = new Schedule(new Event("M", monitorInc));
+		
+		/*
+		//fill schedule with Monitor events
+		for(double i = monitorInc+monitorInc; i<SimTime; i=i+monitorInc)
+		{
+			//System.out.println(i);
+			sched.add(new Event("M", i));
+		}
+		*/
 		time = 0;	//initialize time to 0
 
 		//schedule and execute first arrival
 		currentIAT = randExp(1.0 / Lambda);
-		sched = new Schedule(new Event("A", currentIAT));
+		sched.add(new Event("A", currentIAT));
+		//sched = new Schedule(new Event("A", currentIAT));
 		currentEvent = sched.getFirstEvent();
 		time = currentEvent.getTime();
 		execute(currentEvent);
@@ -98,6 +110,8 @@ public class Control {
 		//Arrival
 		if(e.getType() == "A")
 		{	
+			System.out.println("\t" + e.toString());
+			
 			numInQueue++;
 
 			//if this is only request in queue, schedule its departure
@@ -122,6 +136,8 @@ public class Control {
 			//Departure
 		}else if(e.getType() == "D")
 		{
+			System.out.println("\t" + e.toString());
+			
 			numRequests ++; //a request has finished, increment counter
 
 			currentTq = e.getTime() - arrivalNeedingDeparture.getTime();
@@ -170,8 +186,17 @@ public class Control {
 					
 					Event nextDeparture = new Event("D", actualServiceStart+currentTs);
 					sched.add(nextDeparture);
-				}
-			}
+				}//end if
+			}//end if
+		}
+		//Monitor
+		else if(e.getType() == "M")
+		{
+			System.out.println(numInQueue);
+			
+			System.out.println("\t" + e.toString());
+			
+			sched.add(new Event("M", e.getTime()+monitorInc));
 		}
 	}
 
