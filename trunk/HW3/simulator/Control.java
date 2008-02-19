@@ -12,6 +12,12 @@ public class Control {
 	private Event arrivalNeedingDeparture;
 	
 	private int numInQueue = 0;
+	private double currentIAT = 0.0;
+	private double currentTs = 0.0;
+	private double currentTq = 0.0;
+	private double currentTw = 0.0;
+	private double currentQ = 0.0;
+	private double currentW = 0.0;
 	
 	public Control(double Lambda, double Ts, int SimTime)
 	{
@@ -85,7 +91,8 @@ public class Control {
 			numInQueue++;
 			if(numInQueue == 1)
 			{
-				Event myDeparture = new Event("D", cleanDouble(e.getTime()+randTime()));
+				currentTs = randExp(Ts);
+				Event myDeparture = new Event("D", e.getTime()+currentTs);
 				sched.add(myDeparture);
 				//System.out.println("DDD: " + myDeparture);
 				
@@ -94,15 +101,26 @@ public class Control {
 				
 			}
 			//schedule next arrival
-			Event nextArrival = new Event("A", cleanDouble( e.getTime()+randTime() ));
+			currentIAT = randExp(1.0 / Lambda);
+			Event nextArrival = new Event("A", e.getTime()+currentIAT);
 			sched.add(nextArrival);
 			//System.out.println("AAA: " + nextArrival);
 			
 		}else if(e.getType() == "D")
 		{
 			//System.out.println("Departure! @ " + time + "My arrival: " + arrivalNeedingDeparture);
-			System.out.println(111 + "\t" + 555 + "\t" + arrivalNeedingDeparture.getTime() + "\t" + e.getTime() + "\t"
-					+ cleanDouble( (e.getTime() - arrivalNeedingDeparture.getTime()) ) );
+			
+			currentTq = e.getTime() - arrivalNeedingDeparture.getTime();
+			currentTw = currentTq - currentTs;
+			
+			System.out.println(
+					  cleanDouble(currentIAT) + "\t"
+					+ cleanDouble(currentTs) + "\t" 
+					+ cleanDouble(arrivalNeedingDeparture.getTime()) + "\t" 
+					+ cleanDouble(e.getTime()) + "\t"
+					+ cleanDouble(currentTq ) + "\t" 
+					+ cleanDouble(currentTw ) + "\t"
+					+ numInQueue);
 			if(numInQueue>0)
 			{
 				numInQueue--;
@@ -113,8 +131,12 @@ public class Control {
 				{
 				//Stats
 				advanceArrival();
+				currentTs = randExp(Ts);
 				//Event nextDeparture = new Event("D", arrivalNeedingDeparture.getTime()+randTime());
-				Event nextDeparture = new Event("D", cleanDouble( e.getTime()+randTime() ));
+				
+				//MAX
+				
+				Event nextDeparture = new Event("D", e.getTime()+currentTs);
 				//Event nextDeparture = new Event("D", e.getTime()+randTime());
 				//System.out.println("DD: " + nextDeparture + "arrivalNeeding: " + arrivalNeedingDeparture);
 				
@@ -178,19 +200,20 @@ public class Control {
 	
 	public static void main(String[] args)
 	{
-		Control c = new Control(5.5, 6.8, 10);
-		//System.out.println(c.Lambda + " " +  c.Ts + " " + c.SimTime);
+		Control c = new Control(5.0, 0.15, 10);
+		System.out.println(c.Lambda + " " +  c.Ts + " " + c.SimTime);
 		
-		System.out.println("IAT\tTs\tArr\tDep\tTq");
+		System.out.println("IAT\tTs\tArr\tDep\tTq\tTw\tn");
 		
 		c.simulate();
 		//System.out.println(c.randTime());
 		
-		System.out.println(c.cleanDouble(55.625));
-		System.out.println(c.cleanDouble(c.randExp(1.0/5.0)));
+		//System.out.println(c.cleanDouble(55.625));
+		//System.out.println(c.cleanDouble(c.randExp(1.0/5.0)));
 		
+		/*
 		double sum = 0.0;
-		for(int i=0; i<1000; i++)
+		for(int i=0; i<10; i++)
 		{
 			double num = c.randExp(0.02);
 			System.out.println(num);
@@ -198,5 +221,6 @@ public class Control {
 		}
 		System.out.println("Actual: " + 0.02);
 		System.out.println("Mean: " + sum/1000.0);
+		*/
 	}
 }
