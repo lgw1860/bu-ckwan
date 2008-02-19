@@ -337,9 +337,12 @@ public class Control {
 
 	public void run()
 	{
-		System.out.println("Lambda: " + Lambda + "\t" 
-				+  "Ts: " + Ts + "\t" 
-				+  "Simulation Time: " + SimTime);
+		//System.out.println("Lambda: " + Lambda + "\t" 
+		//		+  "Ts: " + Ts + "\t" 
+		//		+  "Simulation Time: " + SimTime);
+		
+		System.out.println("\nPlease see DataTable.txt and MonitorLog.txt");
+
 
 		try
 		{
@@ -356,6 +359,7 @@ public class Control {
 					+  "Ts: " + Ts + "\t" 
 					+  "Simulation Time: " + SimTime + "\n");
 
+			
 			psDataTable.println("IAT   \tTs     \tArr   \tDep   \tTq     " +
 			"\tTw     \tq \tw \tn \n");
 
