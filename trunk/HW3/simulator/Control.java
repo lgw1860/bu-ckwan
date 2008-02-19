@@ -149,12 +149,32 @@ public class Control {
 		}
 	}
 	
+	
+	double randExp(double T)
+	{
+		/* Relationship derivation:
+		 * F(U) = U, where 0 <= U <= 1
+		 * F(V) = 1 - exp(-lambda*V), where 0<= V <= infinity
+		 * Equating the above two, we get:
+		 * U = 1 - exp(-lambda*V)
+		 * Which leads to the following relationship.
+		 * V = - ln(1-U) /lambda
+		 */
+		double U = Math.random();
+		double lambda = 1.0/T;
+		double V = ( -1 * (Math.log(1.0 - U)) ) / lambda; 
+		return V;
+	}
+	
+	
 	private double cleanDouble(double number)
 	{
-		double cleanNumber = number * 100.0;
-		cleanNumber = ((int)cleanNumber) / 100.0;
+		double cleanNumber = number * 10000.0;
+		cleanNumber = ((int)cleanNumber) / 10000.0;
 		return cleanNumber;
 	}
+	
+	
 	
 	public static void main(String[] args)
 	{
@@ -167,5 +187,16 @@ public class Control {
 		//System.out.println(c.randTime());
 		
 		System.out.println(c.cleanDouble(55.625));
+		System.out.println(c.cleanDouble(c.randExp(1.0/5.0)));
+		
+		double sum = 0.0;
+		for(int i=0; i<1000; i++)
+		{
+			double num = c.randExp(0.02);
+			System.out.println(num);
+			sum = sum + num;
+		}
+		System.out.println("Actual: " + 0.02);
+		System.out.println("Mean: " + sum/1000.0);
 	}
 }
