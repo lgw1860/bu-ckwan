@@ -110,7 +110,7 @@ public class Control {
 		//Arrival
 		if(e.getType() == "A")
 		{	
-			System.out.println("\t" + e.toString());
+			//System.out.println("\t" + e.toString());
 			
 			numInQueue++;
 
@@ -136,7 +136,7 @@ public class Control {
 			//Departure
 		}else if(e.getType() == "D")
 		{
-			System.out.println("\t" + e.toString());
+			//System.out.println("\t" + e.toString());
 			
 			numRequests ++; //a request has finished, increment counter
 
@@ -154,7 +154,8 @@ public class Control {
 
 			//Data table of stats for all requests so far.
 			//This is commented because it makes run time very slow.
-			/*dataTable = dataTable + (
+			//dataTable = dataTable + (
+			System.out.println(
 					+ cleanDouble(currentIAT) + "\t"
 					+ cleanDouble(currentTs) + "\t" 
 					+ cleanDouble(arrivalNeedingDeparture.getTime()) + "\t" 
@@ -163,8 +164,7 @@ public class Control {
 					+ cleanDouble(currentTw ) + "\t"
 					+ (int)(currentQ) + "\t"
 					+ (int)(currentW) + "\t"
-					+ numInQueue
-					+ "\n");*/
+					+ numInQueue);
 
 			//Don't need to do anything with an empty Queue!
 			if(numInQueue>0)
@@ -192,9 +192,9 @@ public class Control {
 		//Monitor
 		else if(e.getType() == "M")
 		{
-			System.out.println(numInQueue);
+			//System.out.println(numInQueue);
 			
-			System.out.println("\t" + e.toString());
+			//System.out.println("\t" + e.toString());
 			
 			sched.add(new Event("M", e.getTime()+monitorInc));
 		}
@@ -320,8 +320,8 @@ public class Control {
 
 	public static void main(String[] args)
 	{
-		Control c = new Control(5, 0.15, 1000);
-		//Control c = new Control(100, 0.0085, 100);
+		//Control c = new Control(5, 0.15, 1000);
+		Control c = new Control(100, 0.0085, 100);
 		//Control c = new Control(100, 0.02, 100);
 		
 		System.out.println("Lambda: " + c.Lambda + "\t" 
