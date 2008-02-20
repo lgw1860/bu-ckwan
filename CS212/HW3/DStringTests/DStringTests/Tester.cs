@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace DStringTests
+namespace DynamicString
 {
     class Tester
     {
@@ -16,7 +16,8 @@ namespace DStringTests
             ms.Name = "Ermac";
             Console.WriteLine(ms.Name);
 
-            DynamicString.DString ds = new DynamicString.DString();
+            //DynamicString.DString ds = new DynamicString.DString();
+            DString ds = new DString();
             ds.Add("heyguysimads");
             Console.WriteLine( ds.ToString() );
 
@@ -31,7 +32,8 @@ namespace DStringTests
 
         public int testAdd()
         {
-            DynamicString.DString ds1 = new DynamicString.DString("goDaddy");
+            //DynamicString.DString ds1 = new DynamicString.DString("goDaddy");
+            DString ds1 = new DString("goDaddy");
             try
             {
                 //return( ds1.Add(8) );
