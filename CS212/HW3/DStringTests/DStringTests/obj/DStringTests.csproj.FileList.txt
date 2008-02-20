@@ -1,0 +1,10 @@
+bin\Release\DStringTests.exe
+bin\Release\DStringTests.pdb
+obj\Release\ResolveAssemblyReference.cache
+obj\Release\DStringTests.exe
+obj\Release\DStringTests.pdb
+bin\Debug\DStringTests.exe
+bin\Debug\DStringTests.pdb
+obj\Debug\ResolveAssemblyReference.cache
+obj\Debug\DStringTests.exe
+obj\Debug\DStringTests.pdb
