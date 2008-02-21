@@ -11,7 +11,8 @@ namespace DynamicString
             Tester t = new Tester();
             //t.testAdd();
             //t.testCutout();
-            t.testDecimalize();
+            //t.testDecimalize();
+            t.testDecimalPlaces();
 
             Console.ReadLine();
         }
@@ -177,6 +178,34 @@ namespace DynamicString
             }
         }
 
+        public void testDecimalPlaces()
+        {
+            //num of dec places is smaller than those originally in DString
+            try
+            {
+                DString ds1 = new DString(18);
+                string report = ds1.DecimalPlaces().ToString();
+                Console.WriteLine("PASS - num of dec places is smaller than those originally in DString: " + report);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("FAIL - num of dec places is smaller than those originally in DString");
+            }
+        }
 
+        public void testPadRight
+        {
+             //num of dec places is smaller than those originally in DString
+            try
+            {
+                DString ds1 = new DString(18.56789);
+                ds1.Decimalize(2);
+                Console.WriteLine("PASS - num of dec places is smaller than those originally in DString: " + ds1.ToString());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("FAIL - num of dec places is smaller than those originally in DString");
+            }
+        }
     }
 }
