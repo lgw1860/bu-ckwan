@@ -5,8 +5,8 @@ using System.Collections;
 namespace DynamicString
 {
 	/// <summary>
-	/// DStringCollection represents a container; that is, a collection or bag of DStringFixed elements.
-	/// This is a strongly typed DStringFixed collection that has-a CollectionBase; 
+	/// DStringCollection represents a container; that is, a collection or bag of DString elements.
+	/// This is a strongly typed DString collection that has-a CollectionBase; 
 	/// exposes all IList and ArrayList functionality to the user.
 	/// DStringCollection Version 2.00 Copyright (C) 2004 Lou Stein
 	/// </summary>
@@ -17,7 +17,7 @@ namespace DynamicString
 		/// <summary>
 		/// Gets or sets the element at the specified index.
 		/// </summary>
-		public DStringFixed this[ int index ]  
+		public DString this[ int index ]  
 		{
 			get  
 			{
@@ -26,7 +26,7 @@ namespace DynamicString
 					throw new ArgumentOutOfRangeException("DStringCollection this[" + index.ToString() + "]--On Get");
 				}
 
-				return (DStringFixed)List[index].ToString();
+				return (DString)List[index].ToString();
 			}
 			set  
 			{
@@ -101,7 +101,7 @@ namespace DynamicString
 		/// DStringCollection myCollection = new DStringCollection();
 		/// lock( myCollection.SyncRoot ) 
 		/// {
-		///    foreach ( DStringFixed item in myCollection ) 
+		///    foreach ( DString item in myCollection ) 
 		///    {
 		///       Insert your code here.
 		///		}
@@ -167,11 +167,11 @@ namespace DynamicString
 		#endregion
 		#region Add
 		/// <summary>
-		/// Adds a DStringFixed to the end of the DStringCollection. 
+		/// Adds a DString to the end of the DStringCollection. 
 		/// </summary>
-		/// <param name="value">DynamicStringFixed.DStringFixed</param>
+		/// <param name="value">DynamicString.DString</param>
 		/// <returns>The position into which the new element was inserted.</returns>
-		public int Add( DStringFixed value )  
+		public int Add( DString value )  
 		{
 			return( List.Add( value ) );
 		}
@@ -184,26 +184,26 @@ namespace DynamicString
 		public void AddRange(ICollection c)
 		{
 			foreach(object o in c)
-				List.Add((DStringFixed)Convert.ToString(o));
+				List.Add((DString)Convert.ToString(o));
 		}
 		#endregion AddRange
 		#region BinarySearch
 		/// <summary>
 		/// Uses a binary search algorithm to locate a specific element in the sorted DStringCollection or a portion of it.
 		/// </summary>
-		/// <param name="value">DynamicStringFixed.DStringFixed</param>
+		/// <param name="value">DynamicString.DString</param>
 		/// <param name="compare">System.Collections.IComparer; Method to compare two items.</param>
-		/// <returns>DStringFixed; Returns the found item.</returns>
-		public int BinarySearch(DStringFixed value,IComparer compare)
+		/// <returns>DString; Returns the found item.</returns>
+		public int BinarySearch(DString value,IComparer compare)
 		{
 			return InnerList.BinarySearch(value,compare);
 		}
 		/// <summary>
 		/// Uses a binary search algorithm to locate a specific element in the sorted DStringCollection or a portion of it.
 		/// </summary>
-		/// <param name="value">DynamicStringFixed.DStringFixed; Item to find.</param>
-		/// <returns>DStringFixed; Return the found element</returns>
-		public int BinarySearch(DStringFixed value)
+		/// <param name="value">DynamicString.DString; Item to find.</param>
+		/// <returns>DString; Return the found element</returns>
+		public int BinarySearch(DString value)
 		{
 			return InnerList.BinarySearch(value.Value);
 		}
@@ -212,10 +212,10 @@ namespace DynamicString
 		/// </summary>
 		/// <param name="index">int; Start Index</param>
 		/// <param name="count">int; Item Count</param>
-		/// <param name="value">DynamicStringFixed.DStringFixed; Item to find</param>
+		/// <param name="value">DynamicString.DString; Item to find</param>
 		/// <param name="comparer">System.Collections.IComparer; Method to comparer two items</param>
-		/// <returns>DStringFixed; Return the found Item</returns>
-		public int BinarySearch(int index,int count,DStringFixed value,IComparer comparer)
+		/// <returns>DString; Return the found Item</returns>
+		public int BinarySearch(int index,int count,DString value,IComparer comparer)
 		{
 			return InnerList.BinarySearch(index,count,value,comparer);
 		}
@@ -236,9 +236,9 @@ namespace DynamicString
 		/// </summary>
 		/// <param name="value">Element to search for.</param>
 		/// <returns>If found return true, otherwise false</returns>
-		public bool Contains( DStringFixed value )  
+		public bool Contains( DString value )  
 		{
-			// If value is not of type DStringFixed, this will return false.
+			// If value is not of type DString, this will return false.
 			return( InnerList.Contains( value ) );
 		}
 		#endregion Contains
@@ -319,7 +319,7 @@ namespace DynamicString
 		#endregion GetRange
 		#region GetType()
 		/// <summary>
-		/// Returns Type, DynamicStringFixed.DStringFixed.
+		/// Returns Type, DynamicString.DString.
 		/// </summary>
 		/// <returns>System.Object.Type</returns>
 		public new Type GetType()
@@ -331,9 +331,9 @@ namespace DynamicString
 		/// <summary>
 		/// Find the position of the element.
 		/// </summary>
-		/// <param name="value">DStringFixed; Item to find</param>
+		/// <param name="value">DString; Item to find</param>
 		/// <returns>int; Index location of the item.</returns>
-		public int IndexOf( DStringFixed value )  
+		public int IndexOf( DString value )  
 		{
 			return InnerList.IndexOf(value );
 		}
@@ -344,7 +344,7 @@ namespace DynamicString
 		/// <param name="startIndex"></param>
 		/// <param name="count"></param>
 		/// <returns></returns>
-		public int IndexOf(DStringFixed value,int startIndex,int count)
+		public int IndexOf(DString value,int startIndex,int count)
 		{
 			return InnerList.IndexOf(value,startIndex,count);
 		}
@@ -354,7 +354,7 @@ namespace DynamicString
 		/// <param name="value"></param>
 		/// <param name="startIndex"></param>
 		/// <returns></returns>
-		public int IndexOf(DStringFixed value, int startIndex)
+		public int IndexOf(DString value, int startIndex)
 		{
 			return InnerList.IndexOf(value,startIndex);
 		}
@@ -364,8 +364,8 @@ namespace DynamicString
 		/// Insert an new element.
 		/// </summary>
 		/// <param name="index">int; The position the element should be inserted.</param>
-		/// <param name="value">DStringFixed; The element to be inserted.</param>
-		public void Insert( int index, DStringFixed value )  
+		/// <param name="value">DString; The element to be inserted.</param>
+		public void Insert( int index, DString value )  
 		{
 			List.Insert( index, value );
 		}
@@ -379,7 +379,7 @@ namespace DynamicString
 		public void InsertRange(int index,ICollection c)
 		{
 			for(IEnumerator e = c.GetEnumerator();e.MoveNext();index++)
-				List.Insert(index,(DStringFixed)Convert.ToString(e.Current));
+				List.Insert(index,(DString)Convert.ToString(e.Current));
 		}
 		#endregion InsertRange
 		#region LastIndexOf
@@ -388,11 +388,11 @@ namespace DynamicString
 		///  within the section of the DStringCollection that contains the specified number of 
 		///  elements and ends at the specified index.
 		/// </summary>
-		/// <param name="value">DStringFixed; The Object to locate in the ArrayList. The value can be a null reference (Nothing in Visual Basic). </param>
+		/// <param name="value">DString; The Object to locate in the ArrayList. The value can be a null reference (Nothing in Visual Basic). </param>
 		/// <param name="startIndex">int; The zero-based starting index of the backward search. </param>
 		/// <param name="count">The number of elements in the section to search.</param>
 		/// <returns>The zero-based index of the last occurrence of value within the section of the DStringCollection that contains count number of elements and ends at startIndex, if found; otherwise, -1.</returns>
-		public int LastIndexOf(DStringFixed value,int startIndex,int count)
+		public int LastIndexOf(DString value,int startIndex,int count)
 		{
 			return InnerList.LastIndexOf(value,startIndex,count);
 		}
@@ -400,10 +400,10 @@ namespace DynamicString
 		///  the last occurrence within the section of the DStringCollection that 
 		///  contains the specified number of elements and ends at the specified index.
 		/// </summary>
-		/// <param name="value">DStringFixed; The Object to locate in the ArrayList. The value can be a null reference (Nothing in Visual Basic). </param>
+		/// <param name="value">DString; The Object to locate in the ArrayList. The value can be a null reference (Nothing in Visual Basic). </param>
 		/// <param name="startIndex">int; The zero-based starting index of the backward search. </param>
 		/// <returns>The zero-based index of the last occurrence of value within the section of the DStringCollection that contains count number of elements and ends at startIndex, if found; otherwise, -1.</returns>
-		public int LastIndexOf(DStringFixed value,int startIndex)
+		public int LastIndexOf(DString value,int startIndex)
 		{
 			return InnerList.LastIndexOf(value,startIndex);
 		}
@@ -411,9 +411,9 @@ namespace DynamicString
 		///  of the last occurrence within the section of the DStringCollection that 
 		///  contains the specified number of elements and ends at the specified index.
 		/// </summary>
-		/// <param name="value">DStringFixed; The Object to locate in the ArrayList. The value can be a null reference (Nothing in Visual Basic). </param>
+		/// <param name="value">DString; The Object to locate in the ArrayList. The value can be a null reference (Nothing in Visual Basic). </param>
 		/// <returns>The zero-based index of the last occurrence of value within the section of the DStringCollection that contains count number of elements and ends at startIndex, if found; otherwise, -1.</returns>
-		public int LastIndexOf(DStringFixed value)
+		public int LastIndexOf(DString value)
 		{
 			return InnerList.LastIndexOf(value);
 		}
@@ -439,7 +439,7 @@ namespace DynamicString
 		/// -or- 
 		/// The ArrayList has a fixed size.
 		/// </exception>
-		public void Remove( DStringFixed value )  
+		public void Remove( DString value )  
 		{
 			InnerList.Remove( value );
 		}
@@ -459,10 +459,10 @@ namespace DynamicString
 		/// <summary>
 		/// Returns a DStringCollection whose elements are copies of the specified value.
 		/// </summary>
-		/// <param name="value">The DStringFixed to copy multiple times in the new DStringCollection. The value can be a null reference (Nothing in Visual Basic). </param>
+		/// <param name="value">The DString to copy multiple times in the new DStringCollection. The value can be a null reference (Nothing in Visual Basic). </param>
 		/// <param name="count">The number of times value should be copied. </param>
 		/// <returns>A DStringCollection with count number of elements, all of which are copies of value.</returns>
-		public static DStringCollection Repeat(DStringFixed value, int count)
+		public static DStringCollection Repeat(DString value, int count)
 		{
             return new DStringCollection(ArrayList.Repeat(value,count));
 		}
@@ -547,12 +547,12 @@ namespace DynamicString
 		#endregion
 		#region ToArray
 		/// <summary>
-		/// Copies the elements of the DStringCollection to a new array of DStringFixed.
+		/// Copies the elements of the DStringCollection to a new array of DString.
 		/// </summary>
 		/// <returns>An array of the specified type containing copies of the elements of the DStringCollection.</returns>
-		public DStringFixed[] ToArray()
+		public DString[] ToArray()
 		{
-			return (DStringFixed[])InnerList.ToArray(typeof (DStringFixed));
+			return (DString[])InnerList.ToArray(typeof (DString));
 		}
 		/// <summary>
 		/// Copies the elements of the DStringCollection to a new array of the specified type.

@@ -35,9 +35,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DString.cs" />
-    <Compile Include="DStringFixed.cs" />
     <Compile Include="DStringCollection.cs" />
-    <Compile Include="MyString.cs" />
     <Compile Include="Tester.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
