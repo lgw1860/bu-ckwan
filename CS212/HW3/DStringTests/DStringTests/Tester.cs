@@ -10,9 +10,9 @@ namespace DynamicString
         {
             Tester t = new Tester();
             //t.testAdd();
-            //t.testCutout();
             //t.testDecimalize();
-            t.testDecimalPlaces();
+            //t.testPadRight();
+            t.testDStringIntChar();
 
             Console.ReadLine();
         }
@@ -95,26 +95,6 @@ namespace DynamicString
 
         }
 
-        /*
-         * Cutout(string, int, int)
-         */
-        public void testCutout()
-        {
-            //adding empty DString
-            try
-            {
-                DString ds1 = new DString("kangaroo");
-                string s = "kang";
-                ds1.Cutout(s,-4,1);
-                Console.WriteLine("PASS - Adding an empty DString to a DString: " + ds1.ToString());
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("FAIL - Adding an empty DString to a DString");
-            }
-
-        }
-
         public void testDecimalize()
         {
             //negative int
@@ -178,34 +158,72 @@ namespace DynamicString
             }
         }
 
-        public void testDecimalPlaces()
+        public void testPadRight()
         {
-            //num of dec places is smaller than those originally in DString
+            //padding amount greater than Dstring length
             try
             {
-                DString ds1 = new DString(18);
-                string report = ds1.DecimalPlaces().ToString();
-                Console.WriteLine("PASS - num of dec places is smaller than those originally in DString: " + report);
+                DString ds1 = new DString("apple");
+                ds1.PadRight(10, 'A');
+                Console.WriteLine("PASS - padding amount greater than DString length: " + ds1.ToString());
             }
             catch (Exception e)
             {
-                Console.WriteLine("FAIL - num of dec places is smaller than those originally in DString");
+                Console.WriteLine("FAIL - padding amount greater than DString length");
             }
+
+            //padding amount equal to Dstring length
+            try
+            {
+                DString ds1 = new DString("apple");
+                ds1.PadRight(5, 'A');
+                Console.WriteLine("PASS - padding amount equal to Dstring length: " + ds1.ToString());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("FAIL - padding amount equal to Dstring length");
+            }
+
+            //padding amount less than Dstring length
+            try
+            {
+                DString ds1 = new DString("apple");
+                ds1.PadRight(3, 'A');
+                Console.WriteLine("PASS - padding amount less than Dstring length: " + ds1.ToString());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("FAIL - padding amount less than Dstring length");
+            }
+
+            //negative padding amount
+            try
+            {
+                DString ds1 = new DString("apple");
+                ds1.PadRight(-1, 'A');
+                Console.WriteLine("PASS - negative padding amount: " + ds1.ToString());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("FAIL - negative padding amount");
+            }
+
         }
 
-        public void testPadRight
+        public void testDStringIntChar()
         {
-             //num of dec places is smaller than those originally in DString
+            //very large int
             try
             {
-                DString ds1 = new DString(18.56789);
-                ds1.Decimalize(2);
-                Console.WriteLine("PASS - num of dec places is smaller than those originally in DString: " + ds1.ToString());
+                DString ds1 = new DString(1000000000, 'A');
+                Console.WriteLine("PASS - very large int: " + ds1.ToString());
             }
             catch (Exception e)
             {
-                Console.WriteLine("FAIL - num of dec places is smaller than those originally in DString");
+                Console.WriteLine("FAIL - very large int");
             }
+
+
         }
     }
 }
