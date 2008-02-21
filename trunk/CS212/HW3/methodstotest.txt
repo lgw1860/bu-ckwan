@@ -1,0 +1,19 @@
+Add(object) *
+
+xCutout(string, int, int)
+
+Decimalize(int) *
+
+PadRight(int, char) *
+
+DString(int, char)
+
+ElimFirst(string)
+
+ForceRightSpace
+
+Remove(int, int)
+
+Reverse()
+
+ToBoolean(DString)
