@@ -1,3 +1,9 @@
+/*
+ * Christopher Kwan     ckwan@bu.edu    U37-02-3645
+ * CS212 C# Devlin
+ * Assignment #3 - Testing DString function
+ */
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,22 +14,45 @@ namespace DynamicString
     {
         static void Main(string[] args)
         {
+            Console.WriteLine("Christopher Kwan\tckwan@bu.edu\tU37-02-3645");
+            Console.WriteLine("\nTests of DString functions:");
+            Console.WriteLine("---------------------------");
+            
             Tester t = new Tester();
-            //t.testAdd();
-            //t.testDecimalize();
-            //t.testPadRight();
-            //t.testDStringIntChar();
-            //t.testToBoolean();
-            //t.testRemove();
-            //t.testForceRightSpace();
+
+            t.testAdd();
+            t.testDecimalize();
+            t.testToBoolean();
+            t.testPadRight();
+            t.testForceRightSpace();
+            t.testRemove();
+            t.testDStringIntChar();
             t.testElimAll();
 
+            Console.WriteLine("\n-End of Program-");
             Console.ReadLine();
         }
 
+        /**
+         * Test of Add(object).
+         * 
+         * Limits:
+         *  - trying to add a null causes an exception.
+         * 
+         * Fix:
+         * public int Add( Object value )  
+		 *   {
+         *      if(value != null)
+         *      {
+		 *	        int pos = Value.Length+1;
+		 *	        Value += value.ToString();
+		 *	        return pos;
+         *      }
+		 *  }
+         */
         public void testAdd()
         {
-            //DynamicString.DString ds1 = new DynamicString.DString("goDaddy");
+            Console.WriteLine("\n\nTesting Add(object): \n");
             
             //adding null
             try
@@ -99,8 +128,16 @@ namespace DynamicString
 
         }
 
+        /**
+         * Test of Decimalize(int).
+         * 
+         * Limits: passed all tests.
+         */
         public void testDecimalize()
         {
+
+            Console.WriteLine("\n\nTesting Decimalize(int): \n");
+
             //negative int
             try
             {
@@ -162,8 +199,30 @@ namespace DynamicString
             }
         }
 
+        /**
+         * Test of PadRight(int, char).
+         * 
+         * Limits:
+         *  - negative padding amount causes an exception.
+         * 
+         * Fix:
+         *  public DString PadRight(int totalWidth,char paddingChar)
+		 *  {
+		 *      if(totalWidth < 0)
+         *      {
+         *          Value = Value.PadRight(0,paddingChar);
+         *      }else
+         *      {
+         *          Value = Value.PadRight(totalWidth,paddingChar);
+         *      }
+         *      return this;
+		 *  }
+         * 
+         */
         public void testPadRight()
         {
+            Console.WriteLine("\n\nTesting PadRight(int, char): \n");
+
             //padding amount greater than Dstring length
             try
             {
@@ -214,8 +273,34 @@ namespace DynamicString
 
         }
 
+        /**
+         * Test of constructor DString(int, char).
+         * 
+         * Limits:
+         *  - putting in a very large int (but not quite a long) causes an exception.
+         * 
+         * Fix:
+         * //5000 is arbitrary yet managable choice for upper string size limit
+         * public DString(int count,char ch)
+		 * {
+         *      int upperLimit = 5000;
+		 *      if ( count > 0 && <= upperLimit)
+         *      {
+		 *		    _strBuffer = new StringBuilder(new string(ch,count));
+		 *      }else if (count > upperLimit)
+         *      {
+         *          _strBuffer = new StringBuilder(new string(ch,upperLimit));
+         *      }else
+         *      {
+		 *		    _strBuffer = new StringBuilder(@"");
+		 *      }
+         * }
+         * 
+         */
         public void testDStringIntChar()
         {
+            Console.WriteLine("\n\nTesting DString(int, char): \n");
+            
             //very large int (1000000000, not quite a long)
             try
             {
@@ -253,8 +338,15 @@ namespace DynamicString
 
         }
 
+        /**
+         * Test of ToBoolean(DString).
+         * 
+         * Limits: passed all tests.
+         */
         public void testToBoolean()
         {
+            Console.WriteLine("\n\nTesting ToBoolean(DString): \n");
+
             //string
             try
             {
@@ -342,8 +434,16 @@ namespace DynamicString
 
         }
 
+        /**
+         * Test of Remove(int, int).
+         * 
+         * Limits: passed all tests.
+         */
         public void testRemove()
         {
+
+            Console.WriteLine("\n\nTesting Remove(int, int): \n");
+
             //negative index
             try
             {
@@ -418,8 +518,15 @@ namespace DynamicString
 
         }
 
+        /**
+         * Test of ForceRightSpace().
+         * 
+         * Limits: passed all tests.
+         */
         public void testForceRightSpace()
         {
+            Console.WriteLine("\n\nTesting ForceRightSpace(): \n");
+
             //empty string
             try 
             {
@@ -470,8 +577,16 @@ namespace DynamicString
 
         }
 
+        /**
+         * Test of ElimAll(string).
+         * 
+         * Limits: passed all tests.
+         */
         public void testElimAll()
         {
+
+            Console.WriteLine("\n\nTesting ElimAll(string): \n");
+
             //empty control string
             try
             {
