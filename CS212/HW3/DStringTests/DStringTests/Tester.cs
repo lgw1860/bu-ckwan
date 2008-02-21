@@ -12,7 +12,11 @@ namespace DynamicString
             //t.testAdd();
             //t.testDecimalize();
             //t.testPadRight();
-            t.testDStringIntChar();
+            //t.testDStringIntChar();
+            //t.testToBoolean();
+            //t.testRemove();
+            //t.testForceRightSpace();
+            t.testElimAll();
 
             Console.ReadLine();
         }
@@ -212,17 +216,346 @@ namespace DynamicString
 
         public void testDStringIntChar()
         {
-            //very large int
+            //very large int (1000000000, not quite a long)
             try
             {
                 DString ds1 = new DString(1000000000, 'A');
-                Console.WriteLine("PASS - very large int: " + ds1.ToString());
+                Console.WriteLine("PASS - very large int (1000000000, not quite a long): " + ds1.ToString());
             }
             catch (Exception e)
             {
-                Console.WriteLine("FAIL - very large int");
+                Console.WriteLine("FAIL - very large int (1000000000, not quite a long)");
             }
 
+            //negative int
+            try
+            {
+                DString ds1 = new DString(-50, 'A');
+                Console.WriteLine("PASS - negative int: " + ds1.ToString());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("FAIL - negative int");
+            }
+
+            //space character
+            try
+            {
+                DString ds1 = new DString(5, ' ');
+                Console.WriteLine("PASS - space character: " + ds1.ToString());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("FAIL - space character");
+            }
+
+
+
+        }
+
+        public void testToBoolean()
+        {
+            //string
+            try
+            {
+                DString ds1 = new DString("cat");
+                DString.ToBoolean(ds1);
+                Console.WriteLine("PASS - string: " + ds1.ToString() + " " + DString.ToBoolean(ds1));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("FAIL - string");
+            }
+
+            //char
+            try
+            {
+                DString ds1 = new DString('A');
+                DString.ToBoolean(ds1);
+                Console.WriteLine("PASS - char: " + ds1.ToString() + " " + DString.ToBoolean(ds1));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("FAIL - char");
+            }
+
+            //int
+            try
+            {
+                DString ds1 = new DString(39423432);
+                DString.ToBoolean(ds1);
+                Console.WriteLine("PASS - int: " + ds1.ToString() + " " + DString.ToBoolean(ds1));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("FAIL - int");
+            }
+
+
+            //double
+            try
+            {
+                DString ds1 = new DString(39423432.4543535435335);
+                DString.ToBoolean(ds1);
+                Console.WriteLine("PASS - double: " + ds1.ToString() + " " + DString.ToBoolean(ds1));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("FAIL - double");
+            }
+
+            //false bool
+            try
+            {
+                DString ds1 = new DString(false);
+                DString.ToBoolean(ds1);
+                Console.WriteLine("PASS - false bool: " + ds1.ToString() + " " + DString.ToBoolean(ds1));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("FAIL - false bool");
+            }
+
+            //true bool
+            try
+            {
+                DString ds1 = new DString(true);
+                DString.ToBoolean(ds1);
+                Console.WriteLine("PASS - true bool: " + ds1.ToString() + " " + DString.ToBoolean(ds1));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("FAIL - true bool");
+            }
+
+            //empty DString
+            try
+            {
+                DString ds1 = new DString();
+                DString.ToBoolean(ds1);
+                Console.WriteLine("PASS - empty DString: " + ds1.ToString() + " " + DString.ToBoolean(ds1));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("FAIL - empty DString");
+            }
+
+        }
+
+        public void testRemove()
+        {
+            //negative index
+            try
+            {
+                DString ds1 = new DString("rhinoceros");
+                ds1.Remove(-50, 1);
+                Console.WriteLine("PASS - negative index: " + ds1.ToString());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("FAIL - negative index");
+            }
+
+            //negative length
+            try
+            {
+                DString ds1 = new DString("rhinoceros");
+                ds1.Remove(1, -50);
+                Console.WriteLine("PASS - negative length: " + ds1.ToString());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("FAIL - negative length");
+            }
+
+            //negative index and length
+            try
+            {
+                DString ds1 = new DString("rhinoceros");
+                ds1.Remove(-50, -50);
+                Console.WriteLine("PASS - negative index and length: " + ds1.ToString());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("FAIL - negative index and length");
+            }
+
+            //index exceeding actual length
+            try
+            {
+                DString ds1 = new DString("rhinoceros");
+                ds1.Remove(50, 1);
+                Console.WriteLine("PASS - index exceeding actual length: " + ds1.ToString());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("FAIL - index exceeding actual length");
+            }
+
+            //length exceeding actual length
+            try
+            {
+                DString ds1 = new DString("rhinoceros");
+                ds1.Remove(1, 50);
+                Console.WriteLine("PASS - length exceeding actual length: " + ds1.ToString());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("FAIL - length exceeding actual length");
+            }
+
+            //index and length exceeding actual length
+            try
+            {
+                DString ds1 = new DString("rhinoceros");
+                ds1.Remove(50, 50);
+                Console.WriteLine("PASS - index and length exceeding actual length: " + ds1.ToString());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("FAIL - index and length exceeding actual length");
+            }
+
+        }
+
+        public void testForceRightSpace()
+        {
+            //empty string
+            try 
+            {
+                DString ds1 = new DString("");
+                ds1.ForceRightSpace();
+                Console.WriteLine("PASS - empty string: " + ds1.ToString());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("FAIL - empty string");
+            }
+
+            //leading space
+            try
+            {
+                DString ds1 = new DString(" cat");
+                ds1.ForceRightSpace();
+                Console.WriteLine("PASS - leading space: " + ds1.ToString());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("FAIL - leading space");
+            }
+
+            //newline
+            try
+            {
+                DString ds1 = new DString("\n");
+                ds1.ForceRightSpace();
+                Console.WriteLine("PASS - newline: " + ds1.ToString());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("FAIL - newline");
+            }
+
+            //tab
+            try
+            {
+                DString ds1 = new DString("\t");
+                ds1.ForceRightSpace();
+                Console.WriteLine("PASS - tab: " + ds1.ToString());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("FAIL - tab");
+            }
+
+        }
+
+        public void testElimAll()
+        {
+            //empty control string
+            try
+            {
+                DString ds1 = new DString("I am a cactus");
+                ds1.ElimAll("");
+                Console.WriteLine("PASS - empty control string: " + ds1.ToString());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("FAIL - empty control string");
+            }
+
+            //space control string
+            try
+            {
+                DString ds1 = new DString("I am a cactus");
+                ds1.ElimAll(" ");
+                Console.WriteLine("PASS - space control string: " + ds1.ToString());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("FAIL - space control string");
+            }
+
+            //control in DString but with ending spaces
+            try
+            {
+                DString ds1 = new DString("I am a cactus");
+                ds1.ElimAll("cac  ");
+                Console.WriteLine("PASS - control in DString but with ending space: " + ds1.ToString());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("FAIL - control in DString but with ending space");
+            }
+
+
+            //control in DString but with leading spaces
+            try
+            {
+                DString ds1 = new DString("I am a cactus");
+                ds1.ElimAll("  I");
+                Console.WriteLine("PASS - control in DString but with leading spaces: " + ds1.ToString());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("FAIL - control in DString but with leading spaces");
+            }
+
+            //control not in DString
+            try
+            {
+                DString ds1 = new DString("I am a cactus");
+                ds1.ElimAll("xyz");
+                Console.WriteLine("PASS - control not in DString: " + ds1.ToString());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("FAIL - control not in DString");
+            }
+
+            //control not in DString except one letter - "xyaz"
+            try
+            {
+                DString ds1 = new DString("I am a cactus");
+                ds1.ElimAll("xyaz");
+                Console.WriteLine("PASS - control not in DString except one letter - xyaz: " + ds1.ToString());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("FAIL - control not in DString except one letter - xyaz");
+            }
+
+            //control longer than in DString - Youareafernnotacactusdogafern
+            try
+            {
+                DString ds1 = new DString("I am a cactus");
+                ds1.ElimAll("Youareafernnotacactusdogafern");
+                Console.WriteLine("PASS - control longer than in DString - Youareafernnotacactusdogafern: " + ds1.ToString());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("FAIL - control longer than in DString - Youareafernnotacactusdogafern");
+            }
 
         }
     }
