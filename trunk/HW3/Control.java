@@ -287,26 +287,16 @@ public class Control {
 	 */
 	public String endStats()
 	{
-		String report = "\nIAT   \tTs     \tArr   \tDep   \tTq     " +
-		"\tTw     \tq \tw \tn \n";
-
-		report += "\nMeans from data:\n";
-		report += cleanDouble( sumIAT / numRequests) + "\t";
-		report += cleanDouble( sumTs / numRequests) + "\t";
-		report += "\t";
-		report += "\t\t\t";
-		report += cleanDouble( sumTq / numRequests) + "\t";
-		report += cleanDouble( sumTw / numRequests) + "\t";
-		report += cleanDouble( sumQ / numRequests) + "\t";//(int)( sumQ / numRequests) + "\t";
-		report += cleanDouble( sumW / numRequests) + "\t";//(int)( sumW / numRequests) + "\t";
-
-
-
-		report += "\n\nMeans from calculation of parameters:\n";
-		report += cleanDouble( 1.0 / Lambda) + "\t";
-		report += cleanDouble( Ts ) + "\t";
-		report += "\t";
-		report += "\t\t\t";
+		String report = "";
+		//	"\nIAT   \tTs     \tArr   \tDep   \tTq     " +
+		// "\tTw     \tq \tw \tn \n";
+		
+		report += "\nUsing equations (analytically):\n";
+		//report += "\n\nMeans from calculation of parameters:\n";
+		report += "IAT: " + cleanDouble( 1.0 / Lambda) + "\t";
+		report += "Ts: " + cleanDouble( Ts ) + "\t";
+		//report += "\t";
+		//report += "\t\t\t";
 
 		//Calculations from parameters
 		double Rho = Lambda*Ts;				//Rho = Lambda / Mew, Rho = Lambda * Ts
@@ -315,13 +305,24 @@ public class Control {
 		double myTw = myTq - Ts;			//Tq = Tw + Ts, Tw = Tq - Ts
 		double myW = Lambda * myTw;			//w = Lambda * Tw
 
-		report += cleanDouble(myTq) + "\t";
-		report += cleanDouble(myTw) + "\t"; 
-		report += cleanDouble(myQ) + "\t";//(int)myQ + "\t";
-		report += cleanDouble(myW) + "\t";//(int)myW + "\t";
-
-
-
+		report += "Tw: "+ cleanDouble(myTw) + "\t"; 
+		report += "Tq: " + cleanDouble(myTq) + "\t";
+		report += "w: " + cleanDouble(myW) + "\t";//(int)myW + "\t";
+		report += "q: " + cleanDouble(myQ) + "\t";//(int)myQ + "\t";
+		
+		
+		report += "\nUsing simulation:\n";
+		//report += "\nMeans from data:\n";
+		report += "IAT: " + cleanDouble( sumIAT / numRequests) + "\t";
+		report += "Ts: " + cleanDouble( sumTs / numRequests) + "\t";
+		//report += "\t";
+		//report += "\t\t\t";
+		report += "Tw: " + cleanDouble( sumTw / numRequests) + "\t";
+		report += "Tq: " + cleanDouble( sumTq / numRequests) + "\t";
+		report += "w: " + cleanDouble( sumW / numRequests) + "\t";//(int)( sumW / numRequests) + "\t";
+		report += "q: " + cleanDouble( sumQ / numRequests) + "\t";//(int)( sumQ / numRequests) + "\t";
+		
+		
 		return report;
 	}
 
@@ -341,8 +342,8 @@ public class Control {
 		//		+  "Ts: " + Ts + "\t" 
 		//		+  "Simulation Time: " + SimTime);
 		
-		System.out.println("\nPlease see DataTable.txt and MonitorLog.txt");
-
+		//System.out.println("\nPlease see DataTable.txt and MonitorLog.txt");
+		System.out.println("\nPlease wait...");
 
 		try
 		{
@@ -378,6 +379,11 @@ public class Control {
 		{
 			System.err.println("Error.");
 		}
+		
+		System.out.println(endStats());
+		
+		//System.out.println("DONE!");
+		
 	}
 
 	public static void main(String[] args)

@@ -30,6 +30,6 @@ public class Simulator {
 		c = new Control(Lambda, Ts, SimTime);
 		c.run();
 		
-		System.out.println();
+		System.out.println("\nSimulation is done.  Please see DataTable.txt and MonitorLog.txt.");
 	}
 }
