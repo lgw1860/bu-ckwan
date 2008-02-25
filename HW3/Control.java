@@ -171,8 +171,8 @@ public class Control {
 					+ cleanDouble(e.getTime()) + "\t"
 					+ cleanDouble(currentTq ) + "\t" 
 					+ cleanDouble(currentTw ) + "\t"
-					+ (int)(currentQ) + "\t"
-					+ (int)(currentW) + "\t"
+					+ cleanDouble(currentQ) + "\t"//(int)(currentQ) + "\t"
+					+ cleanDouble(currentW) + "\t"//(int)(currentW) + "\t"
 					+ numInQueue);
 
 			//Don't need to do anything with an empty Queue!
@@ -297,8 +297,8 @@ public class Control {
 		report += "\t\t\t";
 		report += cleanDouble( sumTq / numRequests) + "\t";
 		report += cleanDouble( sumTw / numRequests) + "\t";
-		report += (int)( sumQ / numRequests) + "\t";
-		report += (int)( sumW / numRequests) + "\t";
+		report += cleanDouble( sumQ / numRequests) + "\t";//(int)( sumQ / numRequests) + "\t";
+		report += cleanDouble( sumW / numRequests) + "\t";//(int)( sumW / numRequests) + "\t";
 
 
 
@@ -317,8 +317,8 @@ public class Control {
 
 		report += cleanDouble(myTq) + "\t";
 		report += cleanDouble(myTw) + "\t"; 
-		report += (int)myQ + "\t";
-		report += (int)myW + "\t";
+		report += cleanDouble(myQ) + "\t";//(int)myQ + "\t";
+		report += cleanDouble(myW) + "\t";//(int)myW + "\t";
 
 
 
@@ -383,8 +383,8 @@ public class Control {
 	public static void main(String[] args)
 	{
 		//Control c = new Control(5, 0.15, 1000);
-		Control c = new Control(100, 0.0085, 100);
-		//Control c = new Control(100, 0.02, 100);
+		//Control c = new Control(100, 0.0085, 100);
+		Control c = new Control(100, 0.002, 100);
 
 		System.out.println("Lambda: " + c.Lambda + "\t" 
 				+  "Ts: " + c.Ts + "\t" 
