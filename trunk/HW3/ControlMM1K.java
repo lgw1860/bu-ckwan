@@ -42,6 +42,7 @@ public class ControlMM1K {
 	private double currentTs = 0.0;
 	private double currentTq = 0.0;
 	private double currentTw = 0.0;
+	private double currentRho = 0.0;
 	private double currentQ = 0.0;
 	private double currentW = 0.0;
 
@@ -175,6 +176,21 @@ public class ControlMM1K {
 			currentTw = currentTq - currentTs;	//Tq = Tw + Ts
 			sumTw += currentTw;
 
+			currentRho = Lambda * currentTs;	//Rho = Lambda * Ts
+			
+			if(currentRho == 1.0)
+			{
+				currentQ = (double)K / 2.0;
+			}
+			else	//p != 1
+			{
+//				q = [Rho / (1-Rho)] - [ (K+1)*Rho^(K+1) / (1 - Rho^(K+1)) ]
+				currentQ = (currentRho / (1.0-currentRho)) - 
+				( ((double)K+1.0) * Math.pow(currentRho, (double)K+1.0) 
+						/ (1 - Math.pow(currentRho, (double)K+1.0)) );
+			}
+				
+			
 			currentQ = Lambda * currentTq;		//q = Lambda * Tq
 			sumQ += currentQ;
 
