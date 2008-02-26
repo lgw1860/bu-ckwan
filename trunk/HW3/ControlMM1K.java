@@ -178,7 +178,7 @@ public class ControlMM1K {
 
 			currentRho = Lambda * currentTs;	//Rho = Lambda * Ts
 			
-			if(currentRho == 1.0)
+			/*if(currentRho == 1.0)
 			{
 				currentQ = (double)K / 2.0;
 			}
@@ -188,13 +188,14 @@ public class ControlMM1K {
 				currentQ = (currentRho / (1.0-currentRho)) - 
 				( ((double)K+1.0) * Math.pow(currentRho, (double)K+1.0) 
 						/ (1 - Math.pow(currentRho, (double)K+1.0)) );
-			}
+			}*/
 				
 			
 			currentQ = Lambda * currentTq;		//q = Lambda * Tq
 			sumQ += currentQ;
 
-			currentW = Lambda * currentTw;		//w = Lambda * Tw
+			//currentW = Lambda * currentTw;		//w = Lambda * Tw
+			currentW = currentQ - currentRho;		//q = w + p, w = q - p
 			sumW += currentW;
 
 			//Data table of stats for all requests so far.
@@ -339,10 +340,27 @@ public class ControlMM1K {
 		//Calculations from parameters
 		double Rho = Lambda*Ts;				//Rho = Lambda / Mew, Rho = Lambda * Ts
 		double myQ = Rho / (1.0 - Rho);		//q = Rho / (1 - Rho)
+		
+		/*double myQ = 0.0;
+		if(Rho == 1.0)
+		{
+			myQ = (double)K / 2.0;
+		}
+		else	//p != 1
+		{
+//			q = [Rho / (1-Rho)] - [ (K+1)*Rho^(K+1) / (1 - Rho^(K+1)) ]
+			myQ = (Rho / (1.0-Rho)) - 
+			( ((double)K+1.0) * Math.pow(Rho, (double)K+1.0) 
+					/ (1 - Math.pow(Rho, (double)K+1.0)) );
+		}*/
+		
+		
 		double myTq = myQ / Lambda; 		//q = Lambda * Tq, Tq = q / Lambda
 		double myTw = myTq - Ts;			//Tq = Tw + Ts, Tw = Tq - Ts
-		double myW = Lambda * myTw;			//w = Lambda * Tw
-
+		//double myW = Lambda * myTw;			//w = Lambda * Tw
+		double myW = myQ - Rho;
+		
+		
 		report += "Tw: "+ cleanDouble(myTw) + " \t"; 
 		report += "Tq: " + cleanDouble(myTq) + " \t";
 		report += "w: " + cleanDouble(myW) + " \t";//(int)myW + "\t";
@@ -436,7 +454,7 @@ public class ControlMM1K {
 
 	public static void main(String[] args)
 	{
-		ControlMM1K c = new ControlMM1K(5, 30, 0.03, 100);
+		ControlMM1K c = new ControlMM1K(5000, 30, 0.03, 100);
 		//ControlMM1K c = new ControlMM1K(5, 50, 0.03, 100);
 		//ControlMM1K c = new ControlMM1K(15, 30, 0.03, 10);
 		//ControlMM1 c = new ControlMM1(100, 0.0085, 100);
