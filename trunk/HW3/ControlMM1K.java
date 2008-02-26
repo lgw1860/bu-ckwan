@@ -512,8 +512,8 @@ public class ControlMM1K {
 
 	public static void main(String[] args)
 	{
-		//ControlMM1K c = new ControlMM1K(5, 30, 0.03, 100);
-		ControlMM1K c = new ControlMM1K(5, 50, 0.03, 100);
+		ControlMM1K c = new ControlMM1K(5, 30, 0.03, 100);
+		//ControlMM1K c = new ControlMM1K(5, 50, 0.03, 100);
 
 		c.run();
 	}
