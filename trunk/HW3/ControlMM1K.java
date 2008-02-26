@@ -31,6 +31,7 @@ public class ControlMM1K {
 	private Schedule sched;			//schedule of arrivals/departures
 	private Event currentEvent;		//current arr/dep being processed
 	private Event arrivalNeedingDeparture;	//next departure will be for this arrival
+	private boolean arrivalNeedingRejected = false;
 
 	private int numInQueue = 0;		//number of items currently in queue
 	private int numRequests = 0;	//total number of requests served
@@ -129,10 +130,12 @@ public class ControlMM1K {
 			if(numInQueue < K)
 			{
 				numInQueue++;
+				arrivalNeedingRejected = false;
 			}
 			else
 			{
 				numRejected++;
+				arrivalNeedingRejected = true;
 			}
 			
 			//if this is only request in queue, schedule its departure
@@ -176,7 +179,13 @@ public class ControlMM1K {
 			currentTw = currentTq - currentTs;	//Tq = Tw + Ts
 			sumTw += currentTw;
 
-			currentRho = Lambda * currentTs;	//Rho = Lambda * Ts
+			//currentRho = Lambda * currentTs;	//Rho = Lambda * Ts
+			//System.out.println("currentRho: " + currentRho + " \t" + Lambda + " \t" + currentTs);
+			
+			currentRho = (1.0/currentIAT) * currentTs;	//Rho = Lambda * Ts
+			System.out.println("currentRho: " + currentRho + " \t" + (1.0/currentIAT) + " \t" + currentTs);
+			
+			
 			
 			/*if(currentRho == 1.0)
 			{
@@ -188,12 +197,21 @@ public class ControlMM1K {
 				currentQ = (currentRho / (1.0-currentRho)) - 
 				( ((double)K+1.0) * Math.pow(currentRho, (double)K+1.0) 
 						/ (1 - Math.pow(currentRho, (double)K+1.0)) );
+				
+				//double left = ( currentRho / (1.0 - currentRho) );
+				//double rhoPower = Math.pow(currentRho, K+1);
+				
+				//currentQ = rhoPower;
+				
+				//currentQ = 5;
+				
+				currentQ = (double)K / 2.0;
 			}*/
 				
 			
 			currentQ = Lambda * currentTq;		//q = Lambda * Tq
 			sumQ += currentQ;
-
+			
 			//currentW = Lambda * currentTw;		//w = Lambda * Tw
 			currentW = currentQ - currentRho;		//q = w + p, w = q - p
 			sumW += currentW;
@@ -339,9 +357,9 @@ public class ControlMM1K {
 
 		//Calculations from parameters
 		double Rho = Lambda*Ts;				//Rho = Lambda / Mew, Rho = Lambda * Ts
-		double myQ = Rho / (1.0 - Rho);		//q = Rho / (1 - Rho)
+		//double myQ = Rho / (1.0 - Rho);		//q = Rho / (1 - Rho)
 		
-		/*double myQ = 0.0;
+		double myQ = 0.0;
 		if(Rho == 1.0)
 		{
 			myQ = (double)K / 2.0;
@@ -352,7 +370,7 @@ public class ControlMM1K {
 			myQ = (Rho / (1.0-Rho)) - 
 			( ((double)K+1.0) * Math.pow(Rho, (double)K+1.0) 
 					/ (1 - Math.pow(Rho, (double)K+1.0)) );
-		}*/
+		}
 		
 		
 		double myTq = myQ / Lambda; 		//q = Lambda * Tq, Tq = q / Lambda
@@ -450,15 +468,18 @@ public class ControlMM1K {
 
 		System.out.println(toString());
 		System.out.println("\nNumber rejected: " + numRejected);
+		System.out.println("qTotal: " + sumQ);
+		System.out.println("requestTotal: " + numRequests);
 	}
 
 	public static void main(String[] args)
 	{
-		ControlMM1K c = new ControlMM1K(5000, 30, 0.03, 100);
+		//ControlMM1K c = new ControlMM1K(500, 30, 0.03, 100);
 		//ControlMM1K c = new ControlMM1K(5, 50, 0.03, 100);
 		//ControlMM1K c = new ControlMM1K(15, 30, 0.03, 10);
 		//ControlMM1 c = new ControlMM1(100, 0.0085, 100);
 		//ControlMM1 c = new ControlMM1(100, 0.002, 100);
+		ControlMM1K c = new ControlMM1K(5, 5, 0.15, 1000);
 		
 		c.run();
 

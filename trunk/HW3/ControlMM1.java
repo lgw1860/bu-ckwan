@@ -386,10 +386,10 @@ public class ControlMM1 {
 
 	public static void main(String[] args)
 	{
-		ControlMM1 c = new ControlMM1(5, 0.15, 1000);
+		//ControlMM1 c = new ControlMM1(5, 0.15, 1000);
 		//ControlMM1 c = new ControlMM1(100, 0.0085, 100);
 		//ControlMM1 c = new ControlMM1(100, 0.002, 100);
-		//ControlMM1 c = new ControlMM1(30, 0.03, 100);
+		ControlMM1 c = new ControlMM1(30, 0.03, 100);
 
 		System.out.println("Lambda: " + c.Lambda + "\n" 
 				+  "Ts: " + c.Ts + "\n" 
