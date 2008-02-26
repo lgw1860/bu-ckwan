@@ -409,14 +409,14 @@ public class ControlMM1K {
 		
 		report += "\n\nUsing simulation:\n";
 		//report += "\nMeans from data:\n";
-		report += "IAT: " + cleanDouble( sumIAT / numRequests) + " \t";
-		report += "Ts: " + cleanDouble( sumTs / numRequests) + " \t";
+		report += "IAT: " + cleanDouble( sumIAT / (numRequests+numRejected)) + " \t";
+		report += "Ts: " + cleanDouble( sumTs / (numRequests+numRejected)) + " \t";
 		//report += "\t";
 		//report += "\t\t\t";
-		report += "Tw: " + cleanDouble( sumTw / numRequests) + " \t";
-		report += "Tq: " + cleanDouble( sumTq / numRequests) + " \t";
-		report += "w: " + cleanDouble( sumW / numRequests) + " \t";//(int)( sumW / numRequests) + "\t";
-		report += "q: " + cleanDouble( sumQ / numRequests) + " \t";//(int)( sumQ / numRequests) + "\t";
+		report += "Tw: " + cleanDouble( sumTw / (numRequests+numRejected)) + " \t";
+		report += "Tq: " + cleanDouble( sumTq / (numRequests+numRejected)) + " \t";
+		report += "w: " + cleanDouble( sumW / (numRequests+numRejected)) + " \t";//(int)( sumW / numRequests) + "\t";
+		report += "q: " + cleanDouble( sumQ / (numRequests+numRejected)) + " \t";//(int)( sumQ / numRequests) + "\t";
 		
 		
 		return report;
@@ -505,7 +505,7 @@ public class ControlMM1K {
 		}*/
 		
 		System.out.println("\nMEAN: ");
-		double mean = sumQ/numRequests;
+		double mean = sumQ/(numRequests+numRejected);
 		System.out.println(mean);
 		
 		System.out.println("\nSTDDEV: ");
@@ -513,7 +513,7 @@ public class ControlMM1K {
 		System.out.println( stdDev );
 		
 		System.out.println("\nERROR: ");
-		double error = ConfidenceIntervalError( stdDev, numRequests);
+		double error = ConfidenceIntervalError( stdDev, (numRequests+numRejected));
 		System.out.println( error );
 	}
 	
@@ -540,7 +540,9 @@ public class ControlMM1K {
 	{
 		//for 95th percentile confidence interval
 		//Z alpha/2 = 1.96 from the lookup table
-		double Z = 1.96;
+		//double Z = 1.96;
+		
+		double Z = 2.31;
 		
 		double error = Z * ((StdDev) / Math.sqrt(SampleSize));
 		return error;
@@ -548,12 +550,12 @@ public class ControlMM1K {
 	
 	public static void main(String[] args)
 	{
-		ControlMM1K c = new ControlMM1K(5, 30, 0.03, 200);
+		//ControlMM1K c = new ControlMM1K(5, 30, 0.03, 200);
 		//ControlMM1K c = new ControlMM1K(5, 50, 0.03, 100);
 		//ControlMM1K c = new ControlMM1K(15, 30, 0.03, 10);
 		//ControlMM1 c = new ControlMM1(100, 0.0085, 100);
 		//ControlMM1 c = new ControlMM1(100, 0.002, 100);
-		//ControlMM1K c = new ControlMM1K(5, 5, 0.15, 1000);
+		ControlMM1K c = new ControlMM1K(5, 5, 0.15, 1000);
 		
 		c.run();
 		c.printList();
