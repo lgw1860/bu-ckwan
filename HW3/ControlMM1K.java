@@ -1,11 +1,11 @@
 
 /**
  * @author Christopher Kwan  ckwan@bu.edu  U37-02-3645
- * @name CS350 HW3 Problem 4 M/M/1 Queue Simulator
- * @date 2-19-2008
- * @class ControlMM1.java - Controller of Simulator
- * 			compile:	"javac ControlMM1.java"
- * 			run:		"java ControlMM1"
+ * @name CS350 HW4 Problem 6 Part 1 M/M/1/K Queue Simulator
+ * @date 2-26-2008
+ * @class ControlMM1K.java - Controller of SimulatorMM1K
+ * 			compile:	"javac ControlMM1K.java"
+ * 			run:		"java ControlMM1K"
  */
 
 //package simulator;
@@ -37,7 +37,7 @@ public class ControlMM1K {
 	private boolean arrivalNeedingRejected = false;
 
 	private int numInQueue = 0;		//number of items currently in queue
-	private int numRequests = 0;	//total number of requests served
+	private int numAccepted = 0;	//total number of requests served
 
 	private int numRejected = 0;
 
@@ -192,7 +192,7 @@ public class ControlMM1K {
 			//only calculate if the corresponding arrival was not rejected
 			if(arrivalNeedingRejected == false)
 			{
-				numRequests ++; //a request has finished, increment counter
+				numAccepted ++; //a request has finished, increment counter
 
 				sumTq += currentTq;
 				TqList.add(currentTq);
@@ -214,15 +214,15 @@ public class ControlMM1K {
 				//System.out.println(
 				psDataTable.println(
 						+ cleanDouble(time) + "    \t"							//time
-						+ cleanDouble(sumIAT/(numRequests+numRejected)) + " \t"	//IAT
-						+ cleanDouble(sumTs/(numRequests+numRejected)) + " \t"	//Ts
-						+ cleanDouble(sumRho/numRequests) + " \t"				//Rho
+						+ cleanDouble(sumIAT/(numAccepted+numRejected)) + " \t"	//IAT
+						+ cleanDouble(sumTs/(numAccepted+numRejected)) + " \t"	//Ts
+						+ cleanDouble(sumRho/numAccepted) + " \t"				//Rho
 						+ cleanDouble(arrivalNeedingDeparture.getTime()) + "    \t" //Arr
 						+ cleanDouble(e.getTime()) + "    \t"						//Dep
-						+ cleanDouble(sumTw/numRequests ) + " \t"				//Tw
-						+ cleanDouble(sumTq/numRequests ) + " \t" 				//Tq
-						+ cleanDouble(sumW/numRequests) + " \t"					//w
-						+ cleanDouble(sumQ/numRequests) + " \t"					//q
+						+ cleanDouble(sumTw/numAccepted ) + " \t"				//Tw
+						+ cleanDouble(sumTq/numAccepted ) + " \t" 				//Tq
+						+ cleanDouble(sumW/numAccepted) + " \t"					//w
+						+ cleanDouble(sumQ/numAccepted) + " \t"					//q
 						);
 			}
 
@@ -339,58 +339,75 @@ public class ControlMM1K {
 	public String endStats()
 	{
 		String report = "";
-		//	"\nIAT   \tTs     \tArr   \tDep   \tTq     " +
-		// "\tTw     \tq \tw \tn \n";
 
+		//ANALYTICALLY
 		report += "\nUsing equations (analytically):\n";
-		//report += "\n\nMeans from calculation of parameters:\n";
+		
 		report += "IAT: " + cleanDouble( 1.0 / Lambda) + " \t";
 		report += "Ts: " + cleanDouble( Ts ) + " \t";
-		//report += "\t";
-		//report += "\t\t\t";
 
 		//Calculations from parameters
 		double Rho = Lambda*Ts;				//Rho = Lambda / Mew, Rho = Lambda * Ts
-		//double myQ = Rho / (1.0 - Rho);		//q = Rho / (1 - Rho)
 
 		double myQ = 0.0;
 		if(Rho == 1.0)
 		{
 			myQ = (double)K / 2.0;
 		}
-		else	//p != 1
+		else	//Rho != 1
 		{
-//			q = [Rho / (1-Rho)] - [ (K+1)*Rho^(K+1) / (1 - Rho^(K+1)) ]
+			//q = [Rho / (1-Rho)] - [ (K+1)*Rho^(K+1) / (1 - Rho^(K+1)) ]
 			myQ = (Rho / (1.0-Rho)) - 
 			( ((double)K+1.0) * Math.pow(Rho, (double)K+1.0) 
 					/ (1 - Math.pow(Rho, (double)K+1.0)) );
 		}
 
-
-		double myTq = myQ / Lambda; 		//q = Lambda * Tq, Tq = q / Lambda
+		double rejProb = 0.0;
+		if(Rho == 1)
+		{
+			rejProb = 1.0 / (K + 1.0);
+		}
+		else	//Rho != 1
+		{
+			rejProb = ( (1.0 - Rho) * Math.pow(Rho, K) ) / (1 - Math.pow(Rho, (K+1.0) ));
+		}
+		double lambdaPrime = Lambda * (1.0 - rejProb);
+		double myTq = myQ / lambdaPrime; 		//q = Lambda * Tq, Tq = q / Lambda
+		
 		double myTw = myTq - Ts;			//Tq = Tw + Ts, Tw = Tq - Ts
-		//double myW = Lambda * myTw;			//w = Lambda * Tw
 		double myW = myQ - Rho;
 
-
+		report += "Rho: " + cleanDouble(Rho) + "\t";
 		report += "Tw: "+ cleanDouble(myTw) + " \t"; 
 		report += "Tq: " + cleanDouble(myTq) + " \t";
 		report += "w: " + cleanDouble(myW) + " \t";//(int)myW + "\t";
 		report += "q: " + cleanDouble(myQ) + " \t";//(int)myQ + "\t";
-
-
+		report += "RejectionProb: " + cleanDouble(rejProb);
+		
+		//SIMULATION
 		report += "\n\nUsing simulation:\n";
-		//report += "\nMeans from data:\n";
-		report += "IAT: " + cleanDouble( sumIAT / (numRequests+numRejected)) + " \t";
-		report += "Ts: " + cleanDouble( sumTs / (numRequests+numRejected)) + " \t";
-		//report += "\t";
-		//report += "\t\t\t";
-		report += "Tw: " + cleanDouble( sumTw / (numRequests)) + " \t";
-		report += "Tq: " + cleanDouble( sumTq / (numRequests+numRejected)) + " \t";
-		report += "w: " + cleanDouble( sumW / (numRequests)) + " \t";//(int)( sumW / numRequests) + "\t";
-		report += "q: " + cleanDouble( sumQ / (numRequests)) + " \t";//(int)( sumQ / numRequests) + "\t";
+		report += "IAT: " + cleanDouble( sumIAT / (numAccepted+numRejected)) + " \t";
+		report += "Ts: " + cleanDouble( sumTs / (numAccepted+numRejected)) + " \t";
+		report += "Rho: " + cleanDouble( sumRho / numAccepted) + "\t";
+		report += "Tw: " + cleanDouble( sumTw / (numAccepted)) + " \t";
+		report += "Tq: " + cleanDouble( sumTq / (numAccepted)) + " \t";
+		report += "w: " + cleanDouble( sumW / (numAccepted)) + " \t";//(int)( sumW / numRequests) + "\t";
+		report += "q: " + cleanDouble( sumQ / (numAccepted)) + " \t";//(int)( sumQ / numRequests) + "\t";
+		report += "RejectionProb: " + cleanDouble((double)numRejected / ((double)numRejected + (double)numAccepted));
 
-
+		
+		//CONFIDENCE INTERVALS
+		report += "\n\n95th Percentile Confidence Intervals:\n";
+		double qMean = cleanDouble(sumQ/numAccepted);
+		double qError = cleanDouble(ConfidenceIntervalError(qMean ,numAccepted));
+		report += "q: " + " \t" + "[" + qMean + "-" + qError + ", " + qMean + "+" + qError + "]";
+		report += " = [" + cleanDouble(qMean - qError) + ", " + cleanDouble(qMean + qError) + "]\n";
+		
+		double TqMean = cleanDouble(sumTq/numAccepted);
+		double TqError = cleanDouble(ConfidenceIntervalError(TqMean ,numAccepted));
+		report += "Tq: " + " \t" + "[" + TqMean + "-" + TqError + ", " + TqMean + "+" + TqError + "]";
+		report += " = [" + cleanDouble(TqMean - TqError) + ", " + cleanDouble(TqMean + TqError) + "]";
+		
 		return report;
 	}
 
@@ -406,14 +423,10 @@ public class ControlMM1K {
 
 	public void run()
 	{
-		//System.out.println("Lambda: " + Lambda + "\t" 
-		//		+  "Ts: " + Ts + "\t" 
-		//		+  "Simulation Time: " + SimTime);
-
-		//System.out.println("\nPlease see DataTable.txt and MonitorLog.txt");
 
 		System.out.println(
-				"K: " + K + "\n"
+				"M/M/1/K Queue Simulation\n"
+				+ "K: " + K + "\n"
 				+ "Lambda: " + Lambda + "\n" 
 				+  "Ts: " + Ts + "\n" 
 				+  "Simulation Time: " + SimTime);
@@ -463,33 +476,8 @@ public class ControlMM1K {
 		}
 
 		System.out.println(toString());
-		System.out.println("\nNumber rejected: " + numRejected);
-		System.out.println("qTotal: " + sumQ);
-		System.out.println("requestTotal: " + numRequests);
-		System.out.println("qList size: " + qList.size());
-		System.out.println("TqList size: " + TqList.size());
 	}
 
-	public void printList()
-	{
-		/*Iterator iter = qList.iterator();
-		while(iter.hasNext())
-		{
-			System.out.println(iter.next().toString());
-		}*/
-
-		System.out.println("\nMEAN: ");
-		double mean = sumQ/(numRequests+numRejected);
-		System.out.println(mean);
-
-		System.out.println("\nSTDDEV: ");
-		double stdDev = stdDev( mean, qList);
-		System.out.println( stdDev );
-
-		System.out.println("\nERROR: ");
-		double error = ConfidenceIntervalError( stdDev, (numRequests+numRejected));
-		System.out.println( error );
-	}
 
 	public double stdDev(double mean, LinkedList<Double> list)
 	{
@@ -524,17 +512,9 @@ public class ControlMM1K {
 
 	public static void main(String[] args)
 	{
-		ControlMM1K c = new ControlMM1K(5, 30, 0.03, 100);
-		//ControlMM1K c = new ControlMM1K(5, 50, 0.03, 100);
-		//ControlMM1K c = new ControlMM1K(15, 30, 0.03, 10);
-		//ControlMM1 c = new ControlMM1(100, 0.0085, 100);
-		//ControlMM1 c = new ControlMM1(100, 0.002, 100);
-		//ControlMM1K c = new ControlMM1K(5, 5, 0.15, 1000);
+		//ControlMM1K c = new ControlMM1K(5, 30, 0.03, 100);
+		ControlMM1K c = new ControlMM1K(5, 50, 0.03, 100);
 
 		c.run();
-		c.printList();
-
-
-
 	}
 }
