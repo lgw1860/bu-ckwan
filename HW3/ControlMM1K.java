@@ -28,6 +28,8 @@ public class ControlMM1K {
 
 	private double monitorInc = 0.1;	//Time between monitor events
 
+	private boolean isBusy = false;
+	
 	private double time;			//current simulation time
 	private Schedule sched;			//schedule of arrivals/departures
 	private Event currentEvent;		//current arr/dep being processed
@@ -41,7 +43,6 @@ public class ControlMM1K {
 	
 	private LinkedList<Double> qList;
 	private LinkedList<Double> TqList;
-	private LinkedList<Double> RejProbList;
 	
 	
 	
@@ -73,7 +74,6 @@ public class ControlMM1K {
 		this.SimTime = SimTime;
 		qList = new LinkedList<Double>();
 		TqList = new LinkedList<Double>();
-		RejProbList = new LinkedList<Double>();
 		initialize();
 	}
 
@@ -83,21 +83,12 @@ public class ControlMM1K {
 	public void initialize()
 	{
 		sched = new Schedule(new Event("M", monitorInc));
-
-		/*
-		//fill schedule with Monitor events
-		for(double i = monitorInc+monitorInc; i<SimTime; i=i+monitorInc)
-		{
-			//System.out.println(i);
-			sched.add(new Event("M", i));
-		}
-		 */
 		time = 0;	//initialize time to 0
 
 		//schedule and execute first arrival
 		currentIAT = randExp(1.0 / Lambda);
 		sched.add(new Event("A", currentIAT));
-		//sched = new Schedule(new Event("A", currentIAT));
+
 		currentEvent = sched.getFirstEvent();
 		time = currentEvent.getTime();
 		execute(currentEvent);
@@ -134,8 +125,7 @@ public class ControlMM1K {
 		//Arrival
 		if(e.getType() == "A")
 		{	
-			//System.out.println("\t" + e.toString());
-
+			
 			//if the queue is full, the request is rejected
 			if(numInQueue < K)
 			{
@@ -151,6 +141,8 @@ public class ControlMM1K {
 			//if this is only request in queue, schedule its departure
 			if(numInQueue == 1)
 			{
+				isBusy = true;
+				
 				currentTs = randExp(Ts);
 				sumTs += currentTs;
 
@@ -159,6 +151,9 @@ public class ControlMM1K {
 
 				arrivalNeedingDeparture = e;
 
+			}else
+			{
+				isBusy = false;
 			}
 			//if(numInQueue < K)
 			//{
@@ -194,31 +189,17 @@ public class ControlMM1K {
 			
 			currentRho = (1.0/currentIAT) * currentTs;	//Rho = Lambda * Ts
 			//System.out.println("currentRho: " + currentRho + " \t" + (1.0/currentIAT) + " \t" + currentTs);
-			
-			
-			
-			/*if(currentRho == 1.0)
+				
+			if(isBusy == true)
 			{
-				currentQ = (double)K / 2.0;
+				currentQ = numInQueue;
+				//currentW = numInQueue-1;
 			}
-			else	//p != 1
+			else
 			{
-//				q = [Rho / (1-Rho)] - [ (K+1)*Rho^(K+1) / (1 - Rho^(K+1)) ]
-				currentQ = (currentRho / (1.0-currentRho)) - 
-				( ((double)K+1.0) * Math.pow(currentRho, (double)K+1.0) 
-						/ (1 - Math.pow(currentRho, (double)K+1.0)) );
-				
-				//double left = ( currentRho / (1.0 - currentRho) );
-				//double rhoPower = Math.pow(currentRho, K+1);
-				
-				//currentQ = rhoPower;
-				
-				//currentQ = 5;
-				
-				currentQ = (double)K / 2.0;
-			}*/
-				
-			currentQ = numInQueue;
+				currentQ = numInQueue-1;
+				//currentW = currentQ-1;
+			}
 			//currentQ = Lambda * currentTq;		//q = Lambda * Tq
 			//currentW = Lambda * currentTw;		//w = Lambda * Tw
 			currentW = currentQ - currentRho;		//q = w + p, w = q - p
@@ -250,7 +231,8 @@ public class ControlMM1K {
 					+ cleanDouble(currentTq ) + " \t" 
 					+ cleanDouble(currentW) + " \t"//(int)(currentW) + "\t"
 					+ cleanDouble(currentQ) + " \t"//(int)(currentQ) + "\t"
-					+ numInQueue);
+					+ cleanDouble(currentRho));
+					//+ numInQueue);
 
 			}
 			
@@ -258,7 +240,8 @@ public class ControlMM1K {
 			if(numInQueue>0)
 			{
 				numInQueue--;
-
+				isBusy = true;
+				
 				//schedule next departure
 				if(numInQueue > 0)
 				{
@@ -276,6 +259,10 @@ public class ControlMM1K {
 					sched.add(nextDeparture);
 				}//end if
 			}//end if
+			else
+			{
+				isBusy = false;
+			}
 		}
 		//Monitor
 		else if(e.getType() == "M")
@@ -550,7 +537,7 @@ public class ControlMM1K {
 	
 	public static void main(String[] args)
 	{
-		ControlMM1K c = new ControlMM1K(5, 30, 0.03, 100);
+		ControlMM1K c = new ControlMM1K(5, 30, 0.03, 200);
 		//ControlMM1K c = new ControlMM1K(5, 50, 0.03, 100);
 		//ControlMM1K c = new ControlMM1K(15, 30, 0.03, 10);
 		//ControlMM1 c = new ControlMM1(100, 0.0085, 100);
