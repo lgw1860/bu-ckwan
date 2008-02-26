@@ -11,6 +11,7 @@
 //package simulator;
 
 import java.io.*;
+import java.util.*;
 
 public class ControlMM1K {
 
@@ -38,6 +39,12 @@ public class ControlMM1K {
 
 	private int numRejected = 0;
 	
+	private LinkedList<Double> qList;
+	private LinkedList<Double> TqList;
+	private LinkedList<Double> RejProbList;
+	
+	
+	
 	//Queue variables
 	private double currentIAT = 0.0;
 	private double currentTs = 0.0;
@@ -64,6 +71,9 @@ public class ControlMM1K {
 		this.Lambda = Lambda;
 		this.Ts = Ts;
 		this.SimTime = SimTime;
+		qList = new LinkedList<Double>();
+		TqList = new LinkedList<Double>();
+		RejProbList = new LinkedList<Double>();
 		initialize();
 	}
 
@@ -217,8 +227,12 @@ public class ControlMM1K {
 			{
 			numRequests ++; //a request has finished, increment counter
 			sumTq += currentTq;
+			TqList.add(currentTq);
+			
 			sumTw += currentTw;
 			sumQ += currentQ;
+			qList.add(currentQ);
+			
 			sumW += currentW;
 			//}
 
@@ -478,6 +492,8 @@ public class ControlMM1K {
 		System.out.println("\nNumber rejected: " + numRejected);
 		System.out.println("qTotal: " + sumQ);
 		System.out.println("requestTotal: " + numRequests);
+		System.out.println("qList size: " + qList.size());
+		System.out.println("TqList size: " + TqList.size());
 	}
 
 	public static void main(String[] args)
