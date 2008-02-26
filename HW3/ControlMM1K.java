@@ -60,6 +60,7 @@ public class ControlMM1K {
 	private double sumTs = 0.0;
 	private double sumTq = 0.0;
 	private double sumTw = 0.0;
+	private double sumRho = 0.0;
 	private double sumQ = 0.0;
 	private double sumW = 0.0;
 
@@ -145,6 +146,7 @@ public class ControlMM1K {
 				
 				currentTs = randExp(Ts);
 				sumTs += currentTs;
+				
 
 				Event myDeparture = new Event("D", e.getTime()+currentTs);
 				sched.add(myDeparture);
@@ -160,6 +162,7 @@ public class ControlMM1K {
 //				schedule next arrival
 				currentIAT = randExp(1.0 / Lambda);
 				sumIAT += currentIAT;
+				
 
 				Event nextArrival = new Event("A", e.getTime()+currentIAT);
 				sched.add(nextArrival);
@@ -176,6 +179,7 @@ public class ControlMM1K {
 		{
 			//System.out.println("\t" + e.toString());
 
+			
 			
 
 			currentTq = e.getTime() - arrivalNeedingDeparture.getTime();
@@ -202,19 +206,36 @@ public class ControlMM1K {
 			}
 			//currentQ = Lambda * currentTq;		//q = Lambda * Tq
 			//currentW = Lambda * currentTw;		//w = Lambda * Tw
-			currentW = currentQ - currentRho;		//q = w + p, w = q - p
+			
+			System.out.println("q1: " + currentQ);
+			//currentW = currentQ - currentRho;		//q = w + p, w = q - p
 			
 			if(arrivalNeedingRejected == false)
 			{
 			numRequests ++; //a request has finished, increment counter
+			
+			
+			
 			sumTq += currentTq;
+			//currentTq = sumTq/numRequests;
 			TqList.add(currentTq);
 			
 			sumTw += currentTw;
+			
+			currentRho = (1.0/currentIAT) * currentTs;
+			sumRho += currentRho;
+			//currentRho = sumRho/numRequests;
+			
 			sumQ += currentQ;
+			//currentQ = sumQ/numRequests;
+			
+			
+			System.out.println("q2: " + currentQ);
 			qList.add(currentQ);
 			
+			currentW = currentQ - currentRho;
 			sumW += currentW;
+			//currentW = sumW/numRequests;
 			//}
 
 			//Data table of stats for all requests so far.
@@ -227,11 +248,13 @@ public class ControlMM1K {
 					//+ cleanDouble(currentTs) + "\t" 
 					+ cleanDouble(arrivalNeedingDeparture.getTime()) + " \t" 
 					+ cleanDouble(e.getTime()) + " \t"
-					+ cleanDouble(currentTw ) + " \t"
-					+ cleanDouble(currentTq ) + " \t" 
-					+ cleanDouble(currentW) + " \t"//(int)(currentW) + "\t"
-					+ cleanDouble(currentQ) + " \t"//(int)(currentQ) + "\t"
-					+ cleanDouble(currentRho));
+					+ cleanDouble(sumTw/numRequests ) + " \t"
+					+ cleanDouble(sumTq/numRequests ) + " \t" 
+					+ cleanDouble(sumW/numRequests) + " \t"//(int)(currentW) + "\t"
+					+ cleanDouble(sumQ/numRequests) + " \t"//(int)(currentQ) + "\t"
+					+ cleanDouble(sumIAT/(numRequests+numRejected)) + " \t"//(int)(currentQ) + "\t"
+					+ cleanDouble(sumTs/(numRequests+numRejected)) + " \t"//(int)(currentQ) + "\t"
+					+ cleanDouble(sumRho/numRequests));
 					//+ numInQueue);
 
 			}
@@ -537,7 +560,7 @@ public class ControlMM1K {
 	
 	public static void main(String[] args)
 	{
-		ControlMM1K c = new ControlMM1K(5, 30, 0.03, 200);
+		ControlMM1K c = new ControlMM1K(5, 30, 0.03, 100);
 		//ControlMM1K c = new ControlMM1K(5, 50, 0.03, 100);
 		//ControlMM1K c = new ControlMM1K(15, 30, 0.03, 10);
 		//ControlMM1 c = new ControlMM1(100, 0.0085, 100);
