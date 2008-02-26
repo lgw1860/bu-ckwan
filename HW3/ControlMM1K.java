@@ -171,13 +171,13 @@ public class ControlMM1K {
 		{
 			//System.out.println("\t" + e.toString());
 
-			numRequests ++; //a request has finished, increment counter
+			
 
 			currentTq = e.getTime() - arrivalNeedingDeparture.getTime();
-			sumTq += currentTq;
+			
 
 			currentTw = currentTq - currentTs;	//Tq = Tw + Ts
-			sumTw += currentTw;
+			
 
 			//currentRho = Lambda * currentTs;	//Rho = Lambda * Ts
 			//System.out.println("currentRho: " + currentRho + " \t" + Lambda + " \t" + currentTs);
@@ -210,11 +210,17 @@ public class ControlMM1K {
 				
 			
 			currentQ = Lambda * currentTq;		//q = Lambda * Tq
-			sumQ += currentQ;
-			
 			//currentW = Lambda * currentTw;		//w = Lambda * Tw
 			currentW = currentQ - currentRho;		//q = w + p, w = q - p
+			
+			if(arrivalNeedingRejected == false)
+			{
+			numRequests ++; //a request has finished, increment counter
+			sumTq += currentTq;
+			sumTw += currentTw;
+			sumQ += currentQ;
 			sumW += currentW;
+			//}
 
 			//Data table of stats for all requests so far.
 			//This is commented because it makes run time very slow.
@@ -232,6 +238,8 @@ public class ControlMM1K {
 					+ cleanDouble(currentQ) + " \t"//(int)(currentQ) + "\t"
 					+ numInQueue);
 
+			}
+			
 			//Don't need to do anything with an empty Queue!
 			if(numInQueue>0)
 			{
