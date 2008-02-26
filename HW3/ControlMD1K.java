@@ -1,11 +1,11 @@
 
 /**
  * @author Christopher Kwan  ckwan@bu.edu  U37-02-3645
- * @name CS350 HW4 Problem 6 Part 1 M/M/1/K Queue Simulator
+ * @name CS350 HW4 Problem 6 Part 2 M/D/1/K Queue Simulator
  * @date 2-26-2008
- * @class ControlMM1K.java - Controller of SimulatorMM1K
- * 			compile:	"javac ControlMM1K.java"
- * 			run:		"java ControlMM1K"
+ * @class ControlMD1K.java - Controller of SimulatorMD1K
+ * 			compile:	"javac ControlMD1K.java"
+ * 			run:		"java ControlMDs1K"
  */
 
 //package simulator;
@@ -188,6 +188,7 @@ public class ControlMD1K {
 			{
 				currentQ = numInQueue-1;
 			}
+			
 
 			//only calculate if the corresponding arrival was not rejected
 			if(arrivalNeedingRejected == false)
@@ -349,18 +350,9 @@ public class ControlMD1K {
 		//Calculations from parameters
 		double Rho = Lambda*Ts;				//Rho = Lambda / Mew, Rho = Lambda * Ts
 
-		double myQ = 0.0;
-		if(Rho == 1.0)
-		{
-			myQ = (double)K / 2.0;
-		}
-		else	//Rho != 1
-		{
-			//q = [Rho / (1-Rho)] - [ (K+1)*Rho^(K+1) / (1 - Rho^(K+1)) ]
-			myQ = (Rho / (1.0-Rho)) - 
-			( ((double)K+1.0) * Math.pow(Rho, (double)K+1.0) 
-					/ (1 - Math.pow(Rho, (double)K+1.0)) );
-		}
+		double myQ = Math.pow(Rho, 2.0);	//MD1K Equation
+		myQ = myQ / (2.0 * (1.0-Rho) );
+		myQ = myQ + Rho;
 
 		double rejProb = 0.0;
 		if(Rho == 1)
@@ -374,8 +366,10 @@ public class ControlMD1K {
 		double lambdaPrime = Lambda * (1.0 - rejProb);
 		double myTq = myQ / lambdaPrime; 		//q = Lambda * Tq, Tq = q / Lambda
 		
-		double myTw = myTq - Ts;			//Tq = Tw + Ts, Tw = Tq - Ts
-		double myW = myQ - Rho;
+		
+		double myTw = myTq - Ts;			//MD1K equation
+		double myW = Math.pow(Rho, 2.0);
+		myW = myW / (2.0 * (1.0-Rho) );
 
 		report += "Rho: " + cleanDouble(Rho) + "\t";
 		report += "Tw: "+ cleanDouble(myTw) + " \t"; 
@@ -425,7 +419,7 @@ public class ControlMD1K {
 	{
 
 		System.out.println(
-				"M/M/1/K Queue Simulation\n"
+				"M/D/1/K Queue Simulation\n"
 				+ "K: " + K + "\n"
 				+ "Lambda: " + Lambda + "\n" 
 				+  "Ts: " + Ts + "\n" 
