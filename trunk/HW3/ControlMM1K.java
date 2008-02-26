@@ -193,7 +193,7 @@ public class ControlMM1K {
 			//System.out.println("currentRho: " + currentRho + " \t" + Lambda + " \t" + currentTs);
 			
 			currentRho = (1.0/currentIAT) * currentTs;	//Rho = Lambda * Ts
-			System.out.println("currentRho: " + currentRho + " \t" + (1.0/currentIAT) + " \t" + currentTs);
+			//System.out.println("currentRho: " + currentRho + " \t" + (1.0/currentIAT) + " \t" + currentTs);
 			
 			
 			
@@ -496,16 +496,51 @@ public class ControlMM1K {
 		System.out.println("TqList size: " + TqList.size());
 	}
 
+	public void printList()
+	{
+		Iterator iter = qList.iterator();
+		while(iter.hasNext())
+		{
+			System.out.println(iter.next().toString());
+		}
+		
+		System.out.println("\nSTDDEV: \n");
+		double mean = sumQ/numRequests;
+		System.out.println(mean);
+		System.out.println( stdDev( mean, qList) );
+	}
+	
+	public double stdDev(double mean, LinkedList<Double> list)
+	{
+		double difference = 0.0;
+		double sum = 0.0;
+		double variance = 0.0;
+		double deviation = 0.0;
+		
+		Iterator iter = list.iterator();
+		while(iter.hasNext())
+		{
+			difference = ((Double)(iter.next()) - mean);
+			sum += Math.pow(difference, 2.0);
+		}
+		
+		variance = sum / list.size();
+		deviation = Math.sqrt(variance);
+		return deviation;
+	}
+	
 	public static void main(String[] args)
 	{
-		//ControlMM1K c = new ControlMM1K(500, 30, 0.03, 100);
+		ControlMM1K c = new ControlMM1K(5, 30, 0.03, 100);
 		//ControlMM1K c = new ControlMM1K(5, 50, 0.03, 100);
 		//ControlMM1K c = new ControlMM1K(15, 30, 0.03, 10);
 		//ControlMM1 c = new ControlMM1(100, 0.0085, 100);
 		//ControlMM1 c = new ControlMM1(100, 0.002, 100);
-		ControlMM1K c = new ControlMM1K(5, 5, 0.15, 1000);
+		//ControlMM1K c = new ControlMM1K(5, 5, 0.15, 1000);
 		
 		c.run();
+		c.printList();
+		
 
 		
 	}
