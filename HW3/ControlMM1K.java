@@ -498,16 +498,23 @@ public class ControlMM1K {
 
 	public void printList()
 	{
-		Iterator iter = qList.iterator();
+		/*Iterator iter = qList.iterator();
 		while(iter.hasNext())
 		{
 			System.out.println(iter.next().toString());
-		}
+		}*/
 		
-		System.out.println("\nSTDDEV: \n");
+		System.out.println("\nMEAN: ");
 		double mean = sumQ/numRequests;
 		System.out.println(mean);
-		System.out.println( stdDev( mean, qList) );
+		
+		System.out.println("\nSTDDEV: ");
+		double stdDev = stdDev( mean, qList);
+		System.out.println( stdDev );
+		
+		System.out.println("\nERROR: ");
+		double error = ConfidenceIntervalError( stdDev, numRequests);
+		System.out.println( error );
 	}
 	
 	public double stdDev(double mean, LinkedList<Double> list)
@@ -529,9 +536,19 @@ public class ControlMM1K {
 		return deviation;
 	}
 	
+	public double ConfidenceIntervalError(double StdDev, int SampleSize)
+	{
+		//for 95th percentile confidence interval
+		//Z alpha/2 = 1.96 from the lookup table
+		double Z = 1.96;
+		
+		double error = Z * ((StdDev) / Math.sqrt(SampleSize));
+		return error;
+	}
+	
 	public static void main(String[] args)
 	{
-		ControlMM1K c = new ControlMM1K(5, 30, 0.03, 100);
+		ControlMM1K c = new ControlMM1K(5, 30, 0.03, 200);
 		//ControlMM1K c = new ControlMM1K(5, 50, 0.03, 100);
 		//ControlMM1K c = new ControlMM1K(15, 30, 0.03, 10);
 		//ControlMM1 c = new ControlMM1(100, 0.0085, 100);
