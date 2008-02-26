@@ -218,8 +218,8 @@ public class ControlMM1K {
 				currentQ = (double)K / 2.0;
 			}*/
 				
-			
-			currentQ = Lambda * currentTq;		//q = Lambda * Tq
+			currentQ = numInQueue;
+			//currentQ = Lambda * currentTq;		//q = Lambda * Tq
 			//currentW = Lambda * currentTw;		//w = Lambda * Tw
 			currentW = currentQ - currentRho;		//q = w + p, w = q - p
 			
@@ -413,10 +413,10 @@ public class ControlMM1K {
 		report += "Ts: " + cleanDouble( sumTs / (numRequests+numRejected)) + " \t";
 		//report += "\t";
 		//report += "\t\t\t";
-		report += "Tw: " + cleanDouble( sumTw / (numRequests+numRejected)) + " \t";
+		report += "Tw: " + cleanDouble( sumTw / (numRequests)) + " \t";
 		report += "Tq: " + cleanDouble( sumTq / (numRequests+numRejected)) + " \t";
-		report += "w: " + cleanDouble( sumW / (numRequests+numRejected)) + " \t";//(int)( sumW / numRequests) + "\t";
-		report += "q: " + cleanDouble( sumQ / (numRequests+numRejected)) + " \t";//(int)( sumQ / numRequests) + "\t";
+		report += "w: " + cleanDouble( sumW / (numRequests)) + " \t";//(int)( sumW / numRequests) + "\t";
+		report += "q: " + cleanDouble( sumQ / (numRequests)) + " \t";//(int)( sumQ / numRequests) + "\t";
 		
 		
 		return report;
@@ -550,12 +550,12 @@ public class ControlMM1K {
 	
 	public static void main(String[] args)
 	{
-		//ControlMM1K c = new ControlMM1K(5, 30, 0.03, 200);
+		ControlMM1K c = new ControlMM1K(5, 30, 0.03, 100);
 		//ControlMM1K c = new ControlMM1K(5, 50, 0.03, 100);
 		//ControlMM1K c = new ControlMM1K(15, 30, 0.03, 10);
 		//ControlMM1 c = new ControlMM1(100, 0.0085, 100);
 		//ControlMM1 c = new ControlMM1(100, 0.002, 100);
-		ControlMM1K c = new ControlMM1K(5, 5, 0.15, 1000);
+		//ControlMM1K c = new ControlMM1K(5, 5, 0.15, 1000);
 		
 		c.run();
 		c.printList();
