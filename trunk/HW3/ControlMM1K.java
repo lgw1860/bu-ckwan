@@ -29,7 +29,7 @@ public class ControlMM1K {
 	private double monitorInc = 0.1;	//Time between monitor events
 
 	private boolean isBusy = false;
-	
+
 	private double time;			//current simulation time
 	private Schedule sched;			//schedule of arrivals/departures
 	private Event currentEvent;		//current arr/dep being processed
@@ -40,12 +40,12 @@ public class ControlMM1K {
 	private int numRequests = 0;	//total number of requests served
 
 	private int numRejected = 0;
-	
+
 	private LinkedList<Double> qList;
 	private LinkedList<Double> TqList;
-	
-	
-	
+
+
+
 	//Queue variables
 	private double currentIAT = 0.0;
 	private double currentTs = 0.0;
@@ -126,7 +126,7 @@ public class ControlMM1K {
 		//Arrival
 		if(e.getType() == "A")
 		{	
-			
+
 			//if the queue is full, the request is rejected
 			if(numInQueue < K)
 			{
@@ -138,15 +138,15 @@ public class ControlMM1K {
 				numRejected++;
 				arrivalNeedingRejected = true;
 			}
-			
+
 			//if this is only request in queue, schedule its departure
 			if(numInQueue == 1)
 			{
 				isBusy = true;
-				
+
 				currentTs = randExp(Ts);
 				sumTs += currentTs;
-				
+
 
 				Event myDeparture = new Event("D", e.getTime()+currentTs);
 				sched.add(myDeparture);
@@ -159,112 +159,79 @@ public class ControlMM1K {
 			}
 			//if(numInQueue < K)
 			//{
-//				schedule next arrival
-				currentIAT = randExp(1.0 / Lambda);
-				sumIAT += currentIAT;
-				
+//			schedule next arrival
+			currentIAT = randExp(1.0 / Lambda);
+			sumIAT += currentIAT;
 
-				Event nextArrival = new Event("A", e.getTime()+currentIAT);
-				sched.add(nextArrival);
+
+			Event nextArrival = new Event("A", e.getTime()+currentIAT);
+			sched.add(nextArrival);
 			//}
 			/*
 			else
 			{
 				numRejected ++;
 			}
-			*/
+			 */
 
 			//Departure
 		}else if(e.getType() == "D")
 		{
-			//System.out.println("\t" + e.toString());
-
-			
-			
-
 			currentTq = e.getTime() - arrivalNeedingDeparture.getTime();
-			
-
 			currentTw = currentTq - currentTs;	//Tq = Tw + Ts
-			
 
-			//currentRho = Lambda * currentTs;	//Rho = Lambda * Ts
-			//System.out.println("currentRho: " + currentRho + " \t" + Lambda + " \t" + currentTs);
-			
-			currentRho = (1.0/currentIAT) * currentTs;	//Rho = Lambda * Ts
-			//System.out.println("currentRho: " + currentRho + " \t" + (1.0/currentIAT) + " \t" + currentTs);
-				
 			if(isBusy == true)
 			{
 				currentQ = numInQueue;
-				//currentW = numInQueue-1;
 			}
 			else
 			{
 				currentQ = numInQueue-1;
-				//currentW = currentQ-1;
 			}
-			//currentQ = Lambda * currentTq;		//q = Lambda * Tq
-			//currentW = Lambda * currentTw;		//w = Lambda * Tw
-			
-			System.out.println("q1: " + currentQ);
-			//currentW = currentQ - currentRho;		//q = w + p, w = q - p
-			
+
+			//only calculate if the corresponding arrival was not rejected
 			if(arrivalNeedingRejected == false)
 			{
-			numRequests ++; //a request has finished, increment counter
-			
-			
-			
-			sumTq += currentTq;
-			//currentTq = sumTq/numRequests;
-			TqList.add(currentTq);
-			
-			sumTw += currentTw;
-			
-			currentRho = (1.0/currentIAT) * currentTs;
-			sumRho += currentRho;
-			//currentRho = sumRho/numRequests;
-			
-			sumQ += currentQ;
-			//currentQ = sumQ/numRequests;
-			
-			
-			System.out.println("q2: " + currentQ);
-			qList.add(currentQ);
-			
-			currentW = currentQ - currentRho;
-			sumW += currentW;
-			//currentW = sumW/numRequests;
-			//}
+				numRequests ++; //a request has finished, increment counter
 
-			//Data table of stats for all requests so far.
-			//This is commented because it makes run time very slow.
-			//dataTable = dataTable + (
-			//System.out.println(
-			psDataTable.println(
-					+ cleanDouble(time) + " \t"
-					//+ cleanDouble(currentIAT) + "\t"
-					//+ cleanDouble(currentTs) + "\t" 
-					+ cleanDouble(arrivalNeedingDeparture.getTime()) + " \t" 
-					+ cleanDouble(e.getTime()) + " \t"
-					+ cleanDouble(sumTw/numRequests ) + " \t"
-					+ cleanDouble(sumTq/numRequests ) + " \t" 
-					+ cleanDouble(sumW/numRequests) + " \t"//(int)(currentW) + "\t"
-					+ cleanDouble(sumQ/numRequests) + " \t"//(int)(currentQ) + "\t"
-					+ cleanDouble(sumIAT/(numRequests+numRejected)) + " \t"//(int)(currentQ) + "\t"
-					+ cleanDouble(sumTs/(numRequests+numRejected)) + " \t"//(int)(currentQ) + "\t"
-					+ cleanDouble(sumRho/numRequests));
-					//+ numInQueue);
+				sumTq += currentTq;
+				TqList.add(currentTq);
 
+				sumTw += currentTw;
+
+				currentRho = (1.0/currentIAT) * currentTs;
+				sumRho += currentRho;
+
+				sumQ += currentQ;
+				qList.add(currentQ);
+
+				currentW = currentQ - currentRho;
+				sumW += currentW;
+
+				//Data table of stats for all requests so far.
+				//This is commented because it makes run time very slow.
+				//dataTable = dataTable + (
+				//System.out.println(
+				psDataTable.println(
+						+ cleanDouble(time) + "    \t"							//time
+						+ cleanDouble(sumIAT/(numRequests+numRejected)) + " \t"	//IAT
+						+ cleanDouble(sumTs/(numRequests+numRejected)) + " \t"	//Ts
+						+ cleanDouble(sumRho/numRequests) + " \t"				//Rho
+						+ cleanDouble(arrivalNeedingDeparture.getTime()) + "    \t" //Arr
+						+ cleanDouble(e.getTime()) + "    \t"						//Dep
+						+ cleanDouble(sumTw/numRequests ) + " \t"				//Tw
+						+ cleanDouble(sumTq/numRequests ) + " \t" 				//Tq
+						+ cleanDouble(sumW/numRequests) + " \t"					//w
+						+ cleanDouble(sumQ/numRequests) + " \t"					//q
+						);
 			}
-			
+
 			//Don't need to do anything with an empty Queue!
 			if(numInQueue>0)
 			{
 				numInQueue--;
 				isBusy = true;
-				
+
 				//schedule next departure
 				if(numInQueue > 0)
 				{
@@ -290,16 +257,11 @@ public class ControlMM1K {
 		//Monitor
 		else if(e.getType() == "M")
 		{
-			//System.out.println(numInQueue);
-
-			//System.out.println("\t" + e.toString());
-
 			if(psMonitorLog != null)
 			{
 				psMonitorLog.println(cleanDouble(e.getTime()) + "\t\t" + numInQueue);
 			}
-
-
+			//schedule next monitor event
 			sched.add(new Event("M", e.getTime()+monitorInc));
 		}
 	}
@@ -379,7 +341,7 @@ public class ControlMM1K {
 		String report = "";
 		//	"\nIAT   \tTs     \tArr   \tDep   \tTq     " +
 		// "\tTw     \tq \tw \tn \n";
-		
+
 		report += "\nUsing equations (analytically):\n";
 		//report += "\n\nMeans from calculation of parameters:\n";
 		report += "IAT: " + cleanDouble( 1.0 / Lambda) + " \t";
@@ -390,7 +352,7 @@ public class ControlMM1K {
 		//Calculations from parameters
 		double Rho = Lambda*Ts;				//Rho = Lambda / Mew, Rho = Lambda * Ts
 		//double myQ = Rho / (1.0 - Rho);		//q = Rho / (1 - Rho)
-		
+
 		double myQ = 0.0;
 		if(Rho == 1.0)
 		{
@@ -403,20 +365,20 @@ public class ControlMM1K {
 			( ((double)K+1.0) * Math.pow(Rho, (double)K+1.0) 
 					/ (1 - Math.pow(Rho, (double)K+1.0)) );
 		}
-		
-		
+
+
 		double myTq = myQ / Lambda; 		//q = Lambda * Tq, Tq = q / Lambda
 		double myTw = myTq - Ts;			//Tq = Tw + Ts, Tw = Tq - Ts
 		//double myW = Lambda * myTw;			//w = Lambda * Tw
 		double myW = myQ - Rho;
-		
-		
+
+
 		report += "Tw: "+ cleanDouble(myTw) + " \t"; 
 		report += "Tq: " + cleanDouble(myTq) + " \t";
 		report += "w: " + cleanDouble(myW) + " \t";//(int)myW + "\t";
 		report += "q: " + cleanDouble(myQ) + " \t";//(int)myQ + "\t";
-		
-		
+
+
 		report += "\n\nUsing simulation:\n";
 		//report += "\nMeans from data:\n";
 		report += "IAT: " + cleanDouble( sumIAT / (numRequests+numRejected)) + " \t";
@@ -427,8 +389,8 @@ public class ControlMM1K {
 		report += "Tq: " + cleanDouble( sumTq / (numRequests+numRejected)) + " \t";
 		report += "w: " + cleanDouble( sumW / (numRequests)) + " \t";//(int)( sumW / numRequests) + "\t";
 		report += "q: " + cleanDouble( sumQ / (numRequests)) + " \t";//(int)( sumQ / numRequests) + "\t";
-		
-		
+
+
 		return report;
 	}
 
@@ -447,15 +409,15 @@ public class ControlMM1K {
 		//System.out.println("Lambda: " + Lambda + "\t" 
 		//		+  "Ts: " + Ts + "\t" 
 		//		+  "Simulation Time: " + SimTime);
-		
+
 		//System.out.println("\nPlease see DataTable.txt and MonitorLog.txt");
-		
+
 		System.out.println(
 				"K: " + K + "\n"
 				+ "Lambda: " + Lambda + "\n" 
 				+  "Ts: " + Ts + "\n" 
 				+  "Simulation Time: " + SimTime);
-		
+
 		System.out.println("\nPlease wait...");
 
 		try
@@ -475,17 +437,19 @@ public class ControlMM1K {
 					+  "Ts: " + Ts + "\n" 
 					+  "Simulation Time: " + SimTime + "\n");
 
-			psDataTable.println("t    \tArr   \tDep   \tTw     " +
-			"\tTq     \tw   \tq   \tn \n");
+			psDataTable.println("time      \tIAT  \tTs	\tRho" + 
+					"    \tArr      \tDep     \tTw     " +
+					"\tTq     \tw   \tq   \n");
 
 			simulate();
 
-			//ps.println (report);
 			
-			
+			psDataTable.println("time      \tIAT  \tTs	\tRho" + 
+					"    \tArr      \tDep     \tTw     " +
+					"\tTq     \tw   \tq   \n");
 
 			psDataTable.println(endStats());
-			
+
 			psDataTable.println("\nNumber rejected: " + numRejected);
 
 			psMonitorLog.close();
@@ -513,51 +477,51 @@ public class ControlMM1K {
 		{
 			System.out.println(iter.next().toString());
 		}*/
-		
+
 		System.out.println("\nMEAN: ");
 		double mean = sumQ/(numRequests+numRejected);
 		System.out.println(mean);
-		
+
 		System.out.println("\nSTDDEV: ");
 		double stdDev = stdDev( mean, qList);
 		System.out.println( stdDev );
-		
+
 		System.out.println("\nERROR: ");
 		double error = ConfidenceIntervalError( stdDev, (numRequests+numRejected));
 		System.out.println( error );
 	}
-	
+
 	public double stdDev(double mean, LinkedList<Double> list)
 	{
 		double difference = 0.0;
 		double sum = 0.0;
 		double variance = 0.0;
 		double deviation = 0.0;
-		
+
 		Iterator iter = list.iterator();
 		while(iter.hasNext())
 		{
 			difference = ((Double)(iter.next()) - mean);
 			sum += Math.pow(difference, 2.0);
 		}
-		
+
 		variance = sum / list.size();
 		deviation = Math.sqrt(variance);
 		return deviation;
 	}
-	
+
 	public double ConfidenceIntervalError(double StdDev, int SampleSize)
 	{
 		//for 95th percentile confidence interval
 		//Z alpha/2 = 1.96 from the lookup table
 		//double Z = 1.96;
-		
+
 		double Z = 2.31;
-		
+
 		double error = Z * ((StdDev) / Math.sqrt(SampleSize));
 		return error;
 	}
-	
+
 	public static void main(String[] args)
 	{
 		ControlMM1K c = new ControlMM1K(5, 30, 0.03, 100);
@@ -566,11 +530,11 @@ public class ControlMM1K {
 		//ControlMM1 c = new ControlMM1(100, 0.0085, 100);
 		//ControlMM1 c = new ControlMM1(100, 0.002, 100);
 		//ControlMM1K c = new ControlMM1K(5, 5, 0.15, 1000);
-		
+
 		c.run();
 		c.printList();
-		
 
-		
+
+
 	}
 }
