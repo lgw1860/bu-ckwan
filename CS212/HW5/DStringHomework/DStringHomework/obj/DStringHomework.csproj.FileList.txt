@@ -1,0 +1,14 @@
+obj\Release\ResolveAssemblyReference.cache
+obj\Release\WindowsApplication1.Properties.Resources.resources
+obj\Debug\ResolveAssemblyReference.cache
+obj\Debug\WindowsApplication1.Properties.Resources.resources
+obj\Debug\DStringHomework.csproj.GenerateResource.Cache
+obj\Release\DStringHomework.csproj.GenerateResource.Cache
+bin\Release\DStringHomework.exe
+bin\Release\DStringHomework.pdb
+obj\Release\DStringHomework.exe
+obj\Release\DStringHomework.pdb
+bin\Debug\DStringHomework.exe
+bin\Debug\DStringHomework.pdb
+obj\Debug\DStringHomework.exe
+obj\Debug\DStringHomework.pdb
