@@ -16,9 +16,12 @@ namespace WindowsApplication1
             Application.SetCompatibleTextRenderingDefault(false);
             //Application.Problem1(new Form1());
 
+            Console.WriteLine("Christopher Kwan  U37-02-3645  ckwan@bu.edu\n");
+            Console.WriteLine("CS212 Paradigms Lab 05 2/28/08\n");
             Console.WriteLine("DString Homework\n");
 
             DStringHomework HW = new DStringHomework();
+            /*
             HW.Problem1();
             HW.Problem2();
             HW.Problem3();
@@ -29,7 +32,9 @@ namespace WindowsApplication1
             HW.Problem8();
             HW.Problem9();
             HW.Problem10();
+             */
 
+            Console.WriteLine("\nProgram is finished.\nHit any key to close.");
             Console.ReadLine();
 
         }
