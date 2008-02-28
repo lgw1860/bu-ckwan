@@ -196,7 +196,91 @@ namespace WindowsApplication1
 
         }//end of Problem4
 
+        public void Problem5()
+        {
+            Console.WriteLine("\n---Problem 5---");
+            
+            Console.Write("Please enter the path to a file: ");
+           
+            try
+            {
+                //Read a whole file into a single DString
+                string filepath = Console.ReadLine();
+                //string filepath = "C:\\code\\svnS08\\CS212\\HW5\\test2.txt";
+                Console.WriteLine("Path: " + filepath);
+                DString ds = new DString(filepath, System.IO.FileMode.Open);
+                
+                //Capitalize the whole thing
+                DString temp = new DString();
+                foreach (char i in ds)
+                {
+                    temp.Append(char.ToUpper(i));
+                }
+                ds = temp;
 
+                //Eliminate all special characters
+                //by making a new DString of all special characters
+                DString specialChars = new DString();
+                char tempChar = ' ';
+                for (int i = 0; i <= 127; i++)
+                {
+                    if ( (i != 7) //bell - beep is scary to leave in
+                        && (i != 32) //space
+                        && !(i >= 48 && i <=57) //0-9
+                        && !(i >= 65 && i <= 90) //A-Z
+                        )
+                    {
+                        tempChar = (char)i;
+                        specialChars.Append(tempChar);
+                    }
+                }
+
+                //Eliminate special chars and newlines from DString
+                ds.ElimAll(specialChars);
+                ds.ElimAll("\r");
+                ds.ElimAll("\n");
+                ds.ElimAll("\t");
+
+                //Create DString array
+                DStringCollection dsCollect = ds.Split(" ");
+                DString[] dsArr = dsCollect.ToArray();
+                
+                //Create "set" from array
+                Dictionary<DString, int> set = new Dictionary<DString, int>();
+                foreach(DString i in dsArr)
+                {
+                    if (set.ContainsKey(i))
+                    {
+                        set[i]++;
+                    }
+                    else
+                    {
+                        set.Add(i, 1);
+                    }
+                }
+
+                //Print out "set"
+                /*
+                foreach (DString j in set.Keys)
+                {
+                    Console.WriteLine(j + ": " + set[j]);
+                }
+                */
+
+                //Print number of words in both data structures
+                Console.WriteLine("\nNumber of words in array: " + dsArr.Length);
+                Console.WriteLine("Number of words in set: " + set.Keys.Count);
+
+            }
+            catch (Exception e)
+            {
+                e = new FileNotFoundException();
+                Console.WriteLine("\nFile not found.\n");
+            }
+
+            Console.WriteLine("---End of Problem 5---");
+
+        }//end of Problem5
 
         public void Problem6()
         {
