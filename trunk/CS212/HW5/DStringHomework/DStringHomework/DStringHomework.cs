@@ -12,57 +12,69 @@ namespace WindowsApplication1
         {
             Console.WriteLine("\n---Problem 1---");
 
-            //Read in a file into a single DString
-            string filepath = "C:\\code\\svnS08\\CS212\\HW5\\test.txt";
-            DString ds = new DString(filepath, System.IO.FileMode.Open);
-            
-            //Convert single DString into array or DStrings split by newlines
-            DStringCollection dsCollect = ds.Split("\n", true);
-            DString[] dsArr = dsCollect.ToArray();
+            Console.Write("Please enter the path of a file: ");
 
-            //Remove all blank lines and create a new single DString separated by '$'
-            DString dsMoney = new DString("");
-            for (int i = 0; i < dsArr.Length; i++)
+            try
             {
-                //remove carriage returns and newlines
-                //carriage returns tend to mess up string concat
-                dsArr[i].ElimAll("\r");
-                dsArr[i].ElimAll("\n");
+                //Read in a file into a single DString
+                string filepath = Console.ReadLine();
+                Console.WriteLine("Path: " + filepath);
+                //string filepath = "C:\\code\\svnS08\\CS212\\HW5\\test.txt";
+                DString ds = new DString(filepath, System.IO.FileMode.Open);
 
-                if(!dsArr[i].IsBlank())
+                //Convert single DString into array or DStrings split by newlines
+                DStringCollection dsCollect = ds.Split("\n", true);
+                DString[] dsArr = dsCollect.ToArray();
+
+                //Remove all blank lines and create a new single DString separated by '$'
+                DString dsMoney = new DString("");
+                for (int i = 0; i < dsArr.Length; i++)
                 {
-                    dsMoney.Append(dsArr[i].ToString());
-                    dsMoney.Append("$");
+                    //remove carriage returns and newlines
+                    //carriage returns tend to mess up string concat
+                    dsArr[i].ElimAll("\r");
+                    dsArr[i].ElimAll("\n");
+
+                    if (!dsArr[i].IsBlank())
+                    {
+                        dsMoney.Append(dsArr[i].ToString());
+                        dsMoney.Append("$");
+                    }
                 }
+
+                //Remove all newlines and carriage returns
+                dsMoney.ElimAll("\n");
+                dsMoney.ElimAll("\r");
+
+                //Remove all vowels
+                DString vowels = new DString("aeiouAEIOU");
+                dsMoney.ElimAll(vowels.ToString());
+
+                //Remove all numbers
+                dsMoney.ElimAll(DString.Numbers().ToString());
+
+                //Remove all letters (A-M)
+                DString AthruM = DString.Alphas();  //start with whole alphabet and remove stuff
+                AthruM = (AthruM.Substring(0, 13) + AthruM.Substring(26 + 0, 13));
+                dsMoney.ElimAll(AthruM);
+
+                //Create array of DStrings separated by '$'
+                DStringCollection dsMoneyCollect = dsMoney.Split("$");
+                DString[] dsMoneyArray = dsMoneyCollect.ToArray();
+
+                //Print out array, line by line, with '$' at end of each line
+                foreach (DString i in dsMoneyArray)
+                {
+                    i.Append("$");
+                    Console.WriteLine(i);
+                }
+
             }
-
-            //Remove all newlines and carriage returns
-            dsMoney.ElimAll("\n");
-            dsMoney.ElimAll("\r");
-
-            //Remove all vowels
-            DString vowels = new DString("aeiouAEIOU");
-            dsMoney.ElimAll(vowels.ToString());
-
-            //Remove all numbers
-            dsMoney.ElimAll(DString.Numbers().ToString());
-
-            //Remove all letters (A-M)
-            DString AthruM = DString.Alphas();  //start with whole alphabet and remove stuff
-            AthruM = (AthruM.Substring(0,13) + AthruM.Substring(26+0, 13) );
-            dsMoney.ElimAll(AthruM);
-
-            //Create array of DStrings separated by '$'
-            DStringCollection dsMoneyCollect = dsMoney.Split("$");
-            DString[] dsMoneyArray = dsMoneyCollect.ToArray();
-
-            //Print out array, line by line, with '$' at end of each line
-            foreach (DString i in dsMoneyArray)
+            catch (Exception e)
             {
-                i.Append("$");
-                Console.WriteLine(i);
+                e = new FileNotFoundException();
+                Console.WriteLine("\nFile not found.\n");
             }
-
             Console.WriteLine("---End of Problem 1---");
 
         }//end of Problem1
@@ -80,7 +92,7 @@ namespace WindowsApplication1
             //Delete every other word starting with "Every"
             //(by not adding it to new DString)
             DString dsNew = new DString();
-            char firstChar = ' ';
+            //char firstChar = ' ';
             DString temp = new DString();
             for (int i = 0; i < dsArr.Length; i++)
             {
@@ -244,6 +256,25 @@ namespace WindowsApplication1
 
         }//end of Problem7
 
+        public void Problem8()
+        {
+            Console.WriteLine("\n---Problem 8---");
+
+            //Map of integers(1->10) to floats(100->1000)
+            Dictionary<int,float> map = new Dictionary<int,float>();
+
+            for(int i=1; i<=10; i++)
+            {
+                map.Add(i, i * 100.0f);
+            }
+
+            //Bring map into a DString and print it out
+            DString ds = new DString(map," ","\n");
+            Console.WriteLine(ds);
+
+            Console.WriteLine("---End of Problem 8---");
+
+        }//end of Problem8
 
         public void Problem9()
         {
