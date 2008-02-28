@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace WindowsApplication1
+namespace DStringApp
 {
     static class Program
     {
@@ -14,7 +14,7 @@ namespace WindowsApplication1
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            //Application.Problem1(new Form1());
+            Application.Run(new DStringHWButtons());
 
             Console.WriteLine("Christopher Kwan  U37-02-3645  ckwan@bu.edu\n");
             Console.WriteLine("CS212 Paradigms Lab 05 2/28/08\n");
@@ -34,8 +34,9 @@ namespace WindowsApplication1
             HW.Problem10();
              */
 
-            Console.WriteLine("\nProgram is finished.\nHit any key to close.");
-            Console.ReadLine();
+            Console.WriteLine("\nProgram is finished.");
+            Console.WriteLine("\nHit any key to close.");
+            //Console.ReadLine();
 
         }
     }

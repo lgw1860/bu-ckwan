@@ -4,10 +4,25 @@ using System.Text;
 using DynamicString;
 using System.IO;
 
-namespace WindowsApplication1
+namespace DStringApp
 {
     class DStringHomework
     {
+        public static void run()
+        {
+            DStringHomework dsh = new DStringHomework();
+            dsh.Problem1();
+            dsh.Problem2();
+            dsh.Problem3();
+            dsh.Problem4();
+            dsh.Problem5();
+            dsh.Problem6();
+            dsh.Problem7();
+            dsh.Problem8();
+            dsh.Problem9();
+            dsh.Problem10();
+        }//end of Main
+
         public void Problem1()
         {
             Console.WriteLine("\n---Problem 1---");
@@ -19,6 +34,7 @@ namespace WindowsApplication1
                 //Read in a file into a single DString
                 string filepath = Console.ReadLine();
                 Console.WriteLine("Path: " + filepath);
+                //string filepath = "C:\code\svnS08\CS212\HW5\windows.h";
                 //string filepath = "C:\\code\\svnS08\\CS212\\HW5\\test.txt";
                 DString ds = new DString(filepath, System.IO.FileMode.Open);
 
@@ -206,6 +222,7 @@ namespace WindowsApplication1
             {
                 //Read a whole file into a single DString
                 string filepath = Console.ReadLine();
+                //string filepath = "C:\code\svnS08\CS212\HW5\windows.h";
                 //string filepath = "C:\\code\\svnS08\\CS212\\HW5\\test2.txt";
                 Console.WriteLine("Path: " + filepath);
                 DString ds = new DString(filepath, System.IO.FileMode.Open);
