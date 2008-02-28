@@ -183,5 +183,65 @@ namespace WindowsApplication1
             Console.WriteLine("---End of Problem 4---");
 
         }//end of Problem4
+
+
+
+        public void Problem6()
+        {
+            Console.WriteLine("\n---Problem 6---");
+
+            //Start with an empty DString and build up
+            DString ds = new DString();
+            ds += "There";
+            ds += " ";
+            ds += "are";
+            ds += ' ';
+
+            int x = 100;
+
+            ds += x;
+            ds += " ";
+            ds += "ways to skin a cat";
+
+            //Capitalize the whole thing
+            DString temp = new DString();
+            foreach (char i in ds)
+            {
+                temp += char.ToUpper(i);
+            }
+
+            ds = temp;
+            //Print it out
+            Console.WriteLine(ds);
+
+            //Replace "WAYS" with "METHODS" and print resulting string out
+            ds.ReplaceAll("WAYS", "METHODS");
+            Console.WriteLine(ds);
+
+            Console.WriteLine("---End of Problem 6---");
+
+        }//end of Problem6
+
+        public void Problem7()
+        {
+
+            Console.WriteLine("\n---Problem 7---");
+
+            //Create array of about 50 doubles
+            double[] doubleArr = new double[50];
+            for (int i = 0; i < doubleArr.Length; i++)
+            {
+                doubleArr[i] = (double)i * 0.25;
+            }
+
+            //Construct a single DString of array with a space separator
+            DString ds = new DString(doubleArr, " ");
+
+            //Print it out
+            Console.WriteLine(ds);
+
+            Console.WriteLine("---End of Problem 7---");
+
+        }//end of Problem7
     }
 }
