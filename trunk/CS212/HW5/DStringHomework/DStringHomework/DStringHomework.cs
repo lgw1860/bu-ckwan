@@ -243,5 +243,51 @@ namespace WindowsApplication1
             Console.WriteLine("---End of Problem 7---");
 
         }//end of Problem7
+
+
+        public void Problem9()
+        {
+            Console.WriteLine("\n---Problem 9---");
+
+            DString d = new DString("I am empty");
+            Console.WriteLine(d);
+
+            //Reverse DString by characters and print it out again
+            d = d.Reverse();
+            Console.WriteLine(d);
+
+            Console.WriteLine("---End of Problem 9---");
+
+        }//end of Problem9
+
+        public void Problem10()
+        {
+            Console.WriteLine("\n---Problem 10---");
+
+            //Take any given DString
+            Console.Write("Please enter a DString: ");
+            DString ds = Console.ReadLine();
+
+            //Remove middle three characters
+            int half = ds.Length/2;
+            if (ds.Length <= 3) 
+            {
+                ds.Remove(0, ds.Length); //remove all
+            }
+            else if ((ds.Length > 3) && (ds.Length % 2 == 0))
+            {
+                ds.Remove(half - 2, 3); //remove forward middle three
+            }
+            else //length > 3 and odd
+            {
+                ds.Remove(half - 1, 3); //remove middle three
+            }
+
+            //Print result
+            Console.WriteLine("Result: " + ds);
+
+            Console.WriteLine("\n---End of Problem 10---");
+
+        }//end of Problem10
     }
 }

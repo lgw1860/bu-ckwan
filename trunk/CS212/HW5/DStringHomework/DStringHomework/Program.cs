@@ -26,6 +26,10 @@ namespace WindowsApplication1
 
             //HW.Problem6();
             //HW.Problem7();
+
+            //HW.Problem9();
+            //HW.Problem10();
+
             Console.ReadLine();
 
         }
