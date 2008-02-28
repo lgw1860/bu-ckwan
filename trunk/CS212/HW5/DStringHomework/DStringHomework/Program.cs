@@ -19,16 +19,16 @@ namespace WindowsApplication1
             Console.WriteLine("DString Homework\n");
 
             DStringHomework HW = new DStringHomework();
-            //HW.Problem1();
-            //HW.Problem2();
-            //HW.Problem3();
-            //HW.Problem4();
-
-            //HW.Problem6();
-            //HW.Problem7();
-            //HW.Problem8();
-            //HW.Problem9();
-            //HW.Problem10();
+            HW.Problem1();
+            HW.Problem2();
+            HW.Problem3();
+            HW.Problem4();
+            HW.Problem5();
+            HW.Problem6();
+            HW.Problem7();
+            HW.Problem8();
+            HW.Problem9();
+            HW.Problem10();
 
             Console.ReadLine();
 
