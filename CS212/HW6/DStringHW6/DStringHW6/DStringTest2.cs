@@ -115,9 +115,14 @@ namespace DStringHW6
         public DStringCollection Problem4()
         {
             DStringCollection arrayList = ds.Split("\n");
+            DString alphaNumer = DString.Alphas();
+            alphaNumer.Append(DString.Numbers());
 
+            Console.WriteLine(alphaNumer);
+            
             foreach (DString d in arrayList)
             {
+                d.KeepAll(alphaNumer);
                 Console.WriteLine(d);
             }
 
