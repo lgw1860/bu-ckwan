@@ -16,6 +16,8 @@ namespace DStringHW6
         DStringCollection dsCollect;
         ArrayList dsCollectList;
         ArrayList origFileList;
+        String largeString;
+        String asciiString;
 
         public void run()
         {
@@ -26,6 +28,8 @@ namespace DStringHW6
             dsCollectList = Problem5(dsCollect);
             Problem6(dsCollectList);
             origFileList = Problem7(filepath);
+            largeString = Problem8(origFileList);
+            asciiString = Problem9(largeString);
         }
 
         public DString Problem1()
@@ -52,6 +56,10 @@ namespace DStringHW6
                 catch (ArgumentException)
                 {
                     Console.WriteLine("Please enter file path in correct format.\n");
+                }
+                catch (NotSupportedException)
+                {
+                    Console.WriteLine("Path format is not supported.\n");
                 }
 
             }
@@ -112,7 +120,7 @@ namespace DStringHW6
                 {
                     dsCharArray[i] = mapping[key].FirstChar();
                 }
-                Console.WriteLine(dsCharArray[i]);
+                //Console.WriteLine(dsCharArray[i]);
                 d.Append(dsCharArray[i]);
             }
 
@@ -199,6 +207,40 @@ namespace DStringHW6
             }
 
             return dsArrayList;
+        }//end Problem7
+
+        public String Problem8(ArrayList dsArrayList)
+        {
+            DString d = new DString(dsArrayList);
+            //Console.WriteLine(d);
+            String largeString = d.ToString();
+            Console.WriteLine(largeString);
+            return largeString;
+        }//end Problem8
+
+        public String Problem9(String largeString)
+        {
+            DString d = new DString(largeString);
+            d.ElimAll("\n");
+            char[] dCharArray = d.ToCharArray();
+            int[] valuesArray = new int[dCharArray.Length];
+            DString valueString = new DString();
+            for (int i = 0; i < dCharArray.Length; i++)
+            {
+                Console.Write(dCharArray[i] + ": ");
+                //dCharArray[i] = (char)char.ConvertToUtf32(dCharArray[i].ToString(), 0);
+                valuesArray[i] = char.ConvertToUtf32(dCharArray[i].ToString(), 0);
+                Console.WriteLine(valuesArray[i]);//(dCharArray[i]);
+
+                valueString.Add(valuesArray[i]);
+                valueString.Add(" ");
+            }
+
+            Console.WriteLine(valueString);
+
+            return valueString.ToString();
         }
+
+
     }
 }
