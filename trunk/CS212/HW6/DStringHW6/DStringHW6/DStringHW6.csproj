@@ -42,14 +42,18 @@
     <Compile Include="DString.cs" />
     <Compile Include="DStringCollection.cs" />
     <Compile Include="DStringTest2.cs" />
-    <Compile Include="Form1.cs">
+    <Compile Include="DStringHW6.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="DStringHW6.Designer.cs">
+      <DependentUpon>DStringHW6.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="DStringHW6.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>DStringHW6.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

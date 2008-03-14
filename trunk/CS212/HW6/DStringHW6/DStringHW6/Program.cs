@@ -14,11 +14,14 @@ namespace DStringHW6
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            //Application.Run(new Form1());
+            Application.Run(new DStringHW6());
+            
+            //run from console
+            /*
             DStringTest2 dst2 = new DStringTest2();
-            //dst2.Problem1();
             dst2.run();
             Console.ReadLine();
+             */
         }
     }
 }

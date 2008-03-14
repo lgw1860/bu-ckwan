@@ -81,7 +81,7 @@ namespace DynamicString
 		/// DString ctor, takes a string with the file path and the file mode 
 		/// and reads in the file contents into DString.
 		/// </summary>
-		/// <param name="d">System.String ([DirectoryPath]/File to be read]</param>
+		/// <param name="backCap">System.String ([DirectoryPath]/File to be read]</param>
 		/// <param name="m">
     /// <a href=
     /// "http://msdn.microsoft.com/library/default.asp?url=
@@ -299,7 +299,7 @@ namespace DynamicString
 		/// <summary>
 		/// Concatenates objects to DString.
 		/// </summary>
-		/// <param name="d">Original string</param>
+		/// <param name="backCap">Original string</param>
 		/// <param name="o">Primnitive types(byte, short, float etc.) 
 		/// plus object types, char and sting values</param>
 		/// <returns>DString with the appended object valuss</returns>
@@ -313,7 +313,7 @@ namespace DynamicString
 		/// <summary>
 		/// Concatenates an array of objects to DString.
 		/// </summary>
-		/// <param name="d">Original string</param>
+		/// <param name="backCap">Original string</param>
 		/// <param name="array">An array of Primnitive types(byte, short, float etc.) 
 		/// plus object types, char and sting values; 
 		/// that is delimited with spaces between items</param>
@@ -334,7 +334,7 @@ namespace DynamicString
 		/// <summary>
 		/// Concatenates an array of objects to DString.
 		/// </summary>
-		/// <param name="d">Original string</param>
+		/// <param name="backCap">Original string</param>
 		/// <param name="collection">A collection of objects 
 		/// that is delimited with spaces between items</param>
 		/// <returns>Original string appended with a collection of object values</returns>
@@ -351,11 +351,11 @@ namespace DynamicString
       return d2;
 		}	
 		#endregion
-		#region public static implicit operator string (DString d)
+		#region public static implicit operator string (DString backCap)
 		/// <summary>
 		/// Implicitly converts DString to string.
 		/// </summary>
-		/// <param name="d">DString</param>
+		/// <param name="backCap">DString</param>
 		/// <returns>string</returns>
 		public static implicit operator string (DString d)
 		{
@@ -377,7 +377,7 @@ namespace DynamicString
 		/// <summary>
 		/// Explicitly converts a DString containing only a boolean value to a boolean.
 		/// </summary>
-		/// <param name="d">DString</param>
+		/// <param name="backCap">DString</param>
 		/// <returns>bool</returns>
 		public static explicit operator bool(DString d)
 		{
@@ -399,7 +399,7 @@ namespace DynamicString
 		/// <summary>
 		/// Explicitly converts a DString containing only a integer value to a integer.
 		/// </summary>
-		/// <param name="d"></param>
+		/// <param name="backCap"></param>
 		/// <returns></returns>
 		public static explicit operator int(DString d)
 		{
@@ -417,11 +417,11 @@ namespace DynamicString
 			return i;
 		}
 		#endregion
-		#region public static explicit operator byte(DString d)
+		#region public static explicit operator byte(DString backCap)
 		/// <summary>
 		/// Explicitly converts a DString containing only a byte value to a byte.
 		/// </summary>
-		/// <param name="d">DString</param>
+		/// <param name="backCap">DString</param>
 		/// <returns>byte</returns>
 		public static explicit operator byte(DString d)
 		{
@@ -439,11 +439,11 @@ namespace DynamicString
 			return bit;
 		}
 		#endregion
-		#region public static explicit operator char(DString d)
+		#region public static explicit operator char(DString backCap)
 		/// <summary>
 		/// Explicitly converts a DString containing only a character value to a character.
 		/// </summary>
-		/// <param name="d">DString</param>
+		/// <param name="backCap">DString</param>
 		/// <returns>char</returns>
 		public static explicit operator char(DString d)
 		{
@@ -461,11 +461,11 @@ namespace DynamicString
 			return ch;
 		}
 		#endregion
-		#region public static explicit operator DateTime(DString d)
+		#region public static explicit operator DateTime(DString backCap)
 		/// <summary>
 		/// Explicitly converts a DString containing only a DateTime value to a DateTime.
 		/// </summary>
-		/// <param name="d">DString</param>
+		/// <param name="backCap">DString</param>
 		/// <returns>DateTime</returns>
 		public static explicit operator DateTime(DString d)
 		{
@@ -483,11 +483,11 @@ namespace DynamicString
 			return dt;
 		}
 		#endregion
-		#region public static explicit operator uint(DString d)
+		#region public static explicit operator uint(DString backCap)
 		/// <summary>
 		/// Explicitly converts a DString containing only an unsigned integer value to uint.
 		/// </summary>
-		/// <param name="d">DString</param>
+		/// <param name="backCap">DString</param>
 		/// <returns>uint</returns>
 		public static explicit operator uint(DString d)
 		{
@@ -505,11 +505,11 @@ namespace DynamicString
 			return ui;
 		}
 		#endregion
-		#region public static explicit operator ushort(DString d)
+		#region public static explicit operator ushort(DString backCap)
 		/// <summary>
 		/// Explicitly converts a DString containing an unsigned short value to unsigned short.
 		/// </summary>
-		/// <param name="d">DString</param>
+		/// <param name="backCap">DString</param>
 		/// <returns>ushort</returns>
 		public static explicit operator ushort(DString d)
 		{
@@ -527,11 +527,11 @@ namespace DynamicString
 			return us;
 		}
 		#endregion
-		#region public static explicit operator ulong(DString d)
+		#region public static explicit operator ulong(DString backCap)
 		/// <summary>
 		/// Explicitly converts a DString containing only unsigned long value to unsigned long.
 		/// </summary>
-		/// <param name="d">DString</param>
+		/// <param name="backCap">DString</param>
 		/// <returns>ulong</returns>
 		public static explicit operator ulong(DString d)
 		{
@@ -549,11 +549,11 @@ namespace DynamicString
 			return ul;
 		}
 		#endregion
-		#region public static explicit operator short(DString d)
+		#region public static explicit operator short(DString backCap)
 		/// <summary>
 		/// Explicitly converts a DString containing only a short value to a short.
 		/// </summary>
-		/// <param name="d">DString</param>
+		/// <param name="backCap">DString</param>
 		/// <returns>short</returns>
 		public static explicit operator short(DString d)
 		{
@@ -571,11 +571,11 @@ namespace DynamicString
 			return sh;
 		}
 		#endregion
-		#region public static explicit operator long(DString d)
+		#region public static explicit operator long(DString backCap)
 		/// <summary>
 		/// Explicitly converts a DString containing only a long value to a long.
 		/// </summary>
-		/// <param name="d">DString</param>
+		/// <param name="backCap">DString</param>
 		/// <returns>long</returns>
 		public static explicit operator long(DString d)
 		{
@@ -593,11 +593,11 @@ namespace DynamicString
 			return l;
 		}
 		#endregion
-		#region public static explicit operator float(DString d)
+		#region public static explicit operator float(DString backCap)
 		/// <summary>
 		/// Explicitly converts a DString containing only a float value to a float.
 		/// </summary>
-		/// <param name="d">DString</param>
+		/// <param name="backCap">DString</param>
 		/// <returns>float</returns>
 		public static explicit operator float(DString d)
 		{
@@ -615,11 +615,11 @@ namespace DynamicString
 			return f;
 		}
 		#endregion
-		#region public static explicit operator decimal(DString d)
+		#region public static explicit operator decimal(DString backCap)
 		/// <summary>
 		/// Explicitly converts a DString containing only a decimal value to a decimal.
 		/// </summary>
-		/// <param name="d">DString</param>
+		/// <param name="backCap">DString</param>
 		/// <returns>decimal</returns>
 		public static explicit operator decimal(DString d)
 		{
@@ -637,11 +637,11 @@ namespace DynamicString
 			return dec;
 		}
 		#endregion
-		#region public static explicit operator sbyte(DString d)
+		#region public static explicit operator sbyte(DString backCap)
 		/// <summary>
 		/// Explicitly converts a DString containing only a sbyte value to a sbyte.
 		/// </summary>
-		/// <param name="d">Dstring</param>
+		/// <param name="backCap">Dstring</param>
 		/// <returns>sbyte</returns>
 		public static explicit operator sbyte(DString d)
 		{
@@ -663,7 +663,7 @@ namespace DynamicString
 		/// <summary>
 		/// Explicitly converts a DString containing only a double value to a double.
 		/// </summary>
-		/// <param name="d">DString</param>
+		/// <param name="backCap">DString</param>
 		/// <returns>double</returns>
 		public static explicit operator double(DString d)
 		{
@@ -857,7 +857,7 @@ namespace DynamicString
 		/// <summary>
 		/// Relay to operator bool
 		/// </summary>
-		/// <param name="d">DString</param>
+		/// <param name="backCap">DString</param>
 		/// <returns>bool</returns>
 		public static bool ToBoolean(DString d)
 		{
@@ -868,128 +868,128 @@ namespace DynamicString
 		/// <summary>
 		/// Relay to operator int
 		/// </summary>
-		/// <param name="d">DString</param>
+		/// <param name="backCap">DString</param>
 		/// <returns>int</returns>
 		public static int ToInt32(DString d)
 		{
 			return (Int32)d;
 		}
 		#endregion
-		#region public static byte ToByte(DString d)
+		#region public static byte ToByte(DString backCap)
 		/// <summary>
 		/// Relay to operator byte.
 		/// </summary>
-		/// <param name="d">DString</param>
+		/// <param name="backCap">DString</param>
 		/// <returns>byte</returns>
 		public static byte ToByte(DString d)
 		{
 			return (Byte)d;
 		}
 		#endregion
-		#region public static char ToChar(DString d)
+		#region public static char ToChar(DString backCap)
 		/// <summary>
 		/// Relay to operator char
 		/// </summary>
-		/// <param name="d">DString</param>
+		/// <param name="backCap">DString</param>
 		/// <returns>char</returns>
 		public static char ToChar(DString d)
 		{
 			return (Char)d;
 		}
 		#endregion
-		#region public static DateTime ToDateTime(DString d)
+		#region public static DateTime ToDateTime(DString backCap)
 		/// <summary>
 		/// Relay to operator DateTime.
 		/// </summary>
-		/// <param name="d">DString</param>
+		/// <param name="backCap">DString</param>
 		/// <returns>DateTime</returns>
 		public static DateTime ToDateTime(DString d)
 		{
 			return (DateTime)d;
 		}
 		#endregion
-		#region public static uint ToUInt32(DString d)
+		#region public static uint ToUInt32(DString backCap)
 		/// <summary>
 		/// Relay to operator uint.
 		/// </summary>
-		/// <param name="d">DString</param>
+		/// <param name="backCap">DString</param>
 		/// <returns>uint</returns>
 		public static uint ToUInt32(DString d)
 		{
 			return (UInt32)d;
 		}
 		#endregion
-		#region public static ushort ToUInt16(DString d)
+		#region public static ushort ToUInt16(DString backCap)
 		/// <summary>
 		/// Relay to operator ushort
 		/// </summary>
-		/// <param name="d">DString</param>
+		/// <param name="backCap">DString</param>
 		/// <returns>ushort</returns>
 		public static ushort ToUInt16(DString d)
 		{
 			return (UInt16)d;
 		}
 		#endregion
-		#region public static ulong ToUInt64(DString d)
+		#region public static ulong ToUInt64(DString backCap)
 		/// <summary>
 		/// Relay to operator ulong
 		/// </summary>
-		/// <param name="d">DString</param>
+		/// <param name="backCap">DString</param>
 		/// <returns>ulong</returns>
 		public static ulong ToUInt64(DString d)
 		{
 			return (UInt64)d;
 		}
 		#endregion
-		#region public static short ToInt16(DString d)
+		#region public static short ToInt16(DString backCap)
 		/// <summary>
 		/// Relay to operator short
 		/// </summary>
-		/// <param name="d">DString</param>
+		/// <param name="backCap">DString</param>
 		/// <returns>short</returns>
 		public static short ToInt16(DString d)
 		{
 			return (Int16)d;
 		}
 		#endregion
-		#region public static long ToInt64(DString d)
+		#region public static long ToInt64(DString backCap)
 		/// <summary>
 		/// Relay to operator long
 		/// </summary>
-		/// <param name="d">DString</param>
+		/// <param name="backCap">DString</param>
 		/// <returns>long</returns>
 		public static long ToInt64(DString d)
 		{
 			return (Int64)d;
 		}
 		#endregion
-		#region public static float ToSingle(DString d)
+		#region public static float ToSingle(DString backCap)
 		/// <summary>
 		/// Relay to operator float
 		/// </summary>
-		/// <param name="d">DString</param>
+		/// <param name="backCap">DString</param>
 		/// <returns>float</returns>
 		public static float ToSingle(DString d)
 		{
 			return (Single)d;
 		}
 		#endregion
-		#region public static decimal ToDecimal(DString d)
+		#region public static decimal ToDecimal(DString backCap)
 		/// <summary>
 		/// Relay to operator decimal.
 		/// </summary>
-		/// <param name="d">DString</param>
+		/// <param name="backCap">DString</param>
 		/// <returns>decimal</returns>
 		public static decimal ToDecimal(DString d)
 		{
 			return (Decimal)d;
 		}
 		#endregion
-		#region public static sbyte ToSByte(DString d)
+		#region public static sbyte ToSByte(DString backCap)
 		/// <summary>
 		/// Relay to sbyte.
 		/// </summary>
-		/// <param name="d">DString</param>
+		/// <param name="backCap">DString</param>
 		/// <returns>sbyte</returns>
 		public static sbyte ToSByte(DString d)
 		{
@@ -1000,7 +1000,7 @@ namespace DynamicString
 		/// <summary>
 		/// Relay to operator double
 		/// </summary>
-		/// <param name="d">DString</param>
+		/// <param name="backCap">DString</param>
 		/// <returns>double</returns>
 		public static double ToDouble(DString d)
 		{

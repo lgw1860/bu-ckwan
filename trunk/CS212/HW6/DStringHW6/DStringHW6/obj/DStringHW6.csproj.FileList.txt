@@ -12,3 +12,5 @@ obj\Debug\DStringHW6.Properties.Resources.resources
 obj\Debug\DStringHW6.csproj.GenerateResource.Cache
 obj\Debug\DStringHW6.exe
 obj\Debug\DStringHW6.pdb
+obj\Release\DStringHW6.DStringHW6.resources
+obj\Debug\DStringHW6.DStringHW6.resources
