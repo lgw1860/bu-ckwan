@@ -3,21 +3,29 @@ using System.Collections.Generic;
 using System.Text;
 using DynamicString;
 using System.IO;
+using System.Collections;
 
 namespace DStringHW6
 {
     class DStringTest2
     {
+        String filepath;
         DString ds;
         Dictionary<DString, DString> mapping;
         DString dsMapped;
+        DStringCollection dsCollect;
+        ArrayList dsCollectList;
+        ArrayList origFileList;
 
         public void run()
         {
             ds = Problem1();
             mapping = Problem2();
             dsMapped = Problem3();
-            Problem4();
+            dsCollect = Problem4(dsMapped);
+            dsCollectList = Problem5(dsCollect);
+            Problem6(dsCollectList);
+            origFileList = Problem7(filepath);
         }
 
         public DString Problem1()
@@ -29,7 +37,7 @@ namespace DStringHW6
             while (fileFound == false)
             {
                 Console.Write("Please enter a file path: ");
-                String filepath = Console.ReadLine();
+                filepath = Console.ReadLine();
 
                 try
                 {
@@ -110,11 +118,11 @@ namespace DStringHW6
 
             Console.WriteLine(d);
             return d;
-        }
+        }//end Problem3
 
-        public DStringCollection Problem4()
+        public DStringCollection Problem4(DString bigString)
         {
-            DStringCollection arrayList = ds.Split("\n");
+            DStringCollection arrayList = bigString.Split("\n");
             DString alphaNumer = DString.Alphas();
             alphaNumer.Append(DString.Numbers());
 
@@ -127,6 +135,70 @@ namespace DStringHW6
             }
 
             return arrayList;
-        }//end of Problem4
+        }//end Problem4
+
+        public ArrayList Problem5(DStringCollection dsCollect)
+        {
+            ArrayList arrList = new ArrayList();
+            //DStringCollection dsList = bigString.Split("\n");
+            DStringCollection dsList = dsCollect;
+            foreach (DString d in dsList)
+            {
+                d.ElimAll("\n\r");
+                DStringCollection temp = d.Split();
+                arrList.Add(temp);
+            }
+
+            for (int i = 0; i < arrList.Count; i++)
+            {
+                Console.Write(i + ": ");
+                foreach (DString d in (DStringCollection)arrList[i])
+                {
+                    d.ElimAll("\n\r");
+                    Console.Write(d);
+                    Console.Write(" ");
+                }
+                Console.WriteLine();
+            }
+
+            return arrList;
+        }//end Problem5
+
+        public void Problem6(ArrayList DSCollectList)
+        {
+            DirectoryInfo dir = new DirectoryInfo(Directory.GetCurrentDirectory());
+            dir = dir.Parent.Parent;    //get out of bin/debug
+            dir = dir.CreateSubdirectory("Output");
+            StreamWriter writer = new StreamWriter(dir.ToString()+"\\aaa.txt");
+
+            foreach (DStringCollection collect in DSCollectList)
+            {
+                foreach (DString d in collect)
+                {
+                    writer.WriteLine(d.ToString());
+                }
+            }
+            writer.Flush();
+            writer.Close();
+        }//end Problem6
+
+        public ArrayList Problem7(String filepath)
+        {
+            ArrayList dsArrayList = new ArrayList();
+            StreamReader reader = new StreamReader(filepath);
+            while (!reader.EndOfStream)
+            {
+                String line = reader.ReadLine();
+                dsArrayList.Add(line);
+            }
+            reader.Close();
+
+            for (int i = 0; i < dsArrayList.Count; i++)
+            {
+                Console.WriteLine(i + ": " + (DString)dsArrayList[i].ToString());
+            }
+
+            return dsArrayList;
+        }
     }
 }
