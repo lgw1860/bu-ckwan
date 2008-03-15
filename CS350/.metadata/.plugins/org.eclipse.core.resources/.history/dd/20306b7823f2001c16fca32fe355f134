@@ -1,0 +1,60 @@
+
+public class QueuingNetwork {
+
+	public static void main(String[] args)
+	{
+		QueuingNetwork qn = new QueuingNetwork();
+		double sum = 0.0;
+		for(int i=0; i<1000; i++)
+		{
+			sum += (qn.NetworkServiceTime());
+		}
+		System.out.println(sum/1000.0);
+	}
+	
+	/*
+	 * Arrival rate are Poisson with rate 40 proc/sec = 0.04 proc/msec
+	 */ 
+	public double ProcessArrivalTime()
+	{
+		double U = Math.random();
+		double lambda = 0.04;
+		double V = ( -1 * (Math.log(1.0 - U)) ) / lambda; 
+		return V;
+	}
+	
+	/*
+	 * CPU service time is uniformly distributed btn 10 and 30 msec
+	 */
+	public double CPUServiceTime()
+	{
+		return Math.random()* (30.0 - 10.0) + 10.0;
+	}
+
+	/* 
+	 * Disk I/O service time is normally distributed 
+	 * with mean 100 msec and stddev 20 msec (never neg)
+	 */
+	public double DiskServiceTime()
+	{
+		double rand = 0.0;
+		double sum = 0.0;
+		for(int i=0; i<10; i++)
+		{
+			sum += Math.random();
+		}
+		sum = (sum - 10.0/2.0) / Math.sqrt(10.0/12.0);
+		rand = 20.0 * sum - 100.0;
+		rand = Math.abs(rand);
+		return rand;
+	}
+	
+	/*
+	 * Network service time is constant with mean 25 msec
+	 */
+	protected double NetworkServiceTime()
+	{
+		return 25.0;
+	}
+	
+}
