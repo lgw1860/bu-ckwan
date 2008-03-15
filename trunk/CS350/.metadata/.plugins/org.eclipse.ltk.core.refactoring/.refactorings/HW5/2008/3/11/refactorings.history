@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<session version="1.0">
+<refactoring comment="Rename method 'QueuingNetwork.ProcessArrivals()' to 'ProcessArrivalTime'&#13;&#10;- Original element: 'QueuingNetwork.ProcessArrivals()'&#13;&#10;- Renamed element: 'QueuingNetwork.ProcessArrivalTime()'&#13;&#10;- Update references to refactored element" delegate="false" deprecate="true" description="Rename method 'ProcessArrivals'" flags="589830" id="org.eclipse.jdt.ui.rename.method" input="/&lt;{QueuingNetwork.java[QueuingNetwork~ProcessArrivals" name="ProcessArrivalTime" references="true" stamp="1205539086609" version="1.0"/>
+</session>
