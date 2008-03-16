@@ -5,6 +5,14 @@ public class QueuingNetwork {
 	public double currentTime;
 	private Schedule sched;
 	private Event currentEvent;
+	private Event currentArrival; 
+	
+	private int qCPU;
+	
+	private int numDepart;
+	private double sumTq;
+	private int sumQ;
+	private double sumArr;
 	
 	public QueuingNetwork(double SimTime)
 	{
@@ -15,14 +23,18 @@ public class QueuingNetwork {
 	public static void main(String[] args)
 	{
 		//100 sec = 100*1000 msec
-		QueuingNetwork qn = new QueuingNetwork(100);
-
-		for(int i=0; i<1000; i++)
+		QueuingNetwork qn = new QueuingNetwork(100000);
+		qn.simulate();
+		
+		for(int i=0; i<10; i++)
 		{
+			//System.out.println(qn.CPUServiceTime());
 			//sum += (qn.NetworkServiceTime());
-			System.out.println(qn.DiskDepartProb());
+			//System.out.println(qn.DiskDepartProb());
 		}
 		//System.out.println(sum/1000.0);
+		
+		 
 	}
 	
 	public void initialize()
@@ -50,11 +62,99 @@ public class QueuingNetwork {
 				}
 			}
 		}
+		System.out.println("ave Tq: " + sumTq/numDepart);
+		System.out.println("ave Q: " + (double)sumQ/(double)numDepart);
+		System.out.println("ave Arr: " + sumArr/numDepart);
 	}
 	
 	public void execute(Event e)
 	{
-		
+		if(currentEvent.getType() == "A")
+		{
+			qCPU++;
+			Event myDepart = null;
+			double Ts = CPUServiceTime();
+			double lambda = ProcessArrivalTime();
+			sumArr += lambda;
+			if(qCPU == 1)
+			{
+				
+				myDepart = new Event("D",currentEvent.getTime()+Ts,Ts);
+				sched.add(myDepart);
+				currentArrival = currentEvent;
+				//System.out.print(myDepart + "\t");
+				//System.out.println("ARR: " + currentEvent.getTime() + "\tTs:" + currentTs + "\tD:" + myDepart.getTime());
+				
+			}
+			//System.out.println(currentEvent.toString() + "\t" + myDepart);
+			Event nextArrive = new Event("A",currentEvent.getTime() + lambda);
+			sched.add(nextArrive);
+			//System.out.println("ARR: " + currentEvent.getTime() + "\tTs:" + currentTs + "\tD:" + myDepart);
+		}
+		else if(currentEvent.getType() == "D")
+		{
+			
+			if(qCPU>0)
+			{
+				numDepart++;
+				qCPU--;
+				//if(qCPU>0)
+				//{
+					int w = qCPU;
+					int q = 0;
+					if(qCPU>0)
+					{
+						q = w;//w + 1;
+					}else
+					{
+						q = w;
+					}
+					double Tq = currentEvent.getTime() - currentArrival.getTime();
+					//double Ts = CPUServiceTime();
+					sumTq += Tq;
+					//sumArr += currentArrival.getTime();
+					sumQ += q;
+					
+					System.out.print("w: " + w + "\t");
+					System.out.print("q: " + q + "\t");
+					System.out.print("Tq: " + Tq + "\t");
+					//System.out.print("Ts: " + currentEvent.getTs() + "\t");
+					//System.out.print("Tw: " + (Tq -currentEvent.getTs()) + "\t");
+					
+					System.out.print(currentArrival + "\t");
+					System.out.println(currentEvent.toString());
+					
+					double Ts = CPUServiceTime();
+					//updateCurrentArrival();
+					double actualServiceStart = max(currentEvent.getTime(),currentArrival.getTime());
+					Event nextDepart = new Event("D", actualServiceStart+Ts, Ts);
+					sched.add(nextDepart);
+					updateCurrentArrival();
+				//}
+			}
+			
+		}
+	}
+	
+	public double max(double a, double b)
+	{
+		if(a > b)
+		{
+			return a;
+		}
+		return b;
+	}
+	
+	public void updateCurrentArrival()
+	{
+		while(currentArrival.getNext() != null)
+		{
+			currentArrival = currentArrival.getNext();
+			if(currentArrival.getType() == "A")
+			{
+				return;
+			}
+		}
 	}
 	
 	/*
