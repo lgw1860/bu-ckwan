@@ -9,11 +9,19 @@ public class QueuingNetwork {
 	private Event currentArrival; 
 
 	private int qCPU;
+	private int qDisk;
+	private int qNetwork;
 
+	private int numProcesses;
+	
 	private int numDepart;
 	private double sumTq;
 	private int sumQ;
 	private double sumArr;
+	
+	private int sumDA;
+	private int sumNA;
+	private int sumExit;
 
 	public QueuingNetwork(double SimTime)
 	{
@@ -41,7 +49,7 @@ public class QueuingNetwork {
 	public void initialize()
 	{
 		currentTime = 0.0;
-		sched = new Schedule(new Event("A", currentTime + ProcessArrivalTime()));
+		sched = new Schedule(new Event("CA", currentTime + ProcessArrivalTime()));
 		sched.add(new Event("M",monitorInc));
 		currentEvent = sched.getFirstEvent();
 		currentTime = currentEvent.getTime();
@@ -68,11 +76,14 @@ public class QueuingNetwork {
 		System.out.println("ave Tq: " + sumTq/numDepart);
 		System.out.println("ave Q: " + (double)sumQ/(double)numDepart);
 		System.out.println("ave Arr: " + sumArr/numDepart);
+		System.out.println("E: " + (double)sumExit/(sumExit+sumDA+sumNA));
+		System.out.println("DA: " + (double)sumDA/(sumExit+sumDA+sumNA));
+		System.out.println("NA: " + (double)sumNA/(sumExit+sumDA+sumNA));
 	}
 
 	public void execute(Event e)
 	{
-		if(currentEvent.getType() == "A")
+		if(currentEvent.getType() == "CA")
 		{
 			qCPU++;
 			Event myDepart = null;
@@ -81,14 +92,15 @@ public class QueuingNetwork {
 			sumArr += IAT;
 			if(qCPU == 1)
 			{
-				myDepart = new Event("D",currentEvent.getTime()+Ts,Ts);
+				myDepart = new Event("CD",currentEvent.getTime()+Ts,Ts);
 				sched.add(myDepart);
 				currentArrival = currentEvent;
+				
 			}
-			Event nextArrive = new Event("A",currentEvent.getTime() + IAT);
+			Event nextArrive = new Event("CA",currentEvent.getTime() + IAT);
 			sched.add(nextArrive);
 		}
-		else if(currentEvent.getType() == "D")
+		else if(currentEvent.getType() == "CD")
 		{
 
 			if(qCPU>0)
@@ -104,11 +116,35 @@ public class QueuingNetwork {
 				//System.out.print(currentArrival + "\t");
 				//System.out.println(currentEvent);
 
+				
+				
+				String dest = CPUDepartProb();
+				if(dest == "E")
+				{
+					numProcesses++;
+					System.out.println("Exit");
+					sumExit++;
+				}
+				else if(dest == "D")
+				{
+					Event nextDiskArrive = new Event("DA",currentEvent.getTime());
+					sched.add(nextDiskArrive);
+					System.out.println("Disk Arrival");
+					sumDA++;
+				}
+				else if(dest == "N")
+				{
+					Event nextNetworkArrive = new Event("NA",currentEvent.getTime());
+					sched.add(nextNetworkArrive);
+					System.out.println("Network Arrival");
+					sumNA++;
+				}
+				
 				double Ts = CPUServiceTime();
 				double actualServiceStart = max(currentEvent.getTime(),currentArrival.getTime());
-				Event nextDepart = new Event("D", actualServiceStart+Ts, Ts);
+				Event nextDepart = new Event("CD", actualServiceStart+Ts, Ts);
 				sched.add(nextDepart);
-				updateCurrentArrival();
+				updateCurrentArrival("CA");
 			}
 
 		}
@@ -123,6 +159,7 @@ public class QueuingNetwork {
 			sched.add(nextMonitor);
 		}
 	}
+	
 
 	public double max(double a, double b)
 	{
@@ -133,12 +170,12 @@ public class QueuingNetwork {
 		return b;
 	}
 
-	public void updateCurrentArrival()
+	public void updateCurrentArrival(String type)
 	{
 		while(currentArrival.getNext() != null)
 		{
 			currentArrival = currentArrival.getNext();
-			if(currentArrival.getType() == "A")
+			if(currentArrival.getType() == type)
 			{
 				return;
 			}
@@ -155,15 +192,15 @@ public class QueuingNetwork {
 
 		if(prob<=0.5) //0.5 chance
 		{
-			return ("Leave system");
+			return ("E");
 		}
 		else if(prob>0.5 && prob<=(0.5+0.1)) //0.1 chance
 		{
-			return ("To Disk");
+			return ("D");
 		}
 		else	//0.4 chance
 		{
-			return ("To network");
+			return ("N");
 		}
 	}
 
