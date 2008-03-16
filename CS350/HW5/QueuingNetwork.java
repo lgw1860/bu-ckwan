@@ -4,28 +4,29 @@ public class QueuingNetwork {
 	private double SimTime;
 	public double currentTime;
 	private Schedule sched;
+	private int monitorInc = 1000;
 	private Event currentEvent;
 	private Event currentArrival; 
-	
+
 	private int qCPU;
-	
+
 	private int numDepart;
 	private double sumTq;
 	private int sumQ;
 	private double sumArr;
-	
+
 	public QueuingNetwork(double SimTime)
 	{
 		this.SimTime = SimTime;
 		initialize();
 	}
-	
+
 	public static void main(String[] args)
 	{
 		//100 sec = 100*1000 msec
 		QueuingNetwork qn = new QueuingNetwork(100000);
 		qn.simulate();
-		
+
 		for(int i=0; i<10; i++)
 		{
 			//System.out.println(qn.CPUServiceTime());
@@ -33,19 +34,21 @@ public class QueuingNetwork {
 			//System.out.println(qn.DiskDepartProb());
 		}
 		//System.out.println(sum/1000.0);
-		
-		 
+
+
 	}
-	
+
 	public void initialize()
 	{
 		currentTime = 0.0;
 		sched = new Schedule(new Event("A", currentTime + ProcessArrivalTime()));
+		sched.add(new Event("M",monitorInc));
 		currentEvent = sched.getFirstEvent();
 		currentTime = currentEvent.getTime();
+		sched.add(new Event("M",0));//currentEvent.getTime() + monitorInc));
 		execute(currentEvent);
 	}
-	
+
 	public void simulate()
 	{
 		while(currentTime<SimTime)
@@ -54,7 +57,7 @@ public class QueuingNetwork {
 			{
 				currentEvent = currentEvent.getNext();
 				currentTime = currentEvent.getTime();
-				
+
 				//only execute events sched before end of sim
 				if(currentTime < SimTime)
 				{
@@ -66,7 +69,7 @@ public class QueuingNetwork {
 		System.out.println("ave Q: " + (double)sumQ/(double)numDepart);
 		System.out.println("ave Arr: " + sumArr/numDepart);
 	}
-	
+
 	public void execute(Event e)
 	{
 		if(currentEvent.getType() == "A")
@@ -74,68 +77,53 @@ public class QueuingNetwork {
 			qCPU++;
 			Event myDepart = null;
 			double Ts = CPUServiceTime();
-			double lambda = ProcessArrivalTime();
-			sumArr += lambda;
+			double IAT = ProcessArrivalTime();
+			sumArr += IAT;
 			if(qCPU == 1)
 			{
-				
 				myDepart = new Event("D",currentEvent.getTime()+Ts,Ts);
 				sched.add(myDepart);
 				currentArrival = currentEvent;
-				//System.out.print(myDepart + "\t");
-				//System.out.println("ARR: " + currentEvent.getTime() + "\tTs:" + currentTs + "\tD:" + myDepart.getTime());
-				
 			}
-			//System.out.println(currentEvent.toString() + "\t" + myDepart);
-			Event nextArrive = new Event("A",currentEvent.getTime() + lambda);
+			Event nextArrive = new Event("A",currentEvent.getTime() + IAT);
 			sched.add(nextArrive);
-			//System.out.println("ARR: " + currentEvent.getTime() + "\tTs:" + currentTs + "\tD:" + myDepart);
 		}
 		else if(currentEvent.getType() == "D")
 		{
-			
+
 			if(qCPU>0)
 			{
 				numDepart++;
 				qCPU--;
-				//if(qCPU>0)
-				//{
-					int w = qCPU;
-					int q = 0;
-					if(qCPU>0)
-					{
-						q = w;//w + 1;
-					}else
-					{
-						q = w;
-					}
-					double Tq = currentEvent.getTime() - currentArrival.getTime();
-					//double Ts = CPUServiceTime();
-					sumTq += Tq;
-					//sumArr += currentArrival.getTime();
-					sumQ += q;
-					
-					System.out.print("w: " + w + "\t");
-					System.out.print("q: " + q + "\t");
-					System.out.print("Tq: " + Tq + "\t");
-					//System.out.print("Ts: " + currentEvent.getTs() + "\t");
-					//System.out.print("Tw: " + (Tq -currentEvent.getTs()) + "\t");
-					
-					System.out.print(currentArrival + "\t");
-					System.out.println(currentEvent.toString());
-					
-					double Ts = CPUServiceTime();
-					//updateCurrentArrival();
-					double actualServiceStart = max(currentEvent.getTime(),currentArrival.getTime());
-					Event nextDepart = new Event("D", actualServiceStart+Ts, Ts);
-					sched.add(nextDepart);
-					updateCurrentArrival();
-				//}
+				sumQ += qCPU;
+				double Tq = currentEvent.getTime() - currentArrival.getTime();
+				sumTq += Tq;
+
+				//System.out.print("q: " + qCPU + "\t");
+				//System.out.print("Tq: " + Tq + "\t");
+				//System.out.print(currentArrival + "\t");
+				//System.out.println(currentEvent);
+
+				double Ts = CPUServiceTime();
+				double actualServiceStart = max(currentEvent.getTime(),currentArrival.getTime());
+				Event nextDepart = new Event("D", actualServiceStart+Ts, Ts);
+				sched.add(nextDepart);
+				updateCurrentArrival();
 			}
+
+		}
+		else if(currentEvent.getType() == "M")
+		{
+			System.out.print("time: " + currentTime);
+			System.out.print("\tave Tq: " + sumTq/numDepart);
+			System.out.print("\tave Q: " + (double)sumQ/(double)numDepart);
+			System.out.println("\tave Arr: " + sumArr/numDepart);
 			
+			Event nextMonitor = new Event("M",currentEvent.getTime() + monitorInc);
+			sched.add(nextMonitor);
 		}
 	}
-	
+
 	public double max(double a, double b)
 	{
 		if(a > b)
@@ -144,7 +132,7 @@ public class QueuingNetwork {
 		}
 		return b;
 	}
-	
+
 	public void updateCurrentArrival()
 	{
 		while(currentArrival.getNext() != null)
@@ -156,7 +144,7 @@ public class QueuingNetwork {
 			}
 		}
 	}
-	
+
 	/*
 	 * Where will process go after leaving CPU?
 	 */
@@ -164,7 +152,7 @@ public class QueuingNetwork {
 	{
 		double prob = Math.random();
 		//System.out.println("prob: " + prob);
-		
+
 		if(prob<=0.5) //0.5 chance
 		{
 			return ("Leave system");
@@ -178,7 +166,7 @@ public class QueuingNetwork {
 			return ("To network");
 		}
 	}
-	
+
 	/*
 	 * Where will process go after leaving Disk?
 	 */
@@ -195,7 +183,7 @@ public class QueuingNetwork {
 			return ("To Network");
 		}
 	}
-	
+
 	/*
 	 * Arrival rate are Poisson with rate 40 proc/sec = 0.04 proc/msec
 	 */ 
@@ -206,7 +194,7 @@ public class QueuingNetwork {
 		double V = ( -1 * (Math.log(1.0 - U)) ) / lambda; 
 		return V;
 	}
-	
+
 	/*
 	 * CPU service time is uniformly distributed btn 10 and 30 msec
 	 */
@@ -232,7 +220,7 @@ public class QueuingNetwork {
 		rand = Math.abs(rand);
 		return rand;
 	}
-	
+
 	/*
 	 * Network service time is constant with mean 25 msec
 	 */
@@ -240,5 +228,5 @@ public class QueuingNetwork {
 	{
 		return 25.0;
 	}
-	
+
 }
