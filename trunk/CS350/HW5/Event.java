@@ -14,11 +14,24 @@ public class Event {
 	private double time;	//time to execute
 	private String type;	//(A)rrival or (D)eparture or (M)onitor
 	private Event next;		//following event, based on time
+	private double ts; //arrival time
 	
 	public Event(String type, double time)
 	{
 		this.type = type;
 		this.time = time;
+		this.ts = -1;
+	}
+	
+	public Event(String type, double time, double arrival)
+	{
+		this(type,time);
+		this.ts = arrival;
+	}
+	
+	public double getTs()
+	{
+		return ts;
 	}
 	
 	public double getTime()
