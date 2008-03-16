@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<workbench progressCount="12" version="2.0">
+<workbench progressCount="16" version="2.0">
 <workbenchAdvisor/>
-<window height="766" width="1024" x="202" y="83">
+<window height="766" width="1024" x="154" y="-18">
 <fastViewData fastViewLocation="1024"/>
 <perspectiveBar>
 <itemSize x="160"/>
@@ -38,14 +38,18 @@
 </editor>
 </editors>
 <views>
-<view id="org.eclipse.jdt.ui.JavadocView" partName="Javadoc"/>
-<view id="org.eclipse.ui.console.ConsoleView" partName="Console">
+<view id="org.eclipse.jdt.ui.JavadocView" partName="Javadoc">
 <viewState/>
 </view>
 <view id="org.eclipse.ui.views.ContentOutline" partName="Outline">
 <viewState/>
 </view>
-<view id="org.eclipse.jdt.ui.SourceView" partName="Declaration"/>
+<view id="org.eclipse.ui.console.ConsoleView" partName="Console">
+<viewState/>
+</view>
+<view id="org.eclipse.jdt.ui.SourceView" partName="Declaration">
+<viewState/>
+</view>
 <view id="org.eclipse.jdt.ui.PackageExplorer" partName="Package Explorer">
 <viewState isWindowWorkingSet="true" layout="2" org.eclipse.jdt.ui.packages.linktoeditor="0" rootMode="1" workingSetName="">
 <customFilters userDefinedPatternsEnabled="false">
@@ -75,7 +79,7 @@
 </view>
 <view id="org.eclipse.jdt.ui.TypeHierarchy" partName="Hierarchy"/>
 <view id="org.eclipse.ui.views.ProblemView" partName="Problems">
-<viewState columnWidth0="256" columnWidth1="81" columnWidth2="156" columnWidth3="66" columnWidth4="0" horizontalPosition="0" verticalPosition="0">
+<viewState columnWidth0="259" columnWidth1="84" columnWidth2="159" columnWidth3="69" columnWidth4="0" horizontalPosition="0" verticalPosition="0">
 <columnOrder columnOrderIndex="0"/>
 <columnOrder columnOrderIndex="1"/>
 <columnOrder columnOrderIndex="2"/>
@@ -197,48 +201,6 @@
 <editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.jdt.ui.CompilationUnitEditor" path="/HW5/QueuingNetwork.java"/>
 </editors>
 <item historyLabel="QueuingNetwork.java" index="0">
-<position info="not_deleted" x="67" y="0"/>
-</item>
-<item historyLabel="QueuingNetwork.java" index="0">
-<position info="not_deleted" x="2778" y="0"/>
-</item>
-<item historyLabel="QueuingNetwork.java" index="0">
-<position info="not_deleted" x="2194" y="0"/>
-</item>
-<item historyLabel="QueuingNetwork.java" index="0">
-<position info="not_deleted" x="2404" y="0"/>
-</item>
-<item historyLabel="QueuingNetwork.java" index="0">
-<position info="not_deleted" x="2750" y="0"/>
-</item>
-<item historyLabel="QueuingNetwork.java" index="0">
-<position info="not_deleted" x="2246" y="0"/>
-</item>
-<item historyLabel="QueuingNetwork.java" index="0">
-<position/>
-</item>
-<item historyLabel="QueuingNetwork.java" index="0">
-<position info="not_deleted" x="2215" y="6"/>
-</item>
-<item historyLabel="QueuingNetwork.java" index="0">
-<position/>
-</item>
-<item historyLabel="QueuingNetwork.java" index="0">
-<position info="not_deleted" x="362" y="0"/>
-</item>
-<item historyLabel="QueuingNetwork.java" index="0">
-<position info="not_deleted" x="316" y="0"/>
-</item>
-<item historyLabel="QueuingNetwork.java" index="0">
-<position info="not_deleted" x="186" y="0"/>
-</item>
-<item historyLabel="QueuingNetwork.java" index="0">
-<position info="not_deleted" x="1106" y="0"/>
-</item>
-<item historyLabel="QueuingNetwork.java" index="0">
-<position info="not_deleted" x="1099" y="0"/>
-</item>
-<item historyLabel="QueuingNetwork.java" index="0">
 <position info="not_deleted" x="560" y="0"/>
 </item>
 <item historyLabel="QueuingNetwork.java" index="0">
@@ -292,8 +254,101 @@
 <item historyLabel="QueuingNetwork.java" index="0">
 <position info="not_deleted" x="471" y="0"/>
 </item>
-<item active="true" historyLabel="QueuingNetwork.java" index="0">
+<item historyLabel="QueuingNetwork.java" index="0">
 <position/>
+</item>
+<item historyLabel="QueuingNetwork.java" index="0">
+<position info="not_deleted" x="1577" y="0"/>
+</item>
+<item historyLabel="QueuingNetwork.java" index="0">
+<position info="not_deleted" x="1079" y="0"/>
+</item>
+<item historyLabel="QueuingNetwork.java" index="0">
+<position info="not_deleted" x="2027" y="7"/>
+</item>
+<item historyLabel="QueuingNetwork.java" index="0">
+<position info="not_deleted" x="2102" y="0"/>
+</item>
+<item historyLabel="QueuingNetwork.java" index="0">
+<position/>
+</item>
+<item historyLabel="QueuingNetwork.java" index="0">
+<position/>
+</item>
+<item historyLabel="QueuingNetwork.java" index="0">
+<position/>
+</item>
+<item historyLabel="QueuingNetwork.java" index="0">
+<position info="not_deleted" x="1062" y="0"/>
+</item>
+<item historyLabel="QueuingNetwork.java" index="0">
+<position/>
+</item>
+<item historyLabel="QueuingNetwork.java" index="0">
+<position info="not_deleted" x="5172" y="13"/>
+</item>
+<item historyLabel="QueuingNetwork.java" index="0">
+<position/>
+</item>
+<item historyLabel="QueuingNetwork.java" index="0">
+<position/>
+</item>
+<item historyLabel="QueuingNetwork.java" index="0">
+<position/>
+</item>
+<item historyLabel="QueuingNetwork.java" index="0">
+<position/>
+</item>
+<item historyLabel="QueuingNetwork.java" index="0">
+<position/>
+</item>
+<item historyLabel="QueuingNetwork.java" index="0">
+<position info="not_deleted" x="5061" y="0"/>
+</item>
+<item historyLabel="QueuingNetwork.java" index="0">
+<position/>
+</item>
+<item historyLabel="QueuingNetwork.java" index="0">
+<position info="not_deleted" x="472" y="0"/>
+</item>
+<item historyLabel="QueuingNetwork.java" index="0">
+<position info="not_deleted" x="2027" y="7"/>
+</item>
+<item historyLabel="QueuingNetwork.java" index="0">
+<position info="not_deleted" x="1866" y="0"/>
+</item>
+<item historyLabel="QueuingNetwork.java" index="0">
+<position info="not_deleted" x="1623" y="0"/>
+</item>
+<item historyLabel="QueuingNetwork.java" index="0">
+<position info="not_deleted" x="2027" y="7"/>
+</item>
+<item historyLabel="QueuingNetwork.java" index="0">
+<position info="not_deleted" x="2569" y="0"/>
+</item>
+<item historyLabel="QueuingNetwork.java" index="0">
+<position info="not_deleted" x="2505" y="0"/>
+</item>
+<item historyLabel="QueuingNetwork.java" index="0">
+<position info="not_deleted" x="2170" y="0"/>
+</item>
+<item historyLabel="QueuingNetwork.java" index="0">
+<position info="not_deleted" x="2385" y="19"/>
+</item>
+<item historyLabel="QueuingNetwork.java" index="0">
+<position info="not_deleted" x="2184" y="2"/>
+</item>
+<item historyLabel="QueuingNetwork.java" index="0">
+<position info="not_deleted" x="4255" y="16"/>
+</item>
+<item historyLabel="QueuingNetwork.java" index="0">
+<position info="not_deleted" x="4773" y="0"/>
+</item>
+<item historyLabel="QueuingNetwork.java" index="0">
+<position info="not_deleted" x="247" y="5"/>
+</item>
+<item active="true" historyLabel="QueuingNetwork.java" index="0">
+<position info="not_deleted" x="268" y="8"/>
 </item>
 </navigationHistory>
 <stickyState/>
