@@ -81,7 +81,28 @@ public class QueuingNetwork {
 		System.out.println("NA: " + (double)sumNA/(sumExit+sumDA+sumNA));
 	}
 
-	public void execute(Event e)
+	public void execute(Event currentEvent)
+	{
+		if(currentEvent.getType() == "CA" || currentEvent.getType() == "CD")
+		{
+			executeCPUEvent(currentEvent);
+		}
+		else if(currentEvent.getType() == "DA" || currentEvent.getType() == "DD")
+		{
+			executeDiskEvent(currentEvent);
+		}
+		else if(currentEvent.getType() == "NA" || currentEvent.getType() == "ND")
+		{
+			executeNetworkEvent(currentEvent);
+		}
+		else if(currentEvent.getType() == "M")
+		{
+			executeMonitor(currentEvent);
+		}
+	}
+	
+
+	private void executeCPUEvent(Event currentEvent)
 	{
 		if(currentEvent.getType() == "CA")
 		{
@@ -146,21 +167,31 @@ public class QueuingNetwork {
 				sched.add(nextDepart);
 				updateCurrentArrival("CA");
 			}
-
-		}
-		else if(currentEvent.getType() == "M")
-		{
-			System.out.print("time: " + currentTime);
-			System.out.print("\tave Tq: " + sumTq/numDepart);
-			System.out.print("\tave Q: " + (double)sumQ/(double)numDepart);
-			System.out.println("\tave Arr: " + sumArr/numDepart);
-			
-			Event nextMonitor = new Event("M",currentEvent.getTime() + monitorInc);
-			sched.add(nextMonitor);
 		}
 	}
-	
 
+
+	private void executeDiskEvent(Event currentEvent)
+	{
+		
+	}
+	
+	private void executeNetworkEvent(Event currentEvent)
+	{
+		
+	}
+	
+	private void executeMonitor(Event currentEvent)
+	{
+		System.out.print("time: " + currentTime);
+		System.out.print("\tave CPUTq: " + sumTq/numDepart);
+		System.out.print("\tave CPUQ: " + (double)sumQ/(double)numDepart);
+		System.out.println("\tave CPUArr: " + sumArr/numDepart);
+		
+		Event nextMonitor = new Event("M",currentEvent.getTime() + monitorInc);
+		sched.add(nextMonitor);
+	}
+	
 	public double max(double a, double b)
 	{
 		if(a > b)

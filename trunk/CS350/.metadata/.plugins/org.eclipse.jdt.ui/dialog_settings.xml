@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
-	<item key="delegateUpdating" value="false"/>
+	<item key="delegateDeprecation" value="true"/>
+	<item key="delegateUpdating" value="true"/>
 	<section name="JavaElementSearchActions">
 	</section>
 	<section name="org.eclipse.jdt.ui.internal.packageExplorer">
