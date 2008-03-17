@@ -150,7 +150,10 @@ public class QueuingNetwork {
 			{
 				numCPUDepart++;
 				qCPU--;
+				
+				if(qCPU>0)
 				sumCPUQ += qCPU;
+				
 				double Tq = currentEvent.getTime() - currentCPUArr.getTime();
 				sumCPUTq += Tq;
 
