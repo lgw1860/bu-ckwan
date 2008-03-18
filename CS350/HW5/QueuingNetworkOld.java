@@ -77,7 +77,7 @@ public class QueuingNetworkOld {
 		{
 			qCPU++;
 			Event myDepart = null;
-			double Ts = CPUServiceTime();
+			double Ts = newTs();//CPUServiceTime();
 			double lambda = ProcessArrivalTime();
 			sumArr += lambda;
 			if(qCPU == 1)
@@ -86,13 +86,18 @@ public class QueuingNetworkOld {
 				myDepart = new Event("D",currentEvent.getTime()+Ts,Ts);
 				sched.add(myDepart);
 				currentArrival = currentEvent;
+				
 				//System.out.print(myDepart + "\t");
 				//System.out.println("ARR: " + currentEvent.getTime() + "\tTs:" + currentTs + "\tD:" + myDepart.getTime());
 				
 			}
 			//System.out.println(currentEvent.toString() + "\t" + myDepart);
-			Event nextArrive = new Event("A",currentEvent.getTime() + lambda);
-			sched.add(nextArrive);
+			if(currentEvent.getRepeat() == false)
+			{
+				Event nextArrive = new Event("A",currentEvent.getTime() + lambda);
+				sched.add(nextArrive);
+				//updateCurrentArrival();
+			}
 			//System.out.println("ARR: " + currentEvent.getTime() + "\tTs:" + currentTs + "\tD:" + myDepart);
 		}
 		else if(currentEvent.getType() == "D")
@@ -114,10 +119,14 @@ public class QueuingNetworkOld {
 						q = w;
 					}
 					double Tq = currentEvent.getTime() - currentArrival.getTime();
+					//double Tq = (double)qCPU / (1.0/ProcessArrivalTime()); 
+					
 					//double Ts = CPUServiceTime();
 					sumTq += Tq;
 					//sumArr += currentArrival.getTime();
 					sumQ += qCPU;//sumQ += q;
+					
+					updateCurrentArrival();
 					
 					System.out.print("w: " + w + "\t");
 					System.out.print("q: " + q + "\t");
@@ -128,12 +137,12 @@ public class QueuingNetworkOld {
 					System.out.print(currentArrival + "\t");
 					System.out.println(currentEvent.toString());
 					
-					double Ts = CPUServiceTime();
+					double Ts = newTs();//CPUServiceTime();
 					//updateCurrentArrival();
 					double actualServiceStart = max(currentEvent.getTime(),currentArrival.getTime());
 					Event nextDepart = new Event("D", actualServiceStart+Ts, Ts);
 					sched.add(nextDepart);
-					updateCurrentArrival();
+					//updateCurrentArrival();
 				//}
 			}
 			
@@ -206,7 +215,17 @@ public class QueuingNetworkOld {
 	public double ProcessArrivalTime()
 	{
 		double U = Math.random();
-		double lambda = 0.04;
+		//double lambda = 0.04;
+		double lambda = 0.01;
+		double V = ( -1 * (Math.log(1.0 - U)) ) / lambda; 
+		return V;
+	}
+	
+	public double newTs()
+	{
+		double U = Math.random();
+		//double lambda = 0.04;
+		double lambda = 0.0085;
 		double V = ( -1 * (Math.log(1.0 - U)) ) / lambda; 
 		return V;
 	}
