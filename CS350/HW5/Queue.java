@@ -1,8 +1,10 @@
 
 public class Queue {
 
-	double IAT[] = {0.33,1.17,0.24,0.45,1.01,1.02,1.26,0.73,1.37,1.86,1.33};
-	double Ts[] = {0.56,0.57,0.95,0.83,1.39,0.51,1.33,1.45,1.41,0.52,0.69};
+	double IAT[] = {0.33,1.17,0.24,0.45,1.01,1.02,1.26,0.73,1.37,1.86,1.33,
+			0.72,1.21,1.81,1.03,1.51,1.85,0.54,0.87,0.35,0.10,1.26,0.73,1.73};
+	double Ts[] = {0.56,0.57,0.95,0.83,1.39,0.51,1.33,1.45,1.41,0.52,0.69,
+			1.40,1.48,0.62,1.40,1.45,1.00,1.24,1.34,0.64,1.26,0.62,1.03,1.29};
 	
 	int iatIndex = -1;
 	int tsIndex = -1;
@@ -26,7 +28,7 @@ public class Queue {
 	
 	public static void main(String[] args)
 	{
-		Queue qu = new Queue(10);
+		Queue qu = new Queue(25);
 		qu.run();
 	}
 	
@@ -116,12 +118,18 @@ public class Queue {
 		else if(cur.getType() == "D")
 		{
 			q--;
-			
+
 			double Tq = cur.getTime() - lastArr.getTime();
 			System.out.print("Tq: " + Tq + "\t");
-			System.out.println("q: " + q);
+			System.out.print("q: " + q + "\t");
 			
 			int w = 0;
+			if(q>1)
+			{
+				w = q-1;
+			}
+			System.out.println("w: " + w);
+			
 			if(q>0)
 			{
 				
@@ -133,10 +141,7 @@ public class Queue {
 				Event nextDepart = new Event("D",nextTs + startTime);
 				sched.add(nextDepart);
 				
-				if(q>1)
-				{
-					w = q-1;
-				}
+				
 				
 				/*
 				System.out.print("w: " + w + "\t");
