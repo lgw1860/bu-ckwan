@@ -17,8 +17,6 @@ public class Queue {
 	
 	Event lastArr;
 	Event arrInNeed; //next arrival in need of a departure
-	double lastIAT;
-	double lastTs;
 	
 	
 	public Queue(double maxTime)
@@ -34,6 +32,9 @@ public class Queue {
 	
 	public void initializeSchedule()
 	{
+		System.out.println(IAT.length);
+		System.out.println(Ts.length);
+		
 		iatIndex++;
 		Event firstArr = new Event("A", 0.0 + IAT[iatIndex]);
 		sched = new Schedule(firstArr);
@@ -104,8 +105,8 @@ public class Queue {
 				lastArr = cur;
 				updateNextArr();
 				
-				lastTs = myTs;
-				lastIAT = nextIAT;
+				//lastTs = myTs;
+				//lastIAT = nextIAT;
 				
 				//System.out.print("Ts: " + myTs + "\t");
 			}
@@ -131,7 +132,11 @@ public class Queue {
 			System.out.print("w: " + w + "\t");
 			
 			double Tq = cur.getTime() - lastArr.getTime();
-			System.out.println("Tq: " + Tq + "\t");
+			System.out.print("Tq: " + Tq + "\t");
+			
+			System.out.print("IAT: " + IAT[iatIndex] + "\t");
+			System.out.println("Ts: " + Ts[tsIndex] + "\t");
+			
 			//System.out.print("q: " + q + "\t");
 			
 			/*
@@ -175,7 +180,7 @@ public class Queue {
 				lastArr = arrInNeed;
 				updateNextArr();
 				
-				lastTs = nextTs;
+				//lastTs = nextTs;
 				
 				//printStuff();
 				//System.out.print("Tq: " + Tq);
@@ -191,8 +196,8 @@ public class Queue {
 	public void printStuff()
 	{
 		String report = "";
-		report += "IAT: " + lastIAT;
-		report += "\tTs: " + lastTs;
+		//report += "IAT: " + lastIAT;
+		//report += "\tTs: " + lastTs;
 		report += "\tArr: " + arrInNeed;
 		System.out.println(report);
 		
