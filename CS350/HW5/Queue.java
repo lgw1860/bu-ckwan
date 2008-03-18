@@ -18,6 +18,10 @@ public class Queue {
 	Event lastArr;
 	Event arrInNeed; //next arrival in need of a departure
 	
+	int numRequests;
+	int sumQ;
+	int sumW;
+	double sumTq;
 	
 	public Queue(double maxTime)
 	{
@@ -26,7 +30,7 @@ public class Queue {
 	
 	public static void main(String[] args)
 	{
-		Queue qu = new Queue(100);
+		Queue qu = new Queue(24);
 		qu.run();
 	}
 	
@@ -63,6 +67,20 @@ public class Queue {
 			}
 			
 		}
+		
+		System.out.println("mean q: " + (double)sumQ/numRequests);
+		System.out.println("mean w: " + (double)sumW/numRequests);
+		System.out.println("mean Tq: " + (double)sumTq/numRequests);
+		
+		double tsSum = 0;
+		double iatSum = 0;
+		for(int i=0; i<numRequests; i++)
+		{
+			tsSum += Ts[i];
+			iatSum += IAT[i];
+		}
+		System.out.println("mean IAT: " + iatSum/numRequests);
+		System.out.println("mean Ts: " + tsSum/numRequests);
 	}
 	
 	public void execute(Event cur)
@@ -120,7 +138,7 @@ public class Queue {
 		{
 			
 			
-			q--;
+			//q--;
 
 			System.out.print("time: " + time + "\t");
 			System.out.print("q: " + q + "\t");
@@ -136,6 +154,13 @@ public class Queue {
 			
 			System.out.print("IAT: " + IAT[iatIndex] + "\t");
 			System.out.println("Ts: " + Ts[tsIndex] + "\t");
+			
+			numRequests ++;
+			sumQ += q;
+			sumW += w;
+			sumTq += Tq;
+			
+			q--;
 			
 			//System.out.print("q: " + q + "\t");
 			
