@@ -2,9 +2,9 @@
 public class Queue {
 
 	double IAT[] = {0.33,1.17,0.24,0.45,1.01,1.02,1.26,0.73,1.37,1.86,1.33,
-			0.72,1.21,1.81,1.03,1.51,1.85,0.54,0.87,0.35,0.10,1.26,0.73,1.73};
+			0.72,1.21,1.81,1.03,1.51,1.85,0.54,0.87,0.35,0.10,1.26,0.73,1.73,2.22,2.22};
 	double Ts[] = {0.56,0.57,0.95,0.83,1.39,0.51,1.33,1.45,1.41,0.52,0.69,
-			1.40,1.48,0.62,1.40,1.45,1.00,1.24,1.34,0.64,1.26,0.62,1.03,1.29};
+			1.40,1.48,0.62,1.40,1.45,1.00,1.24,1.34,0.64,1.26,0.62,1.03,1.29,2.22,2.22};
 	
 	int iatIndex = -1;
 	int tsIndex = -1;
@@ -30,7 +30,7 @@ public class Queue {
 	
 	public static void main(String[] args)
 	{
-		Queue qu = new Queue(24);
+		Queue qu = new Queue(28);
 		qu.run();
 	}
 	
@@ -68,9 +68,9 @@ public class Queue {
 			
 		}
 		
-		System.out.println("mean q: " + (double)sumQ/numRequests);
-		System.out.println("mean w: " + (double)sumW/numRequests);
-		System.out.println("mean Tq: " + (double)sumTq/numRequests);
+		System.out.println("mean q: " + (double)sumQ/(numRequests));
+		System.out.println("mean w: " + (double)sumW/(numRequests));
+		System.out.println("mean Tq: " + (double)sumTq/(numRequests));
 		
 		double tsSum = 0;
 		double iatSum = 0;
@@ -79,14 +79,15 @@ public class Queue {
 			tsSum += Ts[i];
 			iatSum += IAT[i];
 		}
-		System.out.println("mean IAT: " + iatSum/numRequests);
-		System.out.println("mean Ts: " + tsSum/numRequests);
+		System.out.println("mean IAT: " + iatSum/(numRequests));
+		System.out.println("mean Ts: " + tsSum/(numRequests));
 	}
 	
 	public void execute(Event cur)
 	{
 		if(cur.getType() == "A")
 		{
+
 			q++;
 			
 			//schedule next Arrival
@@ -138,15 +139,34 @@ public class Queue {
 		{
 			
 			
-			//q--;
+			q--;
 
+			
 			System.out.print("time: " + time + "\t");
 			System.out.print("q: " + q + "\t");
-			int w = 0;
+			
+			
+int w = 0;
+			
+			numRequests ++;
+			//sumQ += q;
+			
 			if(q>1)
 			{
 				w = q-1;
 			}
+			
+			sumW += w;
+			
+			if(q == 0)
+			{
+				sumQ += 1;
+			}else
+			{
+				sumQ += q;
+			}
+			
+			
 			System.out.print("w: " + w + "\t");
 			
 			double Tq = cur.getTime() - lastArr.getTime();
@@ -154,13 +174,13 @@ public class Queue {
 			
 			System.out.print("IAT: " + IAT[iatIndex] + "\t");
 			System.out.println("Ts: " + Ts[tsIndex] + "\t");
-			
-			numRequests ++;
-			sumQ += q;
-			sumW += w;
+	
 			sumTq += Tq;
 			
-			q--;
+			
+			
+			
+			//q--;
 			
 			//System.out.print("q: " + q + "\t");
 			
