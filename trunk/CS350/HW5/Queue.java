@@ -13,6 +13,7 @@ public class Queue {
 	Event currentEvent;
 	int q;
 	
+	Event lastArr;
 	Event arrInNeed; //next arrival in need of a departure
 	double lastIAT;
 	double lastTs;
@@ -76,6 +77,7 @@ public class Queue {
 			//System.out.print("q: " + q + "\t");
 			//System.out.print("IAT: " + nextIAT + "\t");
 			
+			int w = 0;
 			//if I'm only one in queue, sched my departure
 			if(q==1)
 			{
@@ -84,10 +86,20 @@ public class Queue {
 				Event myDepart = new Event("D", cur.getTime() + myTs);
 				sched.add(myDepart);
 				
+				/*
+				System.out.print("w: " + w + "\t");
+				System.out.print("q: " + q + "\t");
+				System.out.print("IAT: " + IAT[iatIndex-1] + "\t");
+				System.out.print("Ts: " + myTs + "\t");
+				System.out.print("Arr: " + cur.getTime() + "\t");
+				System.out.print("Dep: " + myDepart.getTime() + "\t");
 				double Tq = myDepart.getTime() - cur.getTime();
-				System.out.println("Tq: " + Tq);
+				System.out.print("Tq: " + Tq + "\t");
+				double Tw = (Tq - myTs);
+				System.out.println("Tw: " + Tw);
+				*/
 				
-				
+				lastArr = cur;
 				updateNextArr();
 				
 				lastTs = myTs;
@@ -98,11 +110,16 @@ public class Queue {
 			
 			//System.out.print("Arr: " + cur.getTime());
 			//System.out.println();
+			//System.out.println("Q: " + q);
 		}
 		
 		else if(cur.getType() == "D")
 		{
 			q--;
+			
+			double Tq = cur.getTime() - lastArr.getTime();
+			System.out.print("Tq: " + Tq + "\t");
+			System.out.println("q: " + q);
 			
 			int w = 0;
 			if(q>0)
@@ -116,22 +133,38 @@ public class Queue {
 				Event nextDepart = new Event("D",nextTs + startTime);
 				sched.add(nextDepart);
 				
+				if(q>1)
+				{
+					w = q-1;
+				}
+				
+				/*
+				System.out.print("w: " + w + "\t");
+				System.out.print("q: " + q + "\t");
+				
+				System.out.print("IAT: " + IAT[iatIndex-1] + "\t");
+				System.out.print("Ts: " + nextTs + "\t");
+				System.out.print("Arr: " + arrInNeed.getTime() + "\t");
+				System.out.print("Dep: " + nextDepart.getTime() + "\t");
 				double Tq = nextDepart.getTime() - arrInNeed.getTime();
-				System.out.println("Tq: " + Tq);
+				System.out.print("Tq: " + Tq + "\t");
+				double Tw = (Tq - nextTs);
+				System.out.println("Tw: " + Tw);
+				
+				*/
 				
 				
+				lastArr = arrInNeed;
 				updateNextArr();
 				
 				lastTs = nextTs;
 				
 				//printStuff();
 				//System.out.print("Tq: " + Tq);
+				
 			}
 			
-			if(q>1)
-			{
-				w = q-1;
-			}
+			
 			
 			
 		}
