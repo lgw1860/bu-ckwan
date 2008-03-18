@@ -35,7 +35,7 @@ public class Queue {
 
 	public static void main(String[] args)
 	{
-		Queue qu = new Queue(100,0.002,100);
+		Queue qu = new Queue(100,0.0085,.1);
 		qu.run();
 	}
 
@@ -75,6 +75,10 @@ public class Queue {
 		System.out.println("mean w: " + (double)sumW/monitorCount);
 		System.out.println("mean Tq: " + meanTq);
 		System.out.println("mean Tw: " + (meanTq - meanTs));
+		
+		System.out.println("mon: " + monitorCount);
+		System.out.println("sumTq: " + sumTq);
+		System.out.println("requests: " + numRequests);
 	}
 
 	public void execute(Event cur)
