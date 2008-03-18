@@ -18,10 +18,16 @@ public class Queue {
 	Event lastArr;
 	Event arrInNeed; //next arrival in need of a departure
 	
+	double monitorInc = .001;
+	int monitorCount;
 	int numRequests;
 	int sumQ;
 	int sumW;
+	int sumOtro;
+	int sumCinco;
 	double sumTq;
+	
+	boolean isBusy = false;
 	
 	public Queue(double maxTime)
 	{
@@ -39,15 +45,28 @@ public class Queue {
 		System.out.println(IAT.length);
 		System.out.println(Ts.length);
 		
+		Event firstMon = new Event("M",0.0+monitorInc);
+		sched = new Schedule(firstMon);
+		
+		/*
+		currentEvent = firstMon;
+		time = currentEvent.getTime();
+		execute(currentEvent);
+		*/
+		
 		iatIndex++;
 		Event firstArr = new Event("A", 0.0 + IAT[iatIndex]);
-		sched = new Schedule(firstArr);
 		arrInNeed = firstArr;
-		
+		sched.add(firstArr);
 		System.out.print("IATf: " + IAT[iatIndex]);
 		System.out.println();
 		
+		/*
 		currentEvent = firstArr;
+		time = currentEvent.getTime();
+		execute(currentEvent);
+		*/
+		currentEvent = sched.getFirstEvent();
 		time = currentEvent.getTime();
 		execute(currentEvent);
 	}
@@ -68,8 +87,10 @@ public class Queue {
 			
 		}
 		
-		System.out.println("mean q: " + (double)sumQ/(numRequests));
-		System.out.println("mean w: " + (double)sumW/(numRequests));
+		System.out.println("mean q: " + (double)sumQ/monitorCount);
+		System.out.println("mean w: " + (double)sumW/monitorCount);
+		System.out.println("mean Otro: " + (double)sumOtro/monitorCount);
+		System.out.println("mean Cinco: " + (double)sumCinco/monitorCount);
 		System.out.println("mean Tq: " + (double)sumTq/(numRequests));
 		
 		double tsSum = 0;
@@ -87,7 +108,7 @@ public class Queue {
 	{
 		if(cur.getType() == "A")
 		{
-
+			isBusy = false;
 			q++;
 			
 			//schedule next Arrival
@@ -103,6 +124,8 @@ public class Queue {
 			//if I'm only one in queue, sched my departure
 			if(q==1)
 			{
+				isBusy = true;
+				
 				tsIndex++;
 				double myTs = Ts[tsIndex];
 				Event myDepart = new Event("D", cur.getTime() + myTs);
@@ -138,7 +161,7 @@ public class Queue {
 		else if(cur.getType() == "D")
 		{
 			
-			
+			isBusy = false;
 			q--;
 
 			
@@ -151,6 +174,7 @@ int w = 0;
 			numRequests ++;
 			//sumQ += q;
 			
+			/*
 			if(q>1)
 			{
 				w = q-1;
@@ -165,7 +189,7 @@ int w = 0;
 			{
 				sumQ += q;
 			}
-			
+			*/
 			
 			System.out.print("w: " + w + "\t");
 			
@@ -195,7 +219,7 @@ int w = 0;
 			
 			if(q>0)
 			{
-				
+				isBusy = true;
 				
 				tsIndex++;
 				double nextTs = Ts[tsIndex];
@@ -235,6 +259,39 @@ int w = 0;
 			
 			
 			
+		}
+		else if(cur.getType() == "M")
+		{
+			System.out.println("Mtime: " + time + "\tq: " + q);
+			monitorCount++;
+			
+			/*
+			sumQ += q;
+			if(q==0)
+			{
+				sumQ += 1;
+			}
+			
+			sumW += q;
+			*/
+			
+			if(isBusy)
+			{
+				sumQ += q+1;
+				sumW += q;
+				sumOtro += q;
+				sumCinco += q+1;
+			}else
+			{
+				sumQ += q-1;
+				sumW += q-2;
+				sumOtro += q-1;
+				sumCinco += q;
+			}
+			
+			//sumW += w;
+			Event nextMon = new Event("M",cur.getTime() + monitorInc);
+			sched.add(nextMon);
 		}
 	}
 
