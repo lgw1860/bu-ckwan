@@ -28,7 +28,7 @@ public class Queue {
 	
 	public static void main(String[] args)
 	{
-		Queue qu = new Queue(25);
+		Queue qu = new Queue(100);
 		qu.run();
 	}
 	
@@ -117,18 +117,31 @@ public class Queue {
 		
 		else if(cur.getType() == "D")
 		{
+			
+			
 			q--;
 
-			double Tq = cur.getTime() - lastArr.getTime();
-			System.out.print("Tq: " + Tq + "\t");
+			System.out.print("time: " + time + "\t");
 			System.out.print("q: " + q + "\t");
+			int w = 0;
+			if(q>1)
+			{
+				w = q-1;
+			}
+			System.out.print("w: " + w + "\t");
 			
+			double Tq = cur.getTime() - lastArr.getTime();
+			System.out.println("Tq: " + Tq + "\t");
+			//System.out.print("q: " + q + "\t");
+			
+			/*
 			int w = 0;
 			if(q>1)
 			{
 				w = q-1;
 			}
 			System.out.println("w: " + w);
+			*/
 			
 			if(q>0)
 			{
