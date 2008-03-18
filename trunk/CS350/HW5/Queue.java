@@ -9,6 +9,9 @@ public class Queue {
 	int iatIndex = -1;
 	int tsIndex = -1;
 	
+	double parLambda = 100;
+	double parTs = 0.002;
+	
 	double maxTime;
 	double time;
 	Schedule sched;
@@ -18,13 +21,14 @@ public class Queue {
 	Event lastArr;
 	Event arrInNeed; //next arrival in need of a departure
 	
-	double monitorInc = .001;
+	double monitorInc = .01;
 	int monitorCount;
 	int numRequests;
 	int sumQ;
 	int sumW;
 	int sumOtro;
 	int sumCinco;
+	int sumSeis;
 	double sumTq;
 	
 	boolean isBusy = false;
@@ -36,7 +40,7 @@ public class Queue {
 	
 	public static void main(String[] args)
 	{
-		Queue qu = new Queue(28);
+		Queue qu = new Queue(100);
 		qu.run();
 	}
 	
@@ -91,15 +95,19 @@ public class Queue {
 		System.out.println("mean w: " + (double)sumW/monitorCount);
 		System.out.println("mean Otro: " + (double)sumOtro/monitorCount);
 		System.out.println("mean Cinco: " + (double)sumCinco/monitorCount);
+		System.out.println("mean Seis: " + (double)sumSeis/monitorCount);
 		System.out.println("mean Tq: " + (double)sumTq/(numRequests));
 		
 		double tsSum = 0;
 		double iatSum = 0;
+		
+		/*
 		for(int i=0; i<numRequests; i++)
 		{
 			tsSum += Ts[i];
 			iatSum += IAT[i];
 		}
+		*/
 		System.out.println("mean IAT: " + iatSum/(numRequests));
 		System.out.println("mean Ts: " + tsSum/(numRequests));
 	}
@@ -112,8 +120,9 @@ public class Queue {
 			q++;
 			
 			//schedule next Arrival
-			iatIndex++;
-			double nextIAT = IAT[iatIndex];
+			//iatIndex++;
+			//double nextIAT = IAT[iatIndex];
+			double nextIAT = randExp(1.0/parLambda);//1.0/5.0;
 			Event nextArr = new Event("A",cur.getTime() + nextIAT);
 			sched.add(nextArr);
 			
@@ -126,8 +135,8 @@ public class Queue {
 			{
 				isBusy = true;
 				
-				tsIndex++;
-				double myTs = Ts[tsIndex];
+				//tsIndex++;
+				double myTs = randExp(parTs);//0.15;//Ts[tsIndex];
 				Event myDepart = new Event("D", cur.getTime() + myTs);
 				sched.add(myDepart);
 				
@@ -165,8 +174,8 @@ public class Queue {
 			q--;
 
 			
-			System.out.print("time: " + time + "\t");
-			System.out.print("q: " + q + "\t");
+			//System.out.print("time: " + time + "\t");
+			//System.out.print("q: " + q + "\t");
 			
 			
 int w = 0;
@@ -191,13 +200,13 @@ int w = 0;
 			}
 			*/
 			
-			System.out.print("w: " + w + "\t");
+			//System.out.print("w: " + w + "\t");
 			
 			double Tq = cur.getTime() - lastArr.getTime();
-			System.out.print("Tq: " + Tq + "\t");
+			//System.out.print("Tq: " + Tq + "\t");
 			
-			System.out.print("IAT: " + IAT[iatIndex] + "\t");
-			System.out.println("Ts: " + Ts[tsIndex] + "\t");
+			//System.out.print("IAT: " + IAT[iatIndex] + "\t");
+			//System.out.println("Ts: " + Ts[tsIndex] + "\t");
 	
 			sumTq += Tq;
 			
@@ -221,8 +230,8 @@ int w = 0;
 			{
 				isBusy = true;
 				
-				tsIndex++;
-				double nextTs = Ts[tsIndex];
+				//tsIndex++;
+				double nextTs = randExp(parTs);//0.15;//Ts[tsIndex];
 				
 				double startTime = max(cur.getTime(), arrInNeed.getTime());
 				Event nextDepart = new Event("D",nextTs + startTime);
@@ -262,9 +271,9 @@ int w = 0;
 		}
 		else if(cur.getType() == "M")
 		{
-			System.out.println("Mtime: " + time + "\tq: " + q);
+			//System.out.println("Mtime: " + time + "\tq: " + q);
 			monitorCount++;
-			
+			System.out.println("Mtime: " + time);
 			/*
 			sumQ += q;
 			if(q==0)
@@ -274,19 +283,24 @@ int w = 0;
 			
 			sumW += q;
 			*/
-			
+			if(q>0)
+			{
 			if(isBusy)
 			{
 				sumQ += q+1;
 				sumW += q;
 				sumOtro += q;
 				sumCinco += q+1;
+				if(q-1>0){sumSeis += q-1;}
 			}else
 			{
 				sumQ += q-1;
 				sumW += q-2;
-				sumOtro += q-1;
+				if(q-1 > 0)
+					{sumOtro += q-1;}
 				sumCinco += q;
+				if(q-2>0){sumSeis += q-2;}
+			}
 			}
 			
 			//sumW += w;
@@ -326,4 +340,22 @@ int w = 0;
 			}
 		}
 	}
+	
+	
+		private double randExp(double T)
+		{
+			/* Relationship derivation:
+			 * F(U) = U, where 0 <= U <= 1
+			 * F(V) = 1 - exp(-lambda*V), where 0<= V <= infinity
+			 * Equating the above two, we get:
+			 * U = 1 - exp(-lambda*V)
+			 * Which leads to the following relationship.
+			 * V = - ln(1-U) /lambda
+			 */
+			double U = Math.random();
+			double lambda = 1.0/T;
+			double V = ( -1 * (Math.log(1.0 - U)) ) / lambda; 
+			return V;
+		}
+	
 }
