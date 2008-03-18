@@ -140,8 +140,12 @@ public class QueuingNetwork {
 			else {
 				System.out.println("WAIT in queue");
 			}
-			Event nextArrive = new Event("CA",currentEvent.getTime() + IAT);
-			sched.add(nextArrive);
+			if(currentEvent.getRepeat() == false)
+			{
+				Event nextArrive = new Event("CA",currentEvent.getTime() + IAT);
+				sched.add(nextArrive);
+			}
+			
 		}
 		else if(currentEvent.getType() == "CD")
 		{
@@ -162,7 +166,7 @@ public class QueuingNetwork {
 				//System.out.print(currentArrival + "\t");
 				//System.out.println(currentEvent);
 
-				/*
+				
 				//Determine destination upon departure
 				String dest = CPUDepartProb();
 				Event destEvent = null;
@@ -189,7 +193,7 @@ public class QueuingNetwork {
 				}
 				
 				System.out.println(destEvent);
-				*/
+				
 				
 				double Ts = CPUServiceTime();
 				double actualServiceStart = max(currentEvent.getTime(),currentCPUArr.getTime());
@@ -239,8 +243,9 @@ public class QueuingNetwork {
 			
 			if(dest == "C")
 			{
-				//destEvent = new Event("CA",currentEvent.getTime());
-				//sched.add(destEvent);
+				destEvent = new Event("CA",currentEvent.getTime());
+				destEvent.setRepeat(true);
+				sched.add(destEvent);
 			}
 			else if(dest == "N")
 			{

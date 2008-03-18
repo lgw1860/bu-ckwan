@@ -14,19 +14,31 @@ public class Event {
 	private double time;	//time to execute
 	private String type;	//(A)rrival or (D)eparture or (M)onitor
 	private Event next;		//following event, based on time
-	private double ts; //arrival time
+	private double ts; 		//arrival time
+	private boolean repeat; //has the packet already been processed before
 	
 	public Event(String type, double time)
 	{
 		this.type = type;
 		this.time = time;
 		this.ts = -1;
+		this.repeat = false;
 	}
 	
 	public Event(String type, double time, double arrival)
 	{
 		this(type,time);
 		this.ts = arrival;
+	}
+	
+	public boolean getRepeat()
+	{
+		return repeat;
+	}
+	
+	public void setRepeat(boolean status)
+	{
+		repeat = status;
 	}
 	
 	public double getTs()
