@@ -57,7 +57,9 @@ public class QueueNet {
 
 	public static void main(String[] args)
 	{
-		QueueNet qn = new QueueNet(5, 30, 0.03, 100);
+		//QueueNet qn = new QueueNet(5, 30, 0.03, 100);
+		QueueNet qn = new QueueNet(100, .0085, 100);
+		//QueueNet qn = new QueueNet(.08, 20, 100);
 		qn.run();
 	}
 
@@ -164,7 +166,8 @@ public class QueueNet {
 			sched.add(nextArr);
 
 			//if I'm only one in queue, sched my departure
-			if(theQueueCPU==1 && theQueueCPU < K+1)
+			if((theQueueCPU==1 || theQueueCPU==2)&& (theQueueCPU < K+1))
+			//if((theQueueCPU==1)&& (theQueueCPU < K+1))
 			{
 				isBusyCPU = true;
 
@@ -187,7 +190,13 @@ public class QueueNet {
 			double Tq = cur.getTime() - lastArrCPU.getTime();
 			sumTqCPU += Tq;
 
+			
 			if(theQueueCPU>0)
+			{
+				isBusyCPU = true;
+			}
+			
+			if(theQueueCPU>1) //>0 )
 			{
 				isBusyCPU = true;
 
@@ -200,6 +209,7 @@ public class QueueNet {
 				lastArrCPU = arrInNeedCPU;
 				updateNextArr("CA");
 			}
+			
 
 		}
 	}//end of executeCPU
