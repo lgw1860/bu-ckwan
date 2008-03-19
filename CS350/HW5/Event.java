@@ -16,6 +16,7 @@ public class Event {
 	private Event next;		//following event, based on time
 	private double ts; 		//arrival time
 	private boolean repeat; //has the packet already been processed before
+	private boolean dropped = false; //was the packet dropped?
 	
 	public Event(String type, double time)
 	{
@@ -29,6 +30,16 @@ public class Event {
 	{
 		this(type,time);
 		this.ts = arrival;
+	}
+	
+	public boolean getDropped()
+	{
+		return dropped;
+	}
+	
+	public void setDropped()
+	{
+		dropped = true;
 	}
 	
 	public boolean getRepeat()
