@@ -8,12 +8,14 @@ public class QueueNet {
 	double Lambda;
 	double Ts;
 	double maxTime;
+	int K;	//maximum size of waiting queue
 	double monitorInc = .01; //time between monitor events
 
 	double time;	//current time
 	Schedule sched;
 	Event currentEvent;
 	int monitorCount;
+	int numDropped;	//number of packets dropped
 
 	//CPU
 	int theQueueCPU;	 //the actual wait queue
@@ -42,11 +44,20 @@ public class QueueNet {
 		this.Lambda = Lambda;
 		this.Ts = Ts;
 		this.maxTime = maxTime;
+		this.K = 1000;
+	}
+
+	public QueueNet(int K, double Lambda, double Ts, double maxTime)
+	{
+		this.Lambda = Lambda;
+		this.Ts = Ts;
+		this.maxTime = maxTime;
+		this.K = K;
 	}
 
 	public static void main(String[] args)
 	{
-		QueueNet qn = new QueueNet(100,0.0085,100);
+		QueueNet qn = new QueueNet(5, 30, 0.03, 100);
 		qn.run();
 	}
 
@@ -84,14 +95,16 @@ public class QueueNet {
 		double meanTs = (double)sumTsCPU/(numRequestsCPU);
 		System.out.println("mean IAT: " + (double)sumIATCPU/(numRequestsCPU));
 		System.out.println("mean Ts: " + meanTs);
-		System.out.println("mean q: " + (double)sumQCPU/monitorCount);
+		System.out.println("mean q: " + (double)sumQCPU/(monitorCount));
 		System.out.println("mean w: " + (double)sumWCPU/monitorCount);
 		System.out.println("mean Tq: " + meanTq);
 		System.out.println("mean Tw: " + (meanTq - meanTs));
-		
+		System.out.println("Prob drop: " + (double)numDropped / (numRequestsCPU + numDropped));
+
 		System.out.println("mon: " + monitorCount);
 		System.out.println("sumTq: " + sumTqCPU);
 		System.out.println("requests: " + numRequestsCPU);
+		System.out.println("dropped: " + numDropped);
 	}
 
 	public void execute(Event cur)
@@ -132,7 +145,17 @@ public class QueueNet {
 		if(cur.getType() == "CA")
 		{
 			isBusyCPU = false;
-			theQueueCPU++;
+
+			if(theQueueCPU < K)
+			{
+				theQueueCPU++;
+			}
+			else
+			{
+				cur.setDropped();
+				numDropped++;
+			}
+
 
 			//schedule next Arrival
 			double nextIAT = randExp(1.0/Lambda);
@@ -141,7 +164,7 @@ public class QueueNet {
 			sched.add(nextArr);
 
 			//if I'm only one in queue, sched my departure
-			if(theQueueCPU==1)
+			if(theQueueCPU==1 && theQueueCPU < K+1)
 			{
 				isBusyCPU = true;
 
@@ -153,6 +176,7 @@ public class QueueNet {
 				lastArrCPU = cur;
 				updateNextArr("CA");
 			}
+
 		}
 
 		else if(cur.getType() == "CD")
@@ -188,7 +212,7 @@ public class QueueNet {
 		}
 		return b;
 	}
-	
+
 	private void updateNextArr(String type)
 	{
 		if(type == "CA")
@@ -196,7 +220,7 @@ public class QueueNet {
 			while(arrInNeedCPU.getNext() != null)
 			{
 				arrInNeedCPU = arrInNeedCPU.getNext();
-				if(arrInNeedCPU.getType() == "CA")
+				if((arrInNeedCPU.getType() == "CA") && (!arrInNeedCPU.getDropped()))
 				{
 					return;
 				}
@@ -224,9 +248,9 @@ public class QueueNet {
 				}
 			}
 		}
-		
+
 	}
-	
+
 	private double randExp(double T)
 	{
 		/* Relationship derivation:
@@ -238,7 +262,7 @@ public class QueueNet {
 		 * V = - ln(1-U) /lambda
 		 */
 
-	double U = Math.random();
+		double U = Math.random();
 		double lambda = 1.0/T;
 		double V = ( -1 * (Math.log(1.0 - U)) ) / lambda; 
 		return V;
