@@ -60,7 +60,45 @@ public class QueueNet {
 		//QueueNet qn = new QueueNet(5, 30, 0.03, 100);
 		QueueNet qn = new QueueNet(100, .0085, 100);
 		//QueueNet qn = new QueueNet(.08, 20, 100);
-		qn.run();
+		//qn.run();
+		
+		int neg2 = 0;
+		int neg1 = 0;
+		int mid = 0;
+		int pos1 = 0;
+		int pos2 = 0;
+		
+		for(int i=0; i<10000; i++)
+		{
+			double num = qn.NetworkServiceTime();
+			if(num<=(100-40))
+			{
+				neg2++;
+			}
+			else if( num>=(100+40))
+			{
+				pos2++;
+			}
+			else if(num<=(100-20) && num>(100-40))
+			{
+				neg1++;
+			}
+			else if( num>=(100+20) && num<(100+40))
+			{
+				pos1++;
+			}
+			else
+			{
+				mid++;
+			}
+			System.out.println(num);
+			//System.out.println(qn.randExp(1.0/40.0));
+		}
+		System.out.println("neg2: " + neg2);
+		System.out.println("neg1: " + neg1);
+		System.out.println("mid: " + mid);
+		System.out.println("pos1: " + pos1);
+		System.out.println("pos2: " + pos2);
 	}
 
 	public void initializeSchedule()
@@ -68,7 +106,7 @@ public class QueueNet {
 		Event firstMon = new Event("M",0.0+monitorInc);
 		sched = new Schedule(firstMon);
 
-		Event firstArr = new Event("CA", 0.0 + randExp(1.0/Lambda));
+		Event firstArr = new Event("CA", 0.0 + ProcessArrivalTime());//("CA", 0.0 + randExp(1.0/Lambda));
 		arrInNeedCPU = firstArr;
 		sched.add(firstArr);
 
@@ -160,7 +198,7 @@ public class QueueNet {
 
 
 			//schedule next Arrival
-			double nextIAT = randExp(1.0/Lambda);
+			double nextIAT = ProcessArrivalTime();//randExp(1.0/Lambda);
 			sumIATCPU += nextIAT;
 			Event nextArr = new Event("CA",cur.getTime() + nextIAT);
 			sched.add(nextArr);
@@ -171,7 +209,7 @@ public class QueueNet {
 			{
 				isBusyCPU = true;
 
-				double myTs = randExp(Ts);
+				double myTs = CPUServiceTime();//randExp(Ts);
 				sumTsCPU += myTs;
 				Event myDepart = new Event("CD", cur.getTime() + myTs);
 				sched.add(myDepart);
@@ -200,7 +238,7 @@ public class QueueNet {
 			{
 				isBusyCPU = true;
 
-				double nextTs = randExp(Ts);
+				double nextTs = CPUServiceTime();//randExp(Ts);
 				sumTsCPU += nextTs;
 				double startTime = max(cur.getTime(), arrInNeedCPU.getTime());
 				Event nextDepart = new Event("CD",nextTs + startTime);
@@ -261,7 +299,7 @@ public class QueueNet {
 
 	}
 
-	private double randExp(double T)
+	public double randExp(double T)
 	{
 		/* Relationship derivation:
 		 * F(U) = U, where 0 <= U <= 1
@@ -278,4 +316,50 @@ public class QueueNet {
 		return V;
 	}
 
+	/*
+	 * Arrival rate are Poisson with rate 40 proc/sec = 0.04 proc/msec
+	 */ 
+	public double ProcessArrivalTime()
+	{
+		double U = Math.random();
+		double lambda = 0.04;
+		double V = ( -1 * (Math.log(1.0 - U)) ) / lambda; 
+		return V;
+	}
+		
+	/*
+	 * CPU service time is uniformly distributed btn 10 and 30 msec
+	 */
+	public double CPUServiceTime()
+	{
+		return Math.random()* (30.0 - 10.0) + 10.0;
+	}
+	
+	/* 
+	 * Disk I/O service time is normally distributed 
+	 * with mean 100 msec and stddev 20 msec (never neg)
+	 */
+	public double DiskServiceTime()
+	{
+		double rand = 0.0;
+		double sum = 0.0;
+		for(int i=0; i<10; i++)
+		{
+			sum += Math.random();
+		}
+		sum = (sum - 10.0/2.0) / Math.sqrt(10.0/12.0);
+		rand = 20.0 * sum - 100.0;
+		rand = Math.abs(rand);
+		return rand;
+	}
+
+
+	/*
+	 * Network service time is constant with mean 25 msec
+	 */
+	protected double NetworkServiceTime()
+	{
+		return 25.0;
+	}
+	
 }//end of class
