@@ -9,7 +9,7 @@ public class QueueNet {
 	double Ts;
 	double maxTime;
 	int K;	//maximum size of waiting queue
-	double monitorInc = 100;//1000;//.01; //time between monitor events
+	double monitorInc = 100;//10;//1000;//.01; //time between monitor events
 
 	double time;	//current time
 	Schedule sched;
@@ -107,11 +107,11 @@ public class QueueNet {
 	{
 		initializeSchedule();
 
-		while(time < maxTime && currentEvent.getNext() != null)
+		while(time <= maxTime && currentEvent.getNext() != null)
 		{
 			currentEvent = currentEvent.getNext();
 			time = currentEvent.getTime();
-			if(currentEvent.getTime() < maxTime)
+			if(currentEvent.getTime() <= maxTime)
 			{execute(currentEvent);}
 		}
 
@@ -185,9 +185,9 @@ public class QueueNet {
 		double meanTqSystem = (double)sumTqSystem/(numRequestsSystem);
 		//double meanTq2System = (double)sumOtherTqSystem/(numRequestsSystem);
 		System.out.println("mean q: " + (double)sumQSystem/(monitorCount));
-		System.out.println("mean q2: " + (meanQCPU + meanQDisk + meanQNetwork) );
+		//System.out.println("mean q2: " + (meanQCPU + meanQDisk + meanQNetwork) );
 		System.out.println("mean w: " + (double)sumWSystem/monitorCount);
-		System.out.println("mean w2: " + (meanWCPU + meanWDisk + meanWNetwork) );
+		//System.out.println("mean w2: " + (meanWCPU + meanWDisk + meanWNetwork) );
 		System.out.println("mean Tq: " + meanTqSystem);
 		//System.out.println("mean Tq2: " + meanTq2System);
 		
@@ -210,10 +210,6 @@ public class QueueNet {
 		else if(cur.getType() == "NA" || cur.getType() == "ND")
 		{
 			executeNetwork(cur);
-		}
-		else if(cur.getType() == "EXIT")
-		{
-			executeExit(cur);
 		}
 		else if(cur.getType() == "M")
 		{
@@ -251,45 +247,74 @@ public class QueueNet {
 				}
 			}
 
-			System.out.println(time + " " + curWCPU);
+			if(time % 1000 == 0)
+			{
+				System.out.println(time + " " + curWCPU);	
+			}
 			
 			//Disk
+			int curQDisk = 0;
+			int curWDisk = 0;
 			if(theQueueDisk>0)
 			{
 				if(isBusyDisk)
 				{
-					sumQDisk += theQueueDisk;
+					curQDisk = theQueueDisk;
+					sumQDisk += curQDisk;
 					if(theQueueDisk-1>0)
-					{sumWDisk += theQueueDisk-1;}
+					{
+						curWDisk = theQueueDisk-1;
+						sumWDisk += curWDisk;
+					}
 				}else
 				{
 					if(theQueueDisk-1 > 0)
-					{sumQDisk += theQueueDisk-1;}
+					{
+						curQDisk = theQueueDisk-1;
+						sumQDisk += curQDisk;
+					}
 					if(theQueueDisk-2>0)
-					{sumWDisk += theQueueDisk-2;}
+					{
+						curWDisk = theQueueDisk-2;
+						sumWDisk += curWDisk;
+					}
 				}
 			}
 			
 			//Network
+			int curQNetwork = 0;
+			int curWNetwork = 0;
 			if(theQueueNetwork>0)
 			{
 				if(isBusyNetwork)
 				{
-					sumQNetwork += theQueueNetwork;
+					curQNetwork = theQueueNetwork;
+					sumQNetwork += curQNetwork;
 					if(theQueueNetwork-1>0)
-					{sumWNetwork += theQueueNetwork-1;}
+					{
+						curWNetwork = theQueueNetwork-1;
+						sumWNetwork += curWNetwork;
+					}
 				}else
 				{
 					if(theQueueNetwork-1 > 0)
-					{sumQNetwork += theQueueNetwork-1;}
+					{
+						curQNetwork = theQueueNetwork-1;
+						sumQNetwork += curQNetwork;
+					}
 					if(theQueueNetwork-2>0)
-					{sumWNetwork += theQueueNetwork-2;}
+					{
+						curWNetwork = theQueueNetwork-2;
+						sumWNetwork += curWNetwork;
+					}
 				}
 			}
 			
 			//System
-			sumQSystem += (((double)sumQCPU/numRequestsCPU) + ((double)sumQDisk/numRequestsDisk) + ((double)sumQNetwork/numRequestsNetwork));
-			sumWSystem += (sumWCPU + sumWDisk + sumWNetwork);
+			//sumQSystem += (((double)sumQCPU/numRequestsCPU) + ((double)sumQDisk/numRequestsDisk) + ((double)sumQNetwork/numRequestsNetwork));
+			//sumWSystem += (sumWCPU + sumWDisk + sumWNetwork);
+			sumQSystem += (curQCPU + curQDisk + curQNetwork);
+			sumWSystem += (curWCPU + curWDisk + curWNetwork);
 			
 			Event nextMon = new Event("M",cur.getTime() + monitorInc);
 			sched.add(nextMon);
@@ -384,7 +409,7 @@ public class QueueNet {
 				}
 			}
 
-			System.out.println(destEvent);
+			//System.out.println(destEvent);
 
 
 			if(theQueueCPU>0)
@@ -466,7 +491,7 @@ public class QueueNet {
 				}
 			}
 
-			System.out.println(destEvent);
+			//System.out.println(destEvent);
 
 
 			if(theQueueDisk>0)
@@ -524,7 +549,7 @@ public class QueueNet {
 			//System.out.println("CPU Arrival");
 			sumCA++;
 
-			System.out.println(destEvent);
+			//System.out.println(destEvent);
 
 
 			if(theQueueNetwork>0)
