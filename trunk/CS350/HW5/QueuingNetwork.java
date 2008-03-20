@@ -13,13 +13,13 @@ public class QueuingNetwork {
 
 	private int qCPU;
 	private int qDisk;
-	private int qNetwork;
+	//private int qNetwork;
 
 	private int numProcesses;
 	
 	private int numCPUDepart;
 	private int numDiskDepart;
-	private int numNetworkDepart;
+	//private int numNetworkDepart;
 	
 	private double sumCPUTq;
 	private int sumCPUQ;
@@ -28,8 +28,8 @@ public class QueuingNetwork {
 	private double sumDiskTq;
 	private int sumDiskQ;
 	
-	private double sumNetworkTq;
-	private int sumNetworkQ;
+	//private double sumNetworkTq;
+	//private int sumNetworkQ;
 	
 	private int sumDA;
 	private int sumNA;
