@@ -3,6 +3,7 @@
  * @author Christopher Kwan
  *
  */
+import java.util.*;
 public class QueueNet {
 
 	double Lambda;
@@ -10,7 +11,8 @@ public class QueueNet {
 	double maxTime;
 	int K;	//maximum size of waiting queue
 	double monitorInc = 100;//10;//1000;//.01; //time between monitor events
-
+	int steadyTime = 43000;
+	
 	double time;	//current time
 	Schedule sched;
 	Event currentEvent;
@@ -29,6 +31,8 @@ public class QueueNet {
 	int sumWCPU;
 	double sumTqCPU;
 	double sumOtherTqCPU;
+	LinkedList<Double> waitQueueList;
+	LinkedList<Double> responseTimeList;
 
 	//Disk
 	int theQueueDisk;
@@ -105,6 +109,8 @@ public class QueueNet {
 
 	public void run()
 	{
+		waitQueueList = new LinkedList<Double>();
+		responseTimeList = new LinkedList<Double>();
 		initializeSchedule();
 
 		while(time <= maxTime && currentEvent.getNext() != null)
@@ -195,6 +201,17 @@ public class QueueNet {
 		//System.out.println("sumTq2System: " + sumOtherTqSystem);
 		System.out.println("requestsSystem: " + numRequestsSystem);
 		
+		System.out.println("mean steady state: " + meanSteadyState(waitQueueList));
+		System.out.println("stdDev steady state: " + stdDevSteadyState(waitQueueList));
+		System.out.println("CIError95: " + CIError(95,waitQueueList));
+		System.out.println("CIError98: " + CIError(98,waitQueueList));
+		
+		System.out.println("\n\n");
+		
+		System.out.println("mean steady state: " + meanSteadyState(responseTimeList));
+		System.out.println("stdDev steady state: " + stdDevSteadyState(responseTimeList));
+		System.out.println("CIError95: " + CIError(95,responseTimeList));
+		System.out.println("CIError98: " + CIError(98,responseTimeList));
 	}
 
 	public void execute(Event cur)
@@ -250,6 +267,11 @@ public class QueueNet {
 			if(time % 1000 == 0)
 			{
 				System.out.println(time + "\t" + curWCPU);	
+				//System.out.println(time + "\t" + theQueueCPU);	
+				if(time >= steadyTime)
+				{
+					waitQueueList.add(new Double(curWCPU));
+				}
 			}
 			
 			//Disk
@@ -385,6 +407,7 @@ public class QueueNet {
 				sumExit++;
 				double SystemTq = cur.getTime() - cur.getOrigArrival();
 				sumTqSystem += SystemTq;
+				responseTimeList.add(new Double(SystemTq));
 			}
 			else if(dest == "D")
 			{
@@ -725,4 +748,50 @@ public class QueueNet {
 		}
 	}
 
+	
+	public double meanSteadyState(LinkedList<Double> list)
+	{
+		double sum = 0.0;
+		System.out.println("size: " + list.size());
+
+		Iterator iter = list.iterator();
+		while(iter.hasNext())
+		{
+			sum += (Double)iter.next();
+		}
+		
+		System.out.println("sum: " + sum);
+		return (sum / list.size());
+	}
+	
+	public double stdDevSteadyState(LinkedList<Double> list)
+	{
+		double mean = meanSteadyState(list);
+		double diffSquared = 0.0;
+		double sum = 0.0;
+		Iterator iter = list.iterator();
+		while(iter.hasNext())
+		{
+			diffSquared = Math.pow(((Double)iter.next() - mean),2);
+			sum += diffSquared;
+		}
+		return Math.sqrt((sum / list.size()));
+	}
+	
+	public double CIError(int percentile, LinkedList<Double> list)
+	{
+		double stdDev = stdDevSteadyState(list);
+		double sampleSize = list.size();
+		double z = -1.0;
+		if(percentile == 95)
+		{
+			z = 1.96;
+		}
+		else if(percentile == 98)
+		{
+			z = 2.325;
+		}
+		return (z * stdDev / Math.sqrt(sampleSize));
+	}
+	
 }//end of class
