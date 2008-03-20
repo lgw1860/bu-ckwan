@@ -43,9 +43,16 @@ public class QueueNet {
 	int sumWDisk;
 
 	//Network
-
+	int theQueueNetwork;
 	Event lastArrNetwork;   //prev arrival that just departed
 	Event arrInNeedNetwork; //next arrival in need of a departure
+	boolean isBusyNetwork = false;
+	int numRequestsNetwork;
+	double sumTsNetwork;
+	double sumTqNetwork;
+	double sumOtherTqNetwork;
+	int sumQNetwork;
+	int sumWNetwork;
 
 	//Whole system
 	int numProcesses;
@@ -132,6 +139,7 @@ public class QueueNet {
 		System.out.println("sumNA: " + sumNA);
 		System.out.println("sumExit: " + sumExit);
 
+		//Disk stats
 		System.out.println("\nDisk: ");
 		double meanTqDisk = (double)sumTqDisk/(numRequestsDisk);
 		double meanTq2Disk = (double)sumOtherTqDisk/(numRequestsDisk);
@@ -146,6 +154,22 @@ public class QueueNet {
 		System.out.println("sumTqDisk: " + sumTqDisk);
 		System.out.println("sumTq2Disk: " + sumOtherTqDisk);
 		System.out.println("requestsDisk: " + numRequestsDisk);
+		
+		//Network stats
+		System.out.println("\nNetwork: ");
+		double meanTqNetwork = (double)sumTqNetwork/(numRequestsNetwork);
+		double meanTq2Network = (double)sumOtherTqNetwork/(numRequestsNetwork);
+		double meanTsNetwork = (double)sumTsNetwork/(numRequestsNetwork);
+		System.out.println("mean Ts: " + meanTsNetwork);
+		System.out.println("mean q: " + (double)sumQNetwork/(monitorCount));
+		System.out.println("mean w: " + (double)sumWNetwork/monitorCount);
+		System.out.println("mean Tq: " + meanTqNetwork);
+		System.out.println("mean Tq2: " + meanTq2Network);
+		System.out.println("mean Tw: " + (meanTqNetwork - meanTsNetwork));
+
+		System.out.println("sumTqNetwork: " + sumTqNetwork);
+		System.out.println("sumTq2Network: " + sumOtherTqNetwork);
+		System.out.println("requestsNetwork: " + numRequestsNetwork);
 	}
 
 	public void execute(Event cur)
@@ -157,6 +181,10 @@ public class QueueNet {
 		else if(cur.getType() == "DA" || cur.getType() == "DD")
 		{
 			executeDisk(cur);
+		}
+		else if(cur.getType() == "NA" || cur.getType() == "ND")
+		{
+			executeNetwork(cur);
 		}
 		else if(cur.getType() == "M")
 		{
@@ -194,6 +222,23 @@ public class QueueNet {
 					{sumQDisk += theQueueDisk-1;}
 					if(theQueueDisk-2>0)
 					{sumWDisk += theQueueDisk-2;}
+				}
+			}
+			
+			//Network
+			if(theQueueNetwork>0)
+			{
+				if(isBusyNetwork)
+				{
+					sumQNetwork += theQueueNetwork;
+					if(theQueueNetwork-1>0)
+					{sumWNetwork += theQueueNetwork-1;}
+				}else
+				{
+					if(theQueueNetwork-1 > 0)
+					{sumQNetwork += theQueueNetwork-1;}
+					if(theQueueNetwork-2>0)
+					{sumWNetwork += theQueueNetwork-2;}
 				}
 			}
 
@@ -282,6 +327,10 @@ public class QueueNet {
 				sched.add(destEvent);
 				//System.out.println("Network Arrival");
 				sumNA++;
+				if(arrInNeedNetwork == null)
+				{
+					arrInNeedNetwork = destEvent;
+				}
 			}
 
 			System.out.println(destEvent);
@@ -360,6 +409,10 @@ public class QueueNet {
 				sched.add(destEvent);
 				//System.out.println("Network Arrival");
 				sumNA++;
+				if(arrInNeedNetwork == null)
+				{
+					arrInNeedNetwork = destEvent;
+				}
 			}
 
 			System.out.println(destEvent);
@@ -378,14 +431,68 @@ public class QueueNet {
 				lastArrDisk = arrInNeedDisk;
 				updateNextArr("DA");
 			}
-
-
-
-
 		}
 	}//end of executeDisk
 
-	
+
+	public void executeNetwork(Event cur)
+	{
+		if(cur.getType() == "NA")
+		{
+			isBusyNetwork = false;
+			theQueueNetwork++;
+
+			//if I'm only one in queue, sched my departure
+			if(theQueueNetwork==1)
+			{
+				isBusyNetwork = true;
+
+				double myTs = NetworkServiceTime();//randExp(Ts);
+				sumTsNetwork += myTs;
+				Event myDepart = new Event("ND", cur.getTime() + myTs, cur.getTime(), cur.getOrigArrival());
+				sched.add(myDepart);
+
+				lastArrNetwork = cur;
+				updateNextArr("NA");
+			}
+
+		}
+
+		else if(cur.getType() == "ND")
+		{
+			isBusyNetwork = false;
+			numRequestsNetwork ++;
+			theQueueNetwork--;
+			double Tq = cur.getTime() - lastArrNetwork.getTime();
+			sumTqNetwork += Tq;
+			sumOtherTqNetwork += (cur.getTime() - cur.getArrival());
+
+			//Arrive at CPU queue upon departure
+
+			Event destEvent = new Event("CA",cur.getTime(),cur.getArrival(),cur.getOrigArrival(),true);
+			sched.add(destEvent);
+			//System.out.println("CPU Arrival");
+			sumCA++;
+
+			System.out.println(destEvent);
+
+
+			if(theQueueNetwork>0)
+			{
+				isBusyNetwork = true;
+
+				double nextTs = NetworkServiceTime();//randExp(Ts);
+				sumTsNetwork += nextTs;
+				double startTime = max(cur.getTime(), arrInNeedNetwork.getTime());
+				Event nextDepart = new Event("ND",nextTs + startTime,arrInNeedNetwork.getTime());
+				sched.add(nextDepart);
+
+				lastArrNetwork = arrInNeedNetwork;
+				updateNextArr("NA");
+			}
+		}
+	}//end of executeNetwork
+
 	private double max(double a, double b)
 	{
 		if(a > b)
