@@ -55,11 +55,14 @@ public class QueueNet {
 	int sumWNetwork;
 
 	//Whole system
-	int numProcesses;
+	int numRequestsSystem;
+	int sumTqSystem;
 	int sumDA;
 	int sumExit;
 	int sumNA;
 	int sumCA;
+	int sumQSystem;
+	int sumWSystem;
 
 	public QueueNet(double Lambda, double Ts, double maxTime)
 	{
@@ -119,9 +122,10 @@ public class QueueNet {
 		double meanTq = (double)sumTqCPU/(numRequestsCPU);
 		double meanTq2 = (double)sumOtherTqCPU/(numRequestsCPU);
 		double meanTs = (double)sumTsCPU/(numRequestsCPU);
+		double meanQCPU = (double)sumQCPU/(monitorCount);
 		System.out.println("mean IAT: " + (double)sumIATCPU/(numRequestsCPU));
 		System.out.println("mean Ts: " + meanTs);
-		System.out.println("mean q: " + (double)sumQCPU/(monitorCount));
+		System.out.println("mean q: " + meanQCPU);
 		System.out.println("mean w: " + (double)sumWCPU/monitorCount);
 		System.out.println("mean Tq: " + meanTq);
 		System.out.println("mean Tq2: " + meanTq2);
@@ -134,7 +138,7 @@ public class QueueNet {
 		System.out.println("requests: " + numRequestsCPU);
 		System.out.println("dropped: " + numDropped);
 
-		System.out.println("numProcesses: " + numProcesses);
+		System.out.println("numProcesses: " + numRequestsSystem);
 		System.out.println("sumDA: " + sumDA);
 		System.out.println("sumNA: " + sumNA);
 		System.out.println("sumExit: " + sumExit);
@@ -144,8 +148,9 @@ public class QueueNet {
 		double meanTqDisk = (double)sumTqDisk/(numRequestsDisk);
 		double meanTq2Disk = (double)sumOtherTqDisk/(numRequestsDisk);
 		double meanTsDisk = (double)sumTsDisk/(numRequestsDisk);
+		double meanQDisk = (double)sumQDisk/(monitorCount);
 		System.out.println("mean Ts: " + meanTsDisk);
-		System.out.println("mean q: " + (double)sumQDisk/(monitorCount));
+		System.out.println("mean q: " + meanQDisk);
 		System.out.println("mean w: " + (double)sumWDisk/monitorCount);
 		System.out.println("mean Tq: " + meanTqDisk);
 		System.out.println("mean Tq2: " + meanTq2Disk);
@@ -160,8 +165,9 @@ public class QueueNet {
 		double meanTqNetwork = (double)sumTqNetwork/(numRequestsNetwork);
 		double meanTq2Network = (double)sumOtherTqNetwork/(numRequestsNetwork);
 		double meanTsNetwork = (double)sumTsNetwork/(numRequestsNetwork);
+		double meanQNetwork = (double)sumQNetwork/(monitorCount);
 		System.out.println("mean Ts: " + meanTsNetwork);
-		System.out.println("mean q: " + (double)sumQNetwork/(monitorCount));
+		System.out.println("mean q: " + meanQNetwork);
 		System.out.println("mean w: " + (double)sumWNetwork/monitorCount);
 		System.out.println("mean Tq: " + meanTqNetwork);
 		System.out.println("mean Tq2: " + meanTq2Network);
@@ -170,6 +176,21 @@ public class QueueNet {
 		System.out.println("sumTqNetwork: " + sumTqNetwork);
 		System.out.println("sumTq2Network: " + sumOtherTqNetwork);
 		System.out.println("requestsNetwork: " + numRequestsNetwork);
+		
+		//System stats
+		System.out.println("\nSystem: ");
+		double meanTqSystem = (double)sumTqSystem/(numRequestsSystem);
+		//double meanTq2System = (double)sumOtherTqSystem/(numRequestsSystem);
+		System.out.println("mean q: " + (double)sumQSystem/(monitorCount));
+		System.out.println("mean q2: " + (meanQCPU + meanQDisk + meanQNetwork) );
+		System.out.println("mean w: " + (double)sumWSystem/monitorCount);
+		System.out.println("mean Tq: " + meanTqSystem);
+		//System.out.println("mean Tq2: " + meanTq2System);
+		
+		System.out.println("sumTqSystem: " + sumTqSystem);
+		//System.out.println("sumTq2System: " + sumOtherTqSystem);
+		System.out.println("requestsSystem: " + numRequestsSystem);
+		
 	}
 
 	public void execute(Event cur)
@@ -185,6 +206,10 @@ public class QueueNet {
 		else if(cur.getType() == "NA" || cur.getType() == "ND")
 		{
 			executeNetwork(cur);
+		}
+		else if(cur.getType() == "EXIT")
+		{
+			executeExit(cur);
 		}
 		else if(cur.getType() == "M")
 		{
@@ -241,7 +266,11 @@ public class QueueNet {
 					{sumWNetwork += theQueueNetwork-2;}
 				}
 			}
-
+			
+			//System
+			sumQSystem += (((double)sumQCPU/numRequestsCPU) + ((double)sumQDisk/numRequestsDisk) + ((double)sumQNetwork/numRequestsNetwork));
+			sumWSystem += (sumWCPU + sumWDisk + sumWNetwork);
+			
 			Event nextMon = new Event("M",cur.getTime() + monitorInc);
 			sched.add(nextMon);
 		}
@@ -306,9 +335,11 @@ public class QueueNet {
 			{
 				//have to remember to retain first arrival
 				destEvent = new Event("EXIT",cur.getTime(),cur.getArrival(),cur.getOrigArrival());
-				numProcesses++;
+				numRequestsSystem++;
 				//System.out.println("Exit");
 				sumExit++;
+				double SystemTq = cur.getTime() - cur.getOrigArrival();
+				sumTqSystem += SystemTq;
 			}
 			else if(dest == "D")
 			{
@@ -434,7 +465,6 @@ public class QueueNet {
 		}
 	}//end of executeDisk
 
-
 	public void executeNetwork(Event cur)
 	{
 		if(cur.getType() == "NA")
@@ -493,6 +523,14 @@ public class QueueNet {
 		}
 	}//end of executeNetwork
 
+	
+	public void executeExit(Event cur)
+	{
+		numRequestsSystem ++;
+		double Tq = cur.getTime() - cur.getOrigArrival();
+		sumTqSystem += Tq;
+	}//end of executeExit
+	
 	private double max(double a, double b)
 	{
 		if(a > b)
