@@ -9,7 +9,7 @@ public class QueueNet {
 	double Ts;
 	double maxTime;
 	int K;	//maximum size of waiting queue
-	double monitorInc = 1;//1000;//.01; //time between monitor events
+	double monitorInc = 100;//1000;//.01; //time between monitor events
 
 	double time;	//current time
 	Schedule sched;
@@ -83,7 +83,7 @@ public class QueueNet {
 	public static void main(String[] args)
 	{
 		//QueueNet qn = new QueueNet(5, 30, 0.03, 100);
-		QueueNet qn = new QueueNet(100, .0085, 1000);//100000);
+		QueueNet qn = new QueueNet(100, .0085, 100000);//1000);//100000);
 		//QueueNet qn = new QueueNet(.08, 20, 100);
 		qn.run();
 	}
@@ -123,10 +123,11 @@ public class QueueNet {
 		double meanTq2 = (double)sumOtherTqCPU/(numRequestsCPU);
 		double meanTs = (double)sumTsCPU/(numRequestsCPU);
 		double meanQCPU = (double)sumQCPU/(monitorCount);
+		double meanWCPU = (double)sumWCPU/monitorCount;
 		System.out.println("mean IAT: " + (double)sumIATCPU/(numRequestsCPU));
 		System.out.println("mean Ts: " + meanTs);
 		System.out.println("mean q: " + meanQCPU);
-		System.out.println("mean w: " + (double)sumWCPU/monitorCount);
+		System.out.println("mean w: " + meanWCPU);
 		System.out.println("mean Tq: " + meanTq);
 		System.out.println("mean Tq2: " + meanTq2);
 		System.out.println("mean Tw: " + (meanTq - meanTs));
@@ -149,9 +150,10 @@ public class QueueNet {
 		double meanTq2Disk = (double)sumOtherTqDisk/(numRequestsDisk);
 		double meanTsDisk = (double)sumTsDisk/(numRequestsDisk);
 		double meanQDisk = (double)sumQDisk/(monitorCount);
+		double meanWDisk = (double)sumWDisk/monitorCount;
 		System.out.println("mean Ts: " + meanTsDisk);
 		System.out.println("mean q: " + meanQDisk);
-		System.out.println("mean w: " + (double)sumWDisk/monitorCount);
+		System.out.println("mean w: " + meanWDisk);
 		System.out.println("mean Tq: " + meanTqDisk);
 		System.out.println("mean Tq2: " + meanTq2Disk);
 		System.out.println("mean Tw: " + (meanTqDisk - meanTsDisk));
@@ -166,9 +168,10 @@ public class QueueNet {
 		double meanTq2Network = (double)sumOtherTqNetwork/(numRequestsNetwork);
 		double meanTsNetwork = (double)sumTsNetwork/(numRequestsNetwork);
 		double meanQNetwork = (double)sumQNetwork/(monitorCount);
+		double meanWNetwork = (double)sumWNetwork/monitorCount;
 		System.out.println("mean Ts: " + meanTsNetwork);
 		System.out.println("mean q: " + meanQNetwork);
-		System.out.println("mean w: " + (double)sumWNetwork/monitorCount);
+		System.out.println("mean w: " + meanWNetwork);
 		System.out.println("mean Tq: " + meanTqNetwork);
 		System.out.println("mean Tq2: " + meanTq2Network);
 		System.out.println("mean Tw: " + (meanTqNetwork - meanTsNetwork));
@@ -184,6 +187,7 @@ public class QueueNet {
 		System.out.println("mean q: " + (double)sumQSystem/(monitorCount));
 		System.out.println("mean q2: " + (meanQCPU + meanQDisk + meanQNetwork) );
 		System.out.println("mean w: " + (double)sumWSystem/monitorCount);
+		System.out.println("mean w2: " + (meanWCPU + meanWDisk + meanWNetwork) );
 		System.out.println("mean Tq: " + meanTqSystem);
 		//System.out.println("mean Tq2: " + meanTq2System);
 		
@@ -214,25 +218,41 @@ public class QueueNet {
 		else if(cur.getType() == "M")
 		{
 			monitorCount++;
-			System.out.println("Time: " + time + "\tCPUQueue: " + theQueueCPU);
+			//System.out.println("Time: " + time + "\tCPUQueue: " + theQueueCPU);
 
+		
+			
 			//CPU
+			int curWCPU = 0;
+			int curQCPU = 0;
 			if(theQueueCPU>0)
 			{
 				if(isBusyCPU)
 				{
-					sumQCPU += theQueueCPU;
+					curQCPU = theQueueCPU;
+					sumQCPU += curQCPU;
 					if(theQueueCPU-1>0)
-					{sumWCPU += theQueueCPU-1;}
+					{
+						curWCPU = theQueueCPU-1;
+						sumWCPU += curWCPU;
+					}
 				}else
 				{
 					if(theQueueCPU-1 > 0)
-					{sumQCPU += theQueueCPU-1;}
+					{
+						curQCPU = theQueueCPU-1;
+						sumQCPU += curQCPU;
+					}
 					if(theQueueCPU-2>0)
-					{sumWCPU += theQueueCPU-2;}
+					{
+						curWCPU = theQueueCPU-2;
+						sumWCPU += curWCPU;
+					}
 				}
 			}
 
+			System.out.println(time + " " + curWCPU);
+			
 			//Disk
 			if(theQueueDisk>0)
 			{
