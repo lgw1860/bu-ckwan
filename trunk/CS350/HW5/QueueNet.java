@@ -249,7 +249,7 @@ public class QueueNet {
 
 			if(time % 1000 == 0)
 			{
-				System.out.println(time + " " + curWCPU);	
+				System.out.println(time + "\t" + curWCPU);	
 			}
 			
 			//Disk
