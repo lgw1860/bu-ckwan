@@ -9,7 +9,7 @@ public class QueueNet {
 	double Ts;
 	double maxTime;
 	int K;	//maximum size of waiting queue
-	double monitorInc = 10;//.01; //time between monitor events
+	double monitorInc = 1;//1000;//.01; //time between monitor events
 
 	double time;	//current time
 	Schedule sched;
@@ -31,9 +31,16 @@ public class QueueNet {
 	double sumOtherTqCPU;
 
 	//Disk
-
+	int theQueueDisk;
 	Event lastArrDisk;   //prev arrival that just departed
 	Event arrInNeedDisk; //next arrival in need of a departure
+	boolean isBusyDisk = false;
+	int numRequestsDisk;
+	double sumTsDisk;
+	double sumTqDisk;
+	double sumOtherTqDisk;
+	int sumQDisk;
+	int sumWDisk;
 
 	//Network
 
@@ -45,7 +52,8 @@ public class QueueNet {
 	int sumDA;
 	int sumExit;
 	int sumNA;
-	
+	int sumCA;
+
 	public QueueNet(double Lambda, double Ts, double maxTime)
 	{
 		this.Lambda = Lambda;
@@ -65,7 +73,7 @@ public class QueueNet {
 	public static void main(String[] args)
 	{
 		//QueueNet qn = new QueueNet(5, 30, 0.03, 100);
-		QueueNet qn = new QueueNet(100, .0085, 100000);
+		QueueNet qn = new QueueNet(100, .0085, 1000);//100000);
 		//QueueNet qn = new QueueNet(.08, 20, 100);
 		qn.run();
 	}
@@ -118,11 +126,26 @@ public class QueueNet {
 		System.out.println("sumTq2: " + sumOtherTqCPU);
 		System.out.println("requests: " + numRequestsCPU);
 		System.out.println("dropped: " + numDropped);
-		
+
 		System.out.println("numProcesses: " + numProcesses);
 		System.out.println("sumDA: " + sumDA);
 		System.out.println("sumNA: " + sumNA);
 		System.out.println("sumExit: " + sumExit);
+
+		System.out.println("\nDisk: ");
+		double meanTqDisk = (double)sumTqDisk/(numRequestsDisk);
+		double meanTq2Disk = (double)sumOtherTqDisk/(numRequestsDisk);
+		double meanTsDisk = (double)sumTsDisk/(numRequestsDisk);
+		System.out.println("mean Ts: " + meanTsDisk);
+		System.out.println("mean q: " + (double)sumQDisk/(monitorCount));
+		System.out.println("mean w: " + (double)sumWDisk/monitorCount);
+		System.out.println("mean Tq: " + meanTqDisk);
+		System.out.println("mean Tq2: " + meanTq2Disk);
+		System.out.println("mean Tw: " + (meanTqDisk - meanTsDisk));
+
+		System.out.println("sumTqDisk: " + sumTqDisk);
+		System.out.println("sumTq2Disk: " + sumOtherTqDisk);
+		System.out.println("requestsDisk: " + numRequestsDisk);
 	}
 
 	public void execute(Event cur)
@@ -157,6 +180,23 @@ public class QueueNet {
 				}
 			}
 
+			//Disk
+			if(theQueueDisk>0)
+			{
+				if(isBusyDisk)
+				{
+					sumQDisk += theQueueDisk;
+					if(theQueueDisk-1>0)
+					{sumWDisk += theQueueDisk-1;}
+				}else
+				{
+					if(theQueueDisk-1 > 0)
+					{sumQDisk += theQueueDisk-1;}
+					if(theQueueDisk-2>0)
+					{sumWDisk += theQueueDisk-2;}
+				}
+			}
+
 			Event nextMon = new Event("M",cur.getTime() + monitorInc);
 			sched.add(nextMon);
 		}
@@ -179,15 +219,18 @@ public class QueueNet {
 			}
 
 
-			//schedule next Arrival
-			double nextIAT = ProcessArrivalTime();//randExp(1.0/Lambda);
-			sumIATCPU += nextIAT;
-			Event nextArr = new Event("CA",cur.getTime() + nextIAT, cur.getTime() + nextIAT, cur.getTime() + nextIAT);
-			sched.add(nextArr);
+			//schedule next Arrival if process did not arrive from another queue
+			if(cur.getRepeat() == false)
+			{
+				double nextIAT = ProcessArrivalTime();//randExp(1.0/Lambda);
+				sumIATCPU += nextIAT;
+				Event nextArr = new Event("CA",cur.getTime() + nextIAT, cur.getTime() + nextIAT, cur.getTime() + nextIAT);
+				sched.add(nextArr);
+			}
 
 			//if I'm only one in queue, sched my departure
 			if((theQueueCPU==1 || theQueueCPU==2)&& (theQueueCPU < K+1))
-			//if((theQueueCPU==1)&& (theQueueCPU < K+1))
+				//if((theQueueCPU==1)&& (theQueueCPU < K+1))
 			{
 				isBusyCPU = true;
 
@@ -210,7 +253,7 @@ public class QueueNet {
 			double Tq = cur.getTime() - lastArrCPU.getTime();
 			sumTqCPU += Tq;
 			sumOtherTqCPU += (cur.getTime() - cur.getArrival());
-			
+
 			//Determine destination upon departure
 			String dest = CPUDepartProb();
 			Event destEvent = null;
@@ -228,6 +271,10 @@ public class QueueNet {
 				sched.add(destEvent);
 				//System.out.println("Disk Arrival");
 				sumDA++;
+				if(arrInNeedDisk == null)
+				{
+					arrInNeedDisk = destEvent;
+				}
 			}
 			else if(dest == "N")
 			{
@@ -236,15 +283,15 @@ public class QueueNet {
 				//System.out.println("Network Arrival");
 				sumNA++;
 			}
-			
+
 			System.out.println(destEvent);
-			
-			
+
+
 			if(theQueueCPU>0)
 			{
 				isBusyCPU = true;
 			}
-			
+
 			if(theQueueCPU>1) //>0 )
 			{
 				isBusyCPU = true;
@@ -258,18 +305,86 @@ public class QueueNet {
 				lastArrCPU = arrInNeedCPU;
 				updateNextArr("CA");
 			}
-			
-			
-			
+
+
+
 
 		}
 	}//end of executeCPU
 
-	
 	public void executeDisk(Event cur)
 	{
-		
-	}
+		if(cur.getType() == "DA")
+		{
+			isBusyDisk = false;
+			theQueueDisk++;
+
+			//if I'm only one in queue, sched my departure
+			if(theQueueDisk==1)
+			{
+				isBusyDisk = true;
+
+				double myTs = DiskServiceTime();//randExp(Ts);
+				sumTsDisk += myTs;
+				Event myDepart = new Event("DD", cur.getTime() + myTs, cur.getTime(), cur.getOrigArrival());
+				sched.add(myDepart);
+
+				lastArrDisk = cur;
+				updateNextArr("DA");
+			}
+
+		}
+
+		else if(cur.getType() == "DD")
+		{
+			isBusyDisk = false;
+			numRequestsDisk ++;
+			theQueueDisk--;
+			double Tq = cur.getTime() - lastArrDisk.getTime();
+			sumTqDisk += Tq;
+			sumOtherTqDisk += (cur.getTime() - cur.getArrival());
+
+			//Determine destination upon departure
+			String dest = DiskDepartProb();
+			Event destEvent = null;
+			if(dest == "C")
+			{
+				destEvent = new Event("CA",cur.getTime(),cur.getArrival(),cur.getOrigArrival(),true);
+				sched.add(destEvent);
+				//System.out.println("CPU Arrival");
+				sumCA++;
+			}
+			else if(dest == "N")
+			{
+				destEvent = new Event("NA",cur.getTime(),cur.getArrival(),cur.getOrigArrival());
+				sched.add(destEvent);
+				//System.out.println("Network Arrival");
+				sumNA++;
+			}
+
+			System.out.println(destEvent);
+
+
+			if(theQueueDisk>0)
+			{
+				isBusyDisk = true;
+
+				double nextTs = DiskServiceTime();//randExp(Ts);
+				sumTsDisk += nextTs;
+				double startTime = max(cur.getTime(), arrInNeedDisk.getTime());
+				Event nextDepart = new Event("DD",nextTs + startTime,arrInNeedDisk.getTime());
+				sched.add(nextDepart);
+
+				lastArrDisk = arrInNeedDisk;
+				updateNextArr("DA");
+			}
+
+
+
+
+		}
+	}//end of executeDisk
+
 	
 	private double max(double a, double b)
 	{
@@ -335,7 +450,7 @@ public class QueueNet {
 		return V;
 	}
 
-	
+
 	/*
 	 * Arrival rate are Poisson with rate 40 proc/sec = 0.04 proc/msec
 	 */ 
@@ -354,7 +469,7 @@ public class QueueNet {
 	{
 		return Math.random()* (30.0 - 10.0) + 10.0;
 	}
-	
+
 	/* 
 	 * Disk I/O service time is normally distributed 
 	 * with mean 100 msec and stddev 20 msec (never neg)
@@ -380,7 +495,7 @@ public class QueueNet {
 	{
 		return 25.0;
 	}
-	
+
 	/*
 	 * Where will process go after leaving CPU?
 	 */
@@ -398,6 +513,23 @@ public class QueueNet {
 			return ("D");
 		}
 		else	//0.4 chance
+		{
+			return ("N");
+		}
+	}
+
+	/*
+	 * Where will process go after leaving Disk?
+	 */
+	public String DiskDepartProb()
+	{
+		double prob = Math.random();
+		//System.out.println("prob: " + prob);
+		if(prob <= 0.5)
+		{
+			return ("C");
+		}
+		else
 		{
 			return ("N");
 		}
