@@ -9,7 +9,7 @@ public class QueueNet {
 	double Ts;
 	double maxTime;
 	int K;	//maximum size of waiting queue
-	double monitorInc = .01; //time between monitor events
+	double monitorInc = 10;//.01; //time between monitor events
 
 	double time;	//current time
 	Schedule sched;
@@ -40,6 +40,12 @@ public class QueueNet {
 	Event lastArrNetwork;   //prev arrival that just departed
 	Event arrInNeedNetwork; //next arrival in need of a departure
 
+	//Whole system
+	int numProcesses;
+	int sumDA;
+	int sumExit;
+	int sumNA;
+	
 	public QueueNet(double Lambda, double Ts, double maxTime)
 	{
 		this.Lambda = Lambda;
@@ -59,7 +65,7 @@ public class QueueNet {
 	public static void main(String[] args)
 	{
 		//QueueNet qn = new QueueNet(5, 30, 0.03, 100);
-		QueueNet qn = new QueueNet(100, .0085, 100);
+		QueueNet qn = new QueueNet(100, .0085, 100000);
 		//QueueNet qn = new QueueNet(.08, 20, 100);
 		qn.run();
 	}
@@ -69,7 +75,8 @@ public class QueueNet {
 		Event firstMon = new Event("M",0.0+monitorInc);
 		sched = new Schedule(firstMon);
 
-		Event firstArr = new Event("CA", 0.0 + ProcessArrivalTime());//("CA", 0.0 + randExp(1.0/Lambda));
+		double firstArrTime = ProcessArrivalTime();
+		Event firstArr = new Event("CA", 0.0 + firstArrTime, 0.0 + firstArrTime, 0.0 + firstArrTime );//("CA", 0.0 + randExp(1.0/Lambda));
 		arrInNeedCPU = firstArr;
 		sched.add(firstArr);
 
@@ -111,6 +118,11 @@ public class QueueNet {
 		System.out.println("sumTq2: " + sumOtherTqCPU);
 		System.out.println("requests: " + numRequestsCPU);
 		System.out.println("dropped: " + numDropped);
+		
+		System.out.println("numProcesses: " + numProcesses);
+		System.out.println("sumDA: " + sumDA);
+		System.out.println("sumNA: " + sumNA);
+		System.out.println("sumExit: " + sumExit);
 	}
 
 	public void execute(Event cur)
@@ -118,6 +130,10 @@ public class QueueNet {
 		if(cur.getType() == "CA" || cur.getType() == "CD")
 		{
 			executeCPU(cur);
+		}
+		else if(cur.getType() == "DA" || cur.getType() == "DD")
+		{
+			executeDisk(cur);
 		}
 		else if(cur.getType() == "M")
 		{
@@ -166,18 +182,18 @@ public class QueueNet {
 			//schedule next Arrival
 			double nextIAT = ProcessArrivalTime();//randExp(1.0/Lambda);
 			sumIATCPU += nextIAT;
-			Event nextArr = new Event("CA",cur.getTime() + nextIAT, cur.getTime() + nextIAT);
+			Event nextArr = new Event("CA",cur.getTime() + nextIAT, cur.getTime() + nextIAT, cur.getTime() + nextIAT);
 			sched.add(nextArr);
 
 			//if I'm only one in queue, sched my departure
-			//if((theQueueCPU==1 || theQueueCPU==2)&& (theQueueCPU < K+1))
-			if((theQueueCPU==1)&& (theQueueCPU < K+1))
+			if((theQueueCPU==1 || theQueueCPU==2)&& (theQueueCPU < K+1))
+			//if((theQueueCPU==1)&& (theQueueCPU < K+1))
 			{
 				isBusyCPU = true;
 
 				double myTs = CPUServiceTime();//randExp(Ts);
 				sumTsCPU += myTs;
-				Event myDepart = new Event("CD", cur.getTime() + myTs, cur.getTime());
+				Event myDepart = new Event("CD", cur.getTime() + myTs, cur.getTime(), cur.getOrigArrival());
 				sched.add(myDepart);
 
 				lastArrCPU = cur;
@@ -195,13 +211,42 @@ public class QueueNet {
 			sumTqCPU += Tq;
 			sumOtherTqCPU += (cur.getTime() - cur.getArrival());
 			
+			//Determine destination upon departure
+			String dest = CPUDepartProb();
+			Event destEvent = null;
+			if(dest == "E")
+			{
+				//have to remember to retain first arrival
+				destEvent = new Event("EXIT",cur.getTime(),cur.getArrival(),cur.getOrigArrival());
+				numProcesses++;
+				//System.out.println("Exit");
+				sumExit++;
+			}
+			else if(dest == "D")
+			{
+				destEvent = new Event("DA",cur.getTime(),cur.getArrival(),cur.getOrigArrival());
+				sched.add(destEvent);
+				//System.out.println("Disk Arrival");
+				sumDA++;
+			}
+			else if(dest == "N")
+			{
+				destEvent = new Event("NA",cur.getTime(),cur.getArrival(),cur.getOrigArrival());
+				sched.add(destEvent);
+				//System.out.println("Network Arrival");
+				sumNA++;
+			}
+			
+			System.out.println(destEvent);
+			
+			
 			if(theQueueCPU>0)
 			{
 				isBusyCPU = true;
-			//}
+			}
 			
-			//if(theQueueCPU>1) //>0 )
-			//{
+			if(theQueueCPU>1) //>0 )
+			{
 				isBusyCPU = true;
 
 				double nextTs = CPUServiceTime();//randExp(Ts);
@@ -220,6 +265,12 @@ public class QueueNet {
 		}
 	}//end of executeCPU
 
+	
+	public void executeDisk(Event cur)
+	{
+		
+	}
+	
 	private double max(double a, double b)
 	{
 		if(a > b)
@@ -284,20 +335,10 @@ public class QueueNet {
 		return V;
 	}
 
-	public double ProcessArrivalTime()
-	{
-		return randExp(1.0/Lambda);
-	}
-	
-	public double CPUServiceTime()
-	{
-		return randExp(Ts);
-	}
 	
 	/*
 	 * Arrival rate are Poisson with rate 40 proc/sec = 0.04 proc/msec
 	 */ 
-	/*
 	public double ProcessArrivalTime()
 	{
 		double U = Math.random();
@@ -305,16 +346,14 @@ public class QueueNet {
 		double V = ( -1 * (Math.log(1.0 - U)) ) / lambda; 
 		return V;
 	}
-		*/
+
 	/*
 	 * CPU service time is uniformly distributed btn 10 and 30 msec
 	 */
-	/*
 	public double CPUServiceTime()
 	{
 		return Math.random()* (30.0 - 10.0) + 10.0;
 	}
-	*/
 	
 	/* 
 	 * Disk I/O service time is normally distributed 

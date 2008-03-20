@@ -15,6 +15,7 @@ public class Event {
 	private String type;	//(A)rrival or (D)eparture or (M)onitor
 	private Event next;		//following event, based on time
 	private double arr; 		//arrival time
+	private double origArr;		//first arrival time for repeat customers
 	private boolean repeat; //has the packet already been processed before
 	private boolean dropped = false; //was the packet dropped?
 	
@@ -30,6 +31,17 @@ public class Event {
 	{
 		this(type,time);
 		this.arr = arrival;
+	}
+	
+	public Event(String type, double time, double arrival, double origArr)
+	{
+		this(type,time,arrival);
+		this.origArr = arrival;
+	}
+	
+	public double getOrigArrival()
+	{
+		return origArr;
 	}
 	
 	public double getArrival()
