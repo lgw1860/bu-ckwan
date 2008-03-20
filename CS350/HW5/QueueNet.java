@@ -28,6 +28,7 @@ public class QueueNet {
 	int sumQCPU;
 	int sumWCPU;
 	double sumTqCPU;
+	double sumOtherTqCPU;
 
 	//Disk
 
@@ -60,45 +61,7 @@ public class QueueNet {
 		//QueueNet qn = new QueueNet(5, 30, 0.03, 100);
 		QueueNet qn = new QueueNet(100, .0085, 100);
 		//QueueNet qn = new QueueNet(.08, 20, 100);
-		//qn.run();
-		
-		int neg2 = 0;
-		int neg1 = 0;
-		int mid = 0;
-		int pos1 = 0;
-		int pos2 = 0;
-		
-		for(int i=0; i<10000; i++)
-		{
-			double num = qn.NetworkServiceTime();
-			if(num<=(100-40))
-			{
-				neg2++;
-			}
-			else if( num>=(100+40))
-			{
-				pos2++;
-			}
-			else if(num<=(100-20) && num>(100-40))
-			{
-				neg1++;
-			}
-			else if( num>=(100+20) && num<(100+40))
-			{
-				pos1++;
-			}
-			else
-			{
-				mid++;
-			}
-			System.out.println(num);
-			//System.out.println(qn.randExp(1.0/40.0));
-		}
-		System.out.println("neg2: " + neg2);
-		System.out.println("neg1: " + neg1);
-		System.out.println("mid: " + mid);
-		System.out.println("pos1: " + pos1);
-		System.out.println("pos2: " + pos2);
+		qn.run();
 	}
 
 	public void initializeSchedule()
@@ -132,17 +95,20 @@ public class QueueNet {
 
 		System.out.println("\nCPU: ");
 		double meanTq = (double)sumTqCPU/(numRequestsCPU);
+		double meanTq2 = (double)sumOtherTqCPU/(numRequestsCPU);
 		double meanTs = (double)sumTsCPU/(numRequestsCPU);
 		System.out.println("mean IAT: " + (double)sumIATCPU/(numRequestsCPU));
 		System.out.println("mean Ts: " + meanTs);
 		System.out.println("mean q: " + (double)sumQCPU/(monitorCount));
 		System.out.println("mean w: " + (double)sumWCPU/monitorCount);
 		System.out.println("mean Tq: " + meanTq);
+		System.out.println("mean Tq2: " + meanTq2);
 		System.out.println("mean Tw: " + (meanTq - meanTs));
 		System.out.println("Prob drop: " + (double)numDropped / (numRequestsCPU + numDropped));
 
 		System.out.println("mon: " + monitorCount);
 		System.out.println("sumTq: " + sumTqCPU);
+		System.out.println("sumTq2: " + sumOtherTqCPU);
 		System.out.println("requests: " + numRequestsCPU);
 		System.out.println("dropped: " + numDropped);
 	}
@@ -200,18 +166,18 @@ public class QueueNet {
 			//schedule next Arrival
 			double nextIAT = ProcessArrivalTime();//randExp(1.0/Lambda);
 			sumIATCPU += nextIAT;
-			Event nextArr = new Event("CA",cur.getTime() + nextIAT);
+			Event nextArr = new Event("CA",cur.getTime() + nextIAT, cur.getTime() + nextIAT);
 			sched.add(nextArr);
 
 			//if I'm only one in queue, sched my departure
-			if((theQueueCPU==1 || theQueueCPU==2)&& (theQueueCPU < K+1))
-			//if((theQueueCPU==1)&& (theQueueCPU < K+1))
+			//if((theQueueCPU==1 || theQueueCPU==2)&& (theQueueCPU < K+1))
+			if((theQueueCPU==1)&& (theQueueCPU < K+1))
 			{
 				isBusyCPU = true;
 
 				double myTs = CPUServiceTime();//randExp(Ts);
 				sumTsCPU += myTs;
-				Event myDepart = new Event("CD", cur.getTime() + myTs);
+				Event myDepart = new Event("CD", cur.getTime() + myTs, cur.getTime());
 				sched.add(myDepart);
 
 				lastArrCPU = cur;
@@ -227,26 +193,28 @@ public class QueueNet {
 			theQueueCPU--;
 			double Tq = cur.getTime() - lastArrCPU.getTime();
 			sumTqCPU += Tq;
-
+			sumOtherTqCPU += (cur.getTime() - cur.getArrival());
 			
 			if(theQueueCPU>0)
 			{
 				isBusyCPU = true;
-			}
+			//}
 			
-			if(theQueueCPU>1) //>0 )
-			{
+			//if(theQueueCPU>1) //>0 )
+			//{
 				isBusyCPU = true;
 
 				double nextTs = CPUServiceTime();//randExp(Ts);
 				sumTsCPU += nextTs;
 				double startTime = max(cur.getTime(), arrInNeedCPU.getTime());
-				Event nextDepart = new Event("CD",nextTs + startTime);
+				Event nextDepart = new Event("CD",nextTs + startTime,arrInNeedCPU.getTime());
 				sched.add(nextDepart);
 
 				lastArrCPU = arrInNeedCPU;
 				updateNextArr("CA");
 			}
+			
+			
 			
 
 		}
@@ -316,9 +284,20 @@ public class QueueNet {
 		return V;
 	}
 
+	public double ProcessArrivalTime()
+	{
+		return randExp(1.0/Lambda);
+	}
+	
+	public double CPUServiceTime()
+	{
+		return randExp(Ts);
+	}
+	
 	/*
 	 * Arrival rate are Poisson with rate 40 proc/sec = 0.04 proc/msec
 	 */ 
+	/*
 	public double ProcessArrivalTime()
 	{
 		double U = Math.random();
@@ -326,14 +305,16 @@ public class QueueNet {
 		double V = ( -1 * (Math.log(1.0 - U)) ) / lambda; 
 		return V;
 	}
-		
+		*/
 	/*
 	 * CPU service time is uniformly distributed btn 10 and 30 msec
 	 */
+	/*
 	public double CPUServiceTime()
 	{
 		return Math.random()* (30.0 - 10.0) + 10.0;
 	}
+	*/
 	
 	/* 
 	 * Disk I/O service time is normally distributed 
@@ -353,7 +334,6 @@ public class QueueNet {
 		return rand;
 	}
 
-
 	/*
 	 * Network service time is constant with mean 25 msec
 	 */
@@ -362,4 +342,26 @@ public class QueueNet {
 		return 25.0;
 	}
 	
+	/*
+	 * Where will process go after leaving CPU?
+	 */
+	public String CPUDepartProb()
+	{
+		double prob = Math.random();
+		//System.out.println("prob: " + prob);
+
+		if(prob<=0.5) //0.5 chance
+		{
+			return ("E");
+		}
+		else if(prob>0.5 && prob<=(0.5+0.1)) //0.1 chance
+		{
+			return ("D");
+		}
+		else	//0.4 chance
+		{
+			return ("N");
+		}
+	}
+
 }//end of class
