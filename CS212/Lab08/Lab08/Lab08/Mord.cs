@@ -11,16 +11,15 @@ namespace Lab08
             LittleGood, BigGood
         };
 
-        double[] values = { 3.0, 5.0, 6.0, 7.0, 1.0};
-            //{ 3.0, 5.0, 6.0, 7.0, 1.0, 5.0 };
+        double[] values = //{ 3.0, 5.0, 6.0, 7.0, 1.0};
+            { 3.0, 5.0, 6.0, 7.0, 1.0, 5.0 };
             //{ 22, 33, 44, 55, 22, 55, 55, 66 };
 
-        sbyte[] tieBreakValues = { 2, 3, 1, 4, 5};//{ 2, 3, 1, 4, 5, 6 };
+        sbyte[] tieBreakValues = { 2, 3, 1, 4, 5, 6 };
         //= { 20, 20, 20, 30 };
             //{ 22, 33, 44, 55, 22, 55, 55, 66 };
             
             //{ 345.0, 477.0, 211.0 };
-        LinkedList<int> list = new LinkedList<int>();
 
         public void run()
         {
@@ -48,7 +47,7 @@ namespace Lab08
                 Console.WriteLine("{0}: {1}: {2}", i, values[i], results[i]);
             }
 
-            GetKord(tieBreakValues);
+            GetKord(tieBreakValues, eDirection.BigGood);
         }
 
         public delegate sbyte[] op(eDirection dir);
@@ -131,12 +130,92 @@ namespace Lab08
             return mordValues;
         }//end GetMord
 
+
+        protected Dictionary<double, sbyte> GetMapNoTies(eDirection dir)
+        {
+            Dictionary<double, sbyte> map = new Dictionary<double, sbyte>();
+            double[] sortedValues = (double[])values.Clone();
+            Array.Sort(sortedValues); //sort a copy of the values array
+
+            //Reverse if BigGood
+            if (dir == eDirection.BigGood)
+            {
+                Array.Reverse(sortedValues);
+            }
+
+            sbyte rank = 1;
+            //sbyte skippedRanks = 0;
+
+            //rank the sorted values array and create a mapping
+            for (int i = 0; i < sortedValues.Length; i++)
+            {
+                if (i == 0)
+                {
+                    //mordValues[i] = rank;
+                    if (!map.ContainsKey(sortedValues[i]))
+                    {
+                        map.Add(sortedValues[i], rank);
+                    }
+                }
+                else
+                {
+                    if (sortedValues[i] == sortedValues[i - 1])
+                    {
+                        rank++;
+                        //skippedRanks++;
+                        //mordValues[i] = rank;
+                        if (!map.ContainsKey(sortedValues[i]))
+                        {
+                            map.Add(sortedValues[i], rank);
+                        }
+                    }
+                    else
+                    {
+                        rank++;
+                        //rank += skippedRanks;
+                        //skippedRanks = 0;
+                        //rank++;
+                        //mordValues[i] = rank;
+                        if (!map.ContainsKey(sortedValues[i]))
+                        {
+                            map.Add(sortedValues[i], rank);
+                        }
+                    }
+                }
+            }//end for
+            return map;
+        }
+
+        protected sbyte[] GetMordNoTies(eDirection dir)
+        {
+            sbyte[] mordValues = new sbyte[values.Length];
+
+            Dictionary<double, sbyte> map = GetMapNoTies(dir);
+
+            //use mapping to place ranks in original order
+            for (int j = 0; j < values.Length; j++)
+            {
+                if (map.ContainsKey(values[j]))
+                {
+                    mordValues[j] = map[values[j]];
+                }
+            }
+
+            foreach (KeyValuePair<double, sbyte> k in map)
+            {
+                Console.WriteLine(k.ToString());
+            }
+
+            return mordValues;
+        }//end GetMord
+
         protected Dictionary<double, sbyte> GetPositionMap()
         {
             Dictionary<double, sbyte> map = new Dictionary<double, sbyte>();
             for (int i = 0; i < values.Length; i++)
             {
-                map.Add(values[i], (sbyte)i);
+                if(!map.ContainsKey(values[i]))
+                    map.Add(values[i], (sbyte)i);
             }
 
             foreach (KeyValuePair<double, sbyte> k in map)
@@ -147,28 +226,30 @@ namespace Lab08
             return map;
         }
 
-        protected void GetKord(sbyte[] tiebrk)
+        public sbyte[] GetKord(sbyte[] tiebrk, eDirection dir)
         {
             sbyte[] origMord = GetMord(eDirection.BigGood);
-            sbyte[] revisedMord = (sbyte[])origMord.Clone();
+            sbyte[] revisedMord = GetMordNoTies(eDirection.BigGood);
+           
             Dictionary<sbyte, sbyte> tieBrkMap = new Dictionary<sbyte, sbyte>();
-            //tieBrkMap.Values.
 
             double[] sortedValues = (double[])values.Clone();
             Array.Sort(sortedValues);
 
-            ///BIGGOOD
-            Array.Reverse(sortedValues);
+            //for BIGGOOD
+            if (dir == eDirection.BigGood)
+            {
+                Array.Reverse(sortedValues);
+            }
 
             sbyte[] kordValues = new sbyte[values.Length];
-            //Dictionary<double, sbyte> map = GetMap(eDirection.BigGood);
             Dictionary<double, sbyte> posMap = GetPositionMap();
             for (int j = 0; j < kordValues.Length; j++)
             {
-                //if (posMap.ContainsKey(j))
-                //{
+                if (posMap.ContainsKey(sortedValues[j]))
+                {
                     kordValues[j] = posMap[sortedValues[j]];
-                //}
+                }
 
             }
 
@@ -190,11 +271,19 @@ namespace Lab08
                 Console.Write("{0} ", tiebrk[i]);
             }
 
+            Console.WriteLine("\nthe revised mord values will be");
+            for (int i = 0; i < revisedMord.Length; i++)
+            {
+                Console.Write("{0} ", revisedMord[i]);
+            }
+
             Console.WriteLine("\nand the kord values will be");
             for (int i = 0; i < kordValues.Length; i++)
             {
                 Console.Write("{0} ", kordValues[i]);
             }
+
+            return kordValues;
         }
     }
 }
