@@ -1,0 +1,18 @@
+obj\Debug\Lab 07.exe
+obj\Debug\Lab 07.pdb
+obj\Release\ResolveAssemblyReference.cache
+obj\Release\Lab_07.Form1.resources
+obj\Release\Lab_07.Form2.resources
+obj\Release\Lab_07.Properties.Resources.resources
+obj\Release\Lab 07.csproj.GenerateResource.Cache
+obj\Release\Lab 07.exe
+obj\Release\Lab 07.pdb
+bin\Release\Lab 07.exe
+bin\Release\Lab 07.pdb
+bin\Debug\Lab 07.exe
+bin\Debug\Lab 07.pdb
+obj\Debug\ResolveAssemblyReference.cache
+obj\Debug\Lab_07.Form1.resources
+obj\Debug\Lab_07.Form2.resources
+obj\Debug\Lab_07.Properties.Resources.resources
+obj\Debug\Lab 07.csproj.GenerateResource.Cache
