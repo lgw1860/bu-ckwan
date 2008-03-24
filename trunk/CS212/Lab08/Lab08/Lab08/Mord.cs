@@ -11,47 +11,15 @@ namespace Lab08
             LittleGood, BigGood
         };
 
-        double[] values = //{ 3.0, 5.0, 6.0, 7.0, 1.0};
-            { 3.0, 5.0, 6.0, 7.0, 1.0, 5.0 };
-            //{ 22, 33, 44, 55, 22, 55, 55, 66 };
-
-        sbyte[] tieBreakValues = { 2, 3, 1, 4, 5, 6 };
-        //= { 20, 20, 20, 30 };
-            //{ 22, 33, 44, 55, 22, 55, 55, 66 };
-            
-            //{ 345.0, 477.0, 211.0 };
-
-        public void run()
-        {
-            /*
-            values = new double[100];
-            for (int i = 0; i < values.Length; i++)
-            {
-                values[i] = i * .50;
-            }
-            Array.Reverse(values);
-            */
-
-            GetPositionMap();
-
-            for (int i = 0; i < values.Length; i++)
-            {
-                Console.WriteLine("{0}: {1}", i, values[i]);
-            }
-
-            op test = new op(GetMord);
-            sbyte[] results = test(eDirection.BigGood);
-
-            for (int i = 0; i < results.Length; i++)
-            {
-                Console.WriteLine("{0}: {1}: {2}", i, values[i], results[i]);
-            }
-
-            GetKord(tieBreakValues, eDirection.BigGood);
-        }
-
+        double[] values;
+        sbyte[] tieBreakValues;
         public delegate sbyte[] op(eDirection dir);
 
+        public Mord(double[] values, sbyte[] tieBreakValues)
+        {
+            this.values = values;
+            this.tieBreakValues = tieBreakValues;
+        }
 
         protected Dictionary<double, sbyte> GetMap(eDirection dir)
         {
@@ -107,7 +75,7 @@ namespace Lab08
             return map;
         }
 
-        protected sbyte[] GetMord(eDirection dir)
+        public sbyte[] GetMord(eDirection dir)
         {
             sbyte[] mordValues = new sbyte[values.Length];
            
@@ -122,14 +90,8 @@ namespace Lab08
                 }
             }
 
-            foreach (KeyValuePair<double, sbyte> k in map)
-            {
-                Console.WriteLine(k.ToString());
-            }
-
             return mordValues;
         }//end GetMord
-
 
         protected Dictionary<double, sbyte> GetMapNoTies(eDirection dir)
         {
@@ -201,11 +163,6 @@ namespace Lab08
                 }
             }
 
-            foreach (KeyValuePair<double, sbyte> k in map)
-            {
-                Console.WriteLine(k.ToString());
-            }
-
             return mordValues;
         }//end GetMord
 
@@ -216,11 +173,6 @@ namespace Lab08
             {
                 if(!map.ContainsKey(values[i]))
                     map.Add(values[i], (sbyte)i);
-            }
-
-            foreach (KeyValuePair<double, sbyte> k in map)
-            {
-                Console.WriteLine(k.ToString());
             }
 
             return map;
