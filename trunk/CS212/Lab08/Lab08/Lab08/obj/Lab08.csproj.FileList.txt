@@ -1,0 +1,10 @@
+obj\Release\Lab08.exe
+obj\Release\Lab08.pdb
+bin\Release\Lab08.exe
+bin\Release\Lab08.pdb
+obj\Release\ResolveAssemblyReference.cache
+bin\Debug\Lab08.exe
+bin\Debug\Lab08.pdb
+obj\Debug\ResolveAssemblyReference.cache
+obj\Debug\Lab08.exe
+obj\Debug\Lab08.pdb
