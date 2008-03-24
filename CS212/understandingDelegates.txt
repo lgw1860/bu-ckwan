@@ -1,0 +1,58 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Lab08
+{
+    class Mord
+    {
+        public enum eDirection
+        {
+            LittleGood, BigGood
+        };
+
+        public void run()
+        {
+            int x = 1324;
+            int y = 232434;
+            Console.WriteLine("hey this is {0} and {1}", x, y);
+            Console.WriteLine(GetMord(eDirection.LittleGood));
+            op test = new op(GetMord);
+            Obtain act = new Obtain(Steal);
+            Obtain act2 = new Obtain(Buy);
+
+            act();
+            act2();
+            Console.WriteLine(test(eDirection.BigGood));
+
+        }
+
+        public delegate void Obtain();
+
+        public void Steal()
+        {
+            Console.WriteLine("I was called by a delegate to steal.");
+        }
+
+        public void Buy()
+        {
+            Console.WriteLine("I was called by a delegate to buy.");
+        }
+
+        public delegate string op(eDirection dir);
+
+        public string GetMord(eDirection dir)
+        {
+            if (dir == eDirection.BigGood)
+            {
+                return "beaver";
+            }
+            else if (dir == eDirection.LittleGood)
+            {
+                return "grasshopper";
+            }
+            return "howdy";
+        }
+
+    }
+}
