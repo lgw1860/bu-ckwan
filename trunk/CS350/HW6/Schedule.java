@@ -23,6 +23,11 @@ public class Schedule {
 		length = 1;
 	}
 	
+	public void addRandom(Event newEvent)
+	{
+		lastEvent.setNext(newEvent);
+	}
+	
 	/**
 	 * Add newEvent to list based on its time.
 	 * @param newEvent
