@@ -4,7 +4,7 @@
  *
  */
 import java.util.*;
-public class DiskRequests {
+public class DiskRequestsFCFS {
 	
 	 private double lambda;
      private double n;
@@ -18,8 +18,8 @@ public class DiskRequests {
 	//double lambda;
 	double Ts;
 	double maxTime;
-	double monitorInc = 10;//1000;//.01; //time between monitor events
-	double maxRequests = 5;//10; //10000;
+	double monitorInc = 1000;//1000;//.01; //time between monitor events
+	double maxRequests = 10000;//5;//10; //10000;
 	
 	double time;	//current time
 	Schedule sched;
@@ -39,7 +39,7 @@ public class DiskRequests {
 	
 	LinkedList<Double> tqList = new LinkedList<Double>();
 
-	public DiskRequests(double Lambda, double Ts, double maxTime)
+	public DiskRequestsFCFS(double Lambda, double Ts, double maxTime)
 	{
 		this.lambda = Lambda;
 		this.Ts = Ts;
@@ -50,13 +50,13 @@ public class DiskRequests {
 	{
 		//DiskRequests qu = new DiskRequests(0.05,0.0085,.1);
 		//qu.run();
-		DiskRequests dr = new DiskRequests(0.05, 500, 2, 0.1);
+		DiskRequestsFCFS dr = new DiskRequestsFCFS(0.05, 500, 2, 0.1);
 		dr.run();
 		
 	}
 
 
-    public DiskRequests(double lambda, double n, double u, double v)
+    public DiskRequestsFCFS(double lambda, double n, double u, double v)
     {
             this.lambda = lambda;
             this.n = n;
@@ -87,6 +87,7 @@ public class DiskRequests {
 
 	public void run()
 	{
+		System.out.println("\nPlease wait...");
 		initializeSchedule();
 
 		while(numRequests < maxRequests && currentEvent.getNext() != null)
@@ -101,9 +102,21 @@ public class DiskRequests {
 		}
 
 		//Print stats
-		System.out.println("\nSimulation results: ");
+		
+		System.out.println("\nFCFS Simulation results: ");
+		System.out.printf("\nNumber of requests: %f", maxRequests);
+		System.out.printf("\nLambda: %f requests per msec", lambda);
+		System.out.printf("\nN: %f tracks", n);
+		System.out.printf("\nU: %f msec", u);
+		System.out.printf("\nV: %f msec/track", v);
+		
+		System.out.println();
 		double meanTq = (double)sumTq/(numRequests);
+		
+		/*
 		double meanTs = (double)sumTs/(numRequests);
+		
+		
 		System.out.println("mean Ts: " + meanTs);
 		
 		System.out.println("mean Tq: " + meanTq);;
@@ -112,16 +125,10 @@ public class DiskRequests {
 		System.out.println("mon: " + monitorCount);
 		System.out.println("sumTq: " + sumTq);
 		System.out.println("requests: " + numRequests);
-		System.out.println("total head movement: " + totalHeadMovement);
+		*/
 		
-		Iterator iter = tqList.iterator();
-		while(iter.hasNext())
-		{
-			System.out.println(iter.next());
-		}
-		
-		System.out.println("standard dev: " + stdDev(meanTq));
-		System.out.println("error: " + error(meanTq));
+		System.out.printf("\nTotal head movement: %f", totalHeadMovement);
+		System.out.printf("\nAverage response time: %f", meanTq);
 		System.out.printf("\n95th percentile confidence interval of response time: [%f +/- %f]", meanTq, error(meanTq));
 	}
 
