@@ -5,5 +5,7 @@
 		<item key="height" value="400"/>
 	</section>
 	<section name="org.eclipse.ltk.ui.refactoring.settings">
+		<item key="renameGetter" value="false"/>
+		<item key="updateTextualMatches" value="false"/>
 	</section>
 </section>

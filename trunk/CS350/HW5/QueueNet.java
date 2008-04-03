@@ -9,7 +9,7 @@ public class QueueNet {
 	double Lambda;
 	double Ts;
 	double maxTime;
-	int K;	//maximum size of waiting queue
+	//int K;	//maximum size of waiting queue
 	double monitorInc = 100;//10;//1000;//.01; //time between monitor events
 	int steadyTime = 43000;
 	
@@ -68,26 +68,15 @@ public class QueueNet {
 	int sumQSystem;
 	int sumWSystem;
 
-	public QueueNet(double Lambda, double Ts, double maxTime)
+	public QueueNet(double maxTime)
 	{
-		this.Lambda = Lambda;
-		this.Ts = Ts;
 		this.maxTime = maxTime;
-		this.K = 1000;
-	}
-
-	public QueueNet(int K, double Lambda, double Ts, double maxTime)
-	{
-		this.Lambda = Lambda;
-		this.Ts = Ts;
-		this.maxTime = maxTime;
-		this.K = K;
 	}
 
 	public static void main(String[] args)
 	{
 		//QueueNet qn = new QueueNet(5, 30, 0.03, 100);
-		QueueNet qn = new QueueNet(100, .0085, 100000);//1000);//100000);
+		QueueNet qn = new QueueNet(100000);//1000);//100000);
 		//QueueNet qn = new QueueNet(.08, 20, 100);
 		qn.run();
 	}
@@ -195,7 +184,7 @@ public class QueueNet {
 		System.out.println("mean w: " + (double)sumWSystem/monitorCount);
 		//System.out.println("mean w2: " + (meanWCPU + meanWDisk + meanWNetwork) );
 		System.out.println("mean Tq: " + meanTqSystem);
-		//System.out.println("mean Tq2: " + meanTq2System);
+		System.out.println("mean Tq2: " + (meanTq2 + meanTqDisk + meanTqNetwork));
 		
 		System.out.println("sumTqSystem: " + sumTqSystem);
 		//System.out.println("sumTq2System: " + sumOtherTqSystem);
@@ -349,20 +338,13 @@ public class QueueNet {
 		{
 			isBusyCPU = false;
 
-			if(theQueueCPU < K)
-			{
-				theQueueCPU++;
-			}
-			else
-			{
-				cur.setDropped();
-				numDropped++;
-			}
+			//theQueueCPU++;
 
 
 			//schedule next Arrival if process did not arrive from another queue
 			if(cur.getRepeat() == false)
 			{
+				theQueueCPU++;
 				double nextIAT = ProcessArrivalTime();//randExp(1.0/Lambda);
 				sumIATCPU += nextIAT;
 				Event nextArr = new Event("CA",cur.getTime() + nextIAT, cur.getTime() + nextIAT, cur.getTime() + nextIAT);
@@ -370,8 +352,8 @@ public class QueueNet {
 			}
 
 			//if I'm only one in queue, sched my departure
-			if((theQueueCPU==1 || theQueueCPU==2)&& (theQueueCPU < K+1))
-				//if((theQueueCPU==1)&& (theQueueCPU < K+1))
+			if((theQueueCPU==1 || theQueueCPU==2))
+		    //if((theQueueCPU==1))
 			{
 				isBusyCPU = true;
 
@@ -391,8 +373,8 @@ public class QueueNet {
 			isBusyCPU = false;
 			numRequestsCPU ++;
 			theQueueCPU--;
-			double Tq = cur.getTime() - lastArrCPU.getTime();
-			sumTqCPU += Tq;
+			//double Tq = cur.getTime() - lastArrCPU.getTime();
+			//sumTqCPU += Tq;
 			sumOtherTqCPU += (cur.getTime() - cur.getArrival());
 
 			//Determine destination upon departure
@@ -435,12 +417,14 @@ public class QueueNet {
 			//System.out.println(destEvent);
 
 
+			/*
 			if(theQueueCPU>0)
 			{
 				isBusyCPU = true;
 			}
+			*/
 
-			if(theQueueCPU>1) //>0 )
+			if(theQueueCPU>0)//>1) //>0 )
 			{
 				isBusyCPU = true;
 
