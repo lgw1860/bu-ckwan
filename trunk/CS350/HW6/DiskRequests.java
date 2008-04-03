@@ -3,6 +3,7 @@
  * @author Christopher Kwan
  *
  */
+import java.util.*;
 public class DiskRequests {
 	
 	 private double lambda;
@@ -11,13 +12,14 @@ public class DiskRequests {
      private double v;
      private double y;       //last track
      private double x;       //requested track
-
+     private double totalHeadMovement;
+     
 	
 	//double lambda;
 	double Ts;
 	double maxTime;
 	double monitorInc = 10;//1000;//.01; //time between monitor events
-	double maxRequests = 10; //10000;
+	double maxRequests = 5;//10; //10000;
 	
 	double time;	//current time
 	Schedule sched;
@@ -34,6 +36,8 @@ public class DiskRequests {
 	int sumQ;
 	int sumW;
 	double sumTq;
+	
+	LinkedList<Double> tqList = new LinkedList<Double>();
 
 	public DiskRequests(double Lambda, double Ts, double maxTime)
 	{
@@ -108,6 +112,15 @@ public class DiskRequests {
 		System.out.println("mon: " + monitorCount);
 		System.out.println("sumTq: " + sumTq);
 		System.out.println("requests: " + numRequests);
+		System.out.println("total head movement: " + totalHeadMovement);
+		
+		Iterator iter = tqList.iterator();
+		while(iter.hasNext())
+		{
+			System.out.println(iter.next());
+		}
+		
+		System.out.println("standard dev: " + stdDev(meanTq));
 	}
 
 	public void execute(Event cur)
@@ -140,6 +153,8 @@ public class DiskRequests {
 				y = lastArr.getTrack();
 				updateNextArr();
 				x = arrInNeed.getTrack();
+				
+				totalHeadMovement += Math.abs(y-x);
 			}
 		}
 
@@ -150,6 +165,7 @@ public class DiskRequests {
 			theQueue--;
 			double Tq = cur.getTime() - lastArr.getTime();
 			sumTq += Tq;
+			tqList.add(Tq);
 
 			if(theQueue>0)
 			{
@@ -172,6 +188,7 @@ public class DiskRequests {
 				updateNextArr();
 				x = arrInNeed.getTrack();
 			
+				totalHeadMovement += Math.abs(y-x);
 				
 			}
 
@@ -203,6 +220,18 @@ public class DiskRequests {
 		}
 	}//end of execute
 
+	public double stdDev(double mean)
+	{
+		double diffs = 0.0;
+		Iterator iter = tqList.iterator();
+		while(iter.hasNext())
+		{
+			diffs += Math.pow( ((Double)(iter.next()) - mean), 2);
+		}
+		return Math.sqrt(diffs/tqList.size());
+		
+	}
+	
 	public int track()
 	{
 		return (int)(Math.random()*n);
