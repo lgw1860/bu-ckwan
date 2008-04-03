@@ -121,6 +121,8 @@ public class DiskRequests {
 		}
 		
 		System.out.println("standard dev: " + stdDev(meanTq));
+		System.out.println("error: " + error(meanTq));
+		System.out.printf("\n95th percentile confidence interval of response time: [%f +/- %f]", meanTq, error(meanTq));
 	}
 
 	public void execute(Event cur)
@@ -220,6 +222,15 @@ public class DiskRequests {
 		}
 	}//end of execute
 
+	public double error(double mean)
+	{
+		//95th percentile
+		double z = 1.96;
+		double s = stdDev(mean);
+		
+		return z * s/Math.sqrt(tqList.size());
+	}
+	
 	public double stdDev(double mean)
 	{
 		double diffs = 0.0;
