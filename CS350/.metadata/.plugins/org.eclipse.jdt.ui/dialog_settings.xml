@@ -2,6 +2,7 @@
 <section name="Workbench">
 	<item key="delegateDeprecation" value="true"/>
 	<item key="delegateUpdating" value="true"/>
+	<item key="SortMembers.sort_all" value="false"/>
 	<section name="JavaElementSearchActions">
 	</section>
 	<section name="org.eclipse.jdt.ui.internal.packageExplorer">
@@ -9,6 +10,7 @@
 	</section>
 	<section name="OptionalMessageDialog.hide.">
 		<item key="org.eclipse.jdt.ui.typecomment.deprecated" value="true"/>
+		<item key="SortMembersMessageDialog.optionalDialog.id" value="false"/>
 	</section>
 	<section name="completion_proposal_size">
 		<item key="size.y" value="175"/>
