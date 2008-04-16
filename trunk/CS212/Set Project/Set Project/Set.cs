@@ -18,15 +18,15 @@ namespace SetProject
         ICloneable, IEnumerable<T>
     {
 
-        Dictionary<T, object> theSet;
+        //Dictionary<T, object> theSet;
         private sbyte count = 0;
 
         /// <summary>
         /// Creates an empty set.
         /// </summary>
-        public Set()
+        public Set() : base()
         {
-            theSet = new Dictionary<T, object>();
+            //theSet = new Dictionary<T, object>();
         }
 
      
@@ -34,9 +34,9 @@ namespace SetProject
         /// Creates a set that can initially contain 'capacity' elements.
         /// </summary>
         /// <param name="capacity">initial number of elements set can contain</param>
-        public Set(int capacity)
+        public Set(int capacity) : base(capacity)
         {
-            theSet = new Dictionary<T, object>(capacity);
+            //theSet = new Dictionary<T, object>(capacity);
         }
 
 
@@ -44,9 +44,9 @@ namespace SetProject
         /// Creates a set with 'IEqualityComparer ic' for comparing keys.
         /// </summary>
         /// <param name="ic">for comparing keys</param>
-        public Set(IEqualityComparer<T> ic)
+        public Set(IEqualityComparer<T> ic) : base(ic)
         {
-            theSet = new Dictionary<T, object>(ic);
+            //theSet = new Dictionary<T, object>(ic);
         }
 
         /// <summary>
@@ -55,10 +55,19 @@ namespace SetProject
         /// <returns>object</returns>
         public object Clone()
         {
+            /*
             Dictionary<T, object> clone = new Dictionary<T, object>();
             foreach (KeyValuePair<T, object> k in theSet)
             {
                 clone.Add(k.Key, k.Value);
+            }
+            return clone;
+             */
+
+            Set<T> clone = new Set<T>();
+            foreach (T item in base.Keys)
+            {
+                clone.Add(item);
             }
             return clone;
         }
@@ -89,9 +98,15 @@ namespace SetProject
         /// </summary>
         public new Dictionary<T, object>.KeyCollection Values
         {
+            /*
             get
             {
                 return theSet.Keys;
+            }
+             */
+            get
+            {
+                return base.Keys;
             }
         }
 
@@ -100,6 +115,7 @@ namespace SetProject
         /// </summary>
         public List<T> List
         {
+            /*
             get
             {
                 List<T> l = new List<T>();
@@ -109,6 +125,19 @@ namespace SetProject
                 }
                 return l;
             }
+             */
+
+            get
+            {
+                List<T> l = new List<T>();
+                foreach (T item in base.Keys)
+                {
+                    l.Add(item);
+                }
+                return l;
+
+            }
+
 
         }
 
@@ -122,8 +151,14 @@ namespace SetProject
             try
             {
                 count++;
+                /*
+                count++;
                 theSet.Add(key, count);
                 Console.WriteLine("{0}: {1}",key,theSet[key]);
+                return true;
+                 */
+                base.Add(key, count);
+                Console.WriteLine("{0}: {1}", key, base[key]);
                 return true;
             }
             catch (ArgumentNullException)
@@ -143,8 +178,73 @@ namespace SetProject
             }
         }
 
+        /// <summary>
+        /// Add all items from ICollection ctr to the Set
+        /// </summary>
+        /// <param name="ctr"></param>
+        /// <returns>true if add successful, false if fail</returns>
+        public bool AddRange(ICollection<T> ctr)
+        {
+            foreach (T item in ctr)
+            {    
+                if (!this.Add(item))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
 
 
+        /// <summary>
+        /// Add all items from IDictionary dict to the Set
+        /// </summary>
+        /// <param name="ctr"></param>
+        /// <returns>true if add successful, false if fail</returns>
+        public bool AddRange(IDictionary<T,object> dict)
+        {
+            foreach (T item in dict.Keys)
+            {
+                if (!this.Add(item))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Returns true if Set contains element 't'
+        /// </summary>
+        /// <param name="t">t - the item to check for</param>
+        /// <returns>true if item is in Set, false if not</returns>
+        public bool Contains(T t)
+        {
+            /*
+            foreach (KeyValuePair<T, object> k in theSet)
+            {
+                if (k.Key.Equals(t))
+                {
+                    return true;
+                }
+            }
+            return false;
+             */
+
+            foreach (T item in base.Keys)
+            {
+                if (item.Equals(t))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public new IEnumerator<T> GetEnumerator()
         {
             return null;
