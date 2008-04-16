@@ -12,3 +12,5 @@ obj\Debug\SetProject.Properties.Resources.resources
 obj\Debug\Set Project.csproj.GenerateResource.Cache
 obj\Debug\Set Project.exe
 obj\Debug\Set Project.pdb
+obj\Release\SetProject.Form1.resources
+obj\Debug\SetProject.Form1.resources

@@ -9,8 +9,13 @@ namespace SetProject
         
         public object run()
         {
-            Set<string> s = new Set<string>();
-            return(s.Clone());
+            //Tests for Set
+            
+            //Test for
+            Set<string> s1 = new Set<string>();
+
+            return null;
+            //return(s.Clone());
 
         }
     }
