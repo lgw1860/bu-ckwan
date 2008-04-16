@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SetProject
 {
-    class SetTest
+    public class SetTest
     {
         
         public object run()
