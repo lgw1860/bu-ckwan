@@ -27,12 +27,24 @@ namespace SetProject
             s.Add("cat");
             s.Add("bird");
 
+            Console.WriteLine("cat: " + s.Contains("cat"));
+            Console.WriteLine("dinosaur: " + s.Contains("dinosaur"));
+
             /*
             foreach (string k in s)
             {
                 Console.WriteLine(k.ToString());
             }
              */
+
+            foreach (string i in s.List)
+            {
+                Console.Write(i + "->");
+
+            }
+            
+
+
 
             Console.ReadLine();
         }
