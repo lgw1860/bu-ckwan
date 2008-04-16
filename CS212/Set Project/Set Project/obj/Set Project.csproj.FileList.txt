@@ -1,0 +1,14 @@
+bin\Release\Set Project.exe
+bin\Release\Set Project.pdb
+obj\Release\ResolveAssemblyReference.cache
+obj\Release\SetProject.Properties.Resources.resources
+obj\Release\Set Project.csproj.GenerateResource.Cache
+obj\Release\Set Project.exe
+obj\Release\Set Project.pdb
+bin\Debug\Set Project.exe
+bin\Debug\Set Project.pdb
+obj\Debug\ResolveAssemblyReference.cache
+obj\Debug\SetProject.Properties.Resources.resources
+obj\Debug\Set Project.csproj.GenerateResource.Cache
+obj\Debug\Set Project.exe
+obj\Debug\Set Project.pdb
