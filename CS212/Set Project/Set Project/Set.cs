@@ -13,12 +13,10 @@ using System.Runtime.Serialization;
 namespace SetProject
 {
     [Serializable]
-    class Set<T> : Dictionary<T, object>,
+    public class Set<T> : Dictionary<T, object>,
         IDeserializationCallback,
         ICloneable, IEnumerable<T>
     {
-
-        //Dictionary<T, object> theSet;
         private sbyte count = 0;
 
         /// <summary>
@@ -26,19 +24,15 @@ namespace SetProject
         /// </summary>
         public Set() : base()
         {
-            //theSet = new Dictionary<T, object>();
         }
 
-     
         /// <summary>
         /// Creates a set that can initially contain 'capacity' elements.
         /// </summary>
         /// <param name="capacity">initial number of elements set can contain</param>
         public Set(int capacity) : base(capacity)
         {
-            //theSet = new Dictionary<T, object>(capacity);
         }
-
 
         /// <summary>
         /// Creates a set with 'IEqualityComparer ic' for comparing keys.
@@ -46,7 +40,6 @@ namespace SetProject
         /// <param name="ic">for comparing keys</param>
         public Set(IEqualityComparer<T> ic) : base(ic)
         {
-            //theSet = new Dictionary<T, object>(ic);
         }
 
         /// <summary>
@@ -55,15 +48,6 @@ namespace SetProject
         /// <returns>object</returns>
         public object Clone()
         {
-            /*
-            Dictionary<T, object> clone = new Dictionary<T, object>();
-            foreach (KeyValuePair<T, object> k in theSet)
-            {
-                clone.Add(k.Key, k.Value);
-            }
-            return clone;
-             */
-
             Set<T> clone = new Set<T>();
             foreach (T item in base.Keys)
             {
@@ -80,12 +64,10 @@ namespace SetProject
         protected Set(SerializationInfo information,
             StreamingContext context) : base(information, context)
         {
-            //theSet = new Dictionary<T, sbyte>(information, context);
-            //theSet = base(information, context);
         }
 
         /// <summary>
-        /// 
+        /// OnDeserialization
         /// </summary>
         /// <param name="sender"></param>
         public override void OnDeserialization(object sender)
@@ -98,12 +80,6 @@ namespace SetProject
         /// </summary>
         public new Dictionary<T, object>.KeyCollection Values
         {
-            /*
-            get
-            {
-                return theSet.Keys;
-            }
-             */
             get
             {
                 return base.Keys;
@@ -115,18 +91,6 @@ namespace SetProject
         /// </summary>
         public List<T> List
         {
-            /*
-            get
-            {
-                List<T> l = new List<T>();
-                foreach (KeyValuePair<T, object> k in theSet)
-                {
-                    l.Add(k.Key);
-                }
-                return l;
-            }
-             */
-
             get
             {
                 List<T> l = new List<T>();
@@ -135,10 +99,7 @@ namespace SetProject
                     l.Add(item);
                 }
                 return l;
-
             }
-
-
         }
 
         /// <summary>
@@ -151,12 +112,6 @@ namespace SetProject
             try
             {
                 count++;
-                /*
-                count++;
-                theSet.Add(key, count);
-                Console.WriteLine("{0}: {1}",key,theSet[key]);
-                return true;
-                 */
                 base.Add(key, count);
                 Console.WriteLine("{0}: {1}", key, base[key]);
                 return true;
@@ -195,7 +150,6 @@ namespace SetProject
             return true;
         }
 
-
         /// <summary>
         /// Add all items from IDictionary dict to the Set
         /// </summary>
@@ -220,25 +174,7 @@ namespace SetProject
         /// <returns>true if item is in Set, false if not</returns>
         public bool Contains(T t)
         {
-            /*
-            foreach (KeyValuePair<T, object> k in theSet)
-            {
-                if (k.Key.Equals(t))
-                {
-                    return true;
-                }
-            }
-            return false;
-             */
-
-            foreach (T item in base.Keys)
-            {
-                if (item.Equals(t))
-                {
-                    return true;
-                }
-            }
-            return false;
+            return(base.ContainsKey(t));
         }
 
         /// <summary>
