@@ -178,12 +178,13 @@ namespace SetProject
         }
 
         /// <summary>
-        /// 
+        /// Returns enumerator for enumerating through elements
         /// </summary>
-        /// <returns></returns>
+        /// <returns>SetEnumerator</returns>
         public new IEnumerator<T> GetEnumerator()
         {
-            return null;
+            SetEnumerator<T> se = new SetEnumerator<T>(this);
+            return se;
         }
     }
 }
