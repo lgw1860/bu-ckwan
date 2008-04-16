@@ -1,3 +1,10 @@
+/**
+ * Christopher Kwan
+ * ckwan@bu.edu     U37-02-3645
+ * CS212 Project Set
+ * Main program
+ */
+
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;

@@ -2,7 +2,7 @@
  * Christopher Kwan
  * ckwan@bu.edu     U37-02-3645
  * CS212 Project Set
- * STL set referenced from http://www.sgi.com/tech/stl/set.html
+ * Set<T>
  */
 
 using System;
