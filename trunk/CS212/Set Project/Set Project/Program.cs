@@ -26,6 +26,7 @@ namespace SetProject
             Console.WriteLine("Hello World");
 
             SetTest test = new SetTest();
+            Console.WriteLine("\n==Testing Set<T>==");
             Console.WriteLine(test.tSet());
             Console.WriteLine(test.tSetCapacity());
             Console.WriteLine(test.tSetIEquality());
@@ -37,6 +38,11 @@ namespace SetProject
             Console.WriteLine(test.tAddRangeIDict());
             Console.WriteLine(test.tContains());
             Console.WriteLine(test.tIEnum());
+
+
+            Console.WriteLine("\n==Testing SSet==");
+            Console.WriteLine(test.tSSet());
+            Console.WriteLine(test.tSSetCapacity());
 
 
             Console.ReadLine();
