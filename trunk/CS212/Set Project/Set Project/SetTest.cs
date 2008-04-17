@@ -456,7 +456,266 @@ namespace SetProject
 
         #region SetEnumerator Tests
 
+        public string tSE()
+        {
+            string report = "\nSetEnumerator() Test";
+            Set<string> mySet = new Set<string>();
+            mySet.Add("trex");
+            mySet.Add("ptery");
+            mySet.Add("bronto");
+            report += "\n Set: ";
+            foreach (string i in mySet)
+                report += i + " ";
 
+            try
+            {
+                SetEnumerator<string> se = new SetEnumerator<string>(mySet);
+                report += "\n " + se.ToString();
+                report += "\n Success";
+            }
+            catch (Exception)
+            {
+                report += "\n Failure";
+            }
+
+            return report;
+
+        }
+
+        public string tSECurrent()
+        {
+            string report = "\nCurrent Test";
+            Set<string> mySet = new Set<string>();
+            mySet.Add("trex");
+            mySet.Add("ptery");
+            mySet.Add("bronto");
+            report += "\n Set: ";
+            foreach (string i in mySet)
+                report += i + " ";
+
+            SetEnumerator<string> se = new SetEnumerator<string>(mySet);
+
+            report += "\n Current before MoveNext is called: ";
+            try
+            {  
+                report += "\n Current = " + se.Current;
+                report += "\n Success";
+            }
+            catch (Exception)
+            {
+                report += "\n Failure";
+            }
+
+            report += "\n\n Current after MoveNext is called: ";
+            try
+            {
+                se.MoveNext();
+                report += "\n Current = " + se.Current;
+                report += "\n Success";
+            }
+            catch (Exception)
+            {
+                report += "\n Failure";
+            }
+
+            report += "\n\n Current at end of set: ";
+            try
+            {
+                while (se.MoveNext() == true)
+                {
+                    se.MoveNext();
+                }
+
+                report += "\n Current = " + se.Current;
+                report += "\n Success";
+            }
+            catch (Exception)
+            {
+                report += "\n Failure";
+            }
+
+            return report;
+
+        }
+
+        public string tSEDispose()
+        {
+            string report = "\nDispose() Test";
+            Set<string> mySet = new Set<string>();
+            mySet.Add("trex");
+            mySet.Add("ptery");
+            mySet.Add("bronto");
+            report += "\n Set: ";
+            foreach (string i in mySet)
+                report += i + " ";
+
+            SetEnumerator<string> se = new SetEnumerator<string>(mySet);
+
+            try
+            {
+                se.Dispose();
+                report += "\n Dispose() Successful";
+            }
+            catch (Exception)
+            {
+                report += "\n Failure";
+            }
+
+            return report;
+
+        }
+
+        public string tSEMoveNext()
+        {
+            string report = "\nMoveNext() Test";
+            Set<string> mySet = new Set<string>();
+            mySet.Add("trex");
+            mySet.Add("ptery");
+            mySet.Add("bronto");
+            report += "\n Set: ";
+            foreach (string i in mySet)
+                report += i + " ";
+
+            SetEnumerator<string> se = new SetEnumerator<string>(mySet);
+
+            report += "\n Current after 0 MoveNext calls: ";
+            try
+            {
+                report += "\n Current = " + se.Current;
+                report += "\n Success";
+            }
+            catch (Exception)
+            {
+                report += "\n Failure";
+            }
+
+            report += "\n\n Current after 1 MoveNext call: ";
+            try
+            {
+                se.MoveNext();
+                report += "\n Current = " + se.Current;
+                report += "\n Success";
+            }
+            catch (Exception)
+            {
+                report += "\n Failure";
+            }
+
+            report += "\n\n Current after 2 MoveNext calls: ";
+            try
+            {
+                se.MoveNext();
+                report += "\n Current = " + se.Current;
+                report += "\n Success";
+            }
+            catch (Exception)
+            {
+                report += "\n Failure";
+            }
+
+            report += "\n\n Current after 3 MoveNext calls: ";
+            try
+            {
+                se.MoveNext();
+                report += "\n Current = " + se.Current;
+                report += "\n Success";
+            }
+            catch (Exception)
+            {
+                report += "\n Failure";
+            }
+
+            report += "\n\n Current after 4 MoveNext calls (more than elements in set): ";
+            try
+            {
+                se.MoveNext();
+                report += "\n Current = " + se.Current;
+                report += "\n Success";
+            }
+            catch (Exception)
+            {
+                report += "\n Failure";
+            }
+
+            return report;
+
+        }
+
+        public string tSEReset()
+        {
+            string report = "\nReset() Test";
+            Set<string> mySet = new Set<string>();
+            mySet.Add("trex");
+            mySet.Add("ptery");
+            mySet.Add("bronto");
+            report += "\n Set: ";
+            foreach (string i in mySet)
+                report += i + " ";
+
+            SetEnumerator<string> se = new SetEnumerator<string>(mySet);
+
+            report += "\n\n Current after 0 MoveNext are called and before Reset is called: ";
+            report += "\n Current = " + se.Current;
+
+            report += "\n\n Current after 0 MoveNext are called and after Reset is called: ";
+            try
+            {
+                se.Reset();
+                report += "\n Current = " + se.Current;
+                report += "\n Set: ";
+                foreach (string i in mySet)
+                    report += i + " ";
+                report += "\n Success";
+            }
+            catch (Exception)
+            {
+                report += "\n Failure";
+            }
+
+            report += "\n\n Current after 1 MoveNext is called and before Reset is called: ";
+            se.MoveNext();
+            report += "\n Current = " + se.Current;
+
+            report += "\n\n Current after 1 MoveNext is called and after Reset is called: ";
+            try
+            {
+                se.Reset();
+                report += "\n Current = " + se.Current;
+                report += "\n Set: ";
+                foreach (string i in mySet)
+                    report += i + " ";
+                report += "\n Success";
+            }
+            catch (Exception)
+            {
+                report += "\n Failure";
+            }
+
+
+            report += "\n\n Current after 2 MoveNext are called and before Reset is called: ";
+            se.MoveNext();
+            se.MoveNext();
+
+            report += "\n Current = " + se.Current;
+
+            report += "\n\n Current after 2 MoveNext are called and after Reset is called: ";
+            try
+            {
+                se.Reset();
+                report += "\n Current = " + se.Current;
+                report += "\n Set: ";
+                foreach (string i in mySet)
+                    report += i + " ";
+                report += "\n Success";
+            }
+            catch (Exception)
+            {
+                report += "\n Failure";
+            }
+
+            return report;
+
+        }
 
         #endregion
     }

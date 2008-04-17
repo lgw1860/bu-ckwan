@@ -38,11 +38,24 @@ namespace SetProject
             Console.WriteLine(test.tAddRangeIDict());
             Console.WriteLine(test.tContains());
             Console.WriteLine(test.tIEnum());
+            Console.WriteLine("\n==End Testing Set<T>==");
 
 
             Console.WriteLine("\n==Testing SSet==");
             Console.WriteLine(test.tSSet());
             Console.WriteLine(test.tSSetCapacity());
+            Console.WriteLine("\n==End Testing SSet==");
+
+            Console.WriteLine("\n==Testing SetEnumerator==");
+            Console.WriteLine(test.tSE());
+            Console.WriteLine(test.tSECurrent());
+            Console.WriteLine(test.tSEDispose());
+            Console.WriteLine(test.tSEMoveNext());
+            Console.WriteLine(test.tSEReset());
+            Console.WriteLine("\n==End Testing SetEnumerator==");
+
+
+
 
 
             Console.ReadLine();
