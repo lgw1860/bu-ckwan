@@ -21,36 +21,22 @@ namespace SetProject
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            //Application.Run(new Form1());
 
             Console.WriteLine("Hello World");
 
-            Set<string> s = new Set<string>();
-            //string test = (string)s.Clone();
-            //Console.WriteLine(test);
-
-            //Console.WriteLine(s.Add(null));
-            s.Add("dog");
-            s.Add("cat");
-            s.Add("bird");
-
-            Console.WriteLine("cat: " + s.Contains("cat"));
-            Console.WriteLine("dinosaur: " + s.Contains("dinosaur"));
-
-            /*
-            foreach (string k in s)
-            {
-                Console.WriteLine(k.ToString());
-            }
-             */
-
-            foreach (string i in s.List)
-            {
-                Console.Write(i + "->");
-
-            }
-            
-
+            SetTest test = new SetTest();
+            Console.WriteLine(test.tSet());
+            Console.WriteLine(test.tSetCapacity());
+            Console.WriteLine(test.tSetIEquality());
+            Console.WriteLine(test.tClone());
+            Console.WriteLine(test.tValues());
+            Console.WriteLine(test.tList());
+            Console.WriteLine(test.tAdd());
+            Console.WriteLine(test.tAddRangeICol());
+            Console.WriteLine(test.tAddRangeIDict());
+            Console.WriteLine(test.tContains());
+            Console.WriteLine(test.tIEnum());
 
 
             Console.ReadLine();
