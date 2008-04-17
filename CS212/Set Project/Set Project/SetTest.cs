@@ -29,7 +29,9 @@ namespace SetProject
 
         }
 
-      
+
+        #region Set Tests
+
         public string tSet()
         {
             string report = "\nSet<T>() Test:";
@@ -356,6 +358,106 @@ namespace SetProject
             return report;
         }
 
-        
+        #endregion
+
+        #region SSet Tests
+
+        public string tSSet()
+        {
+            string report = "\nSSet() Test:";
+            try
+            {
+                SSet s = new SSet();
+                report += "\n SSet created successfully";
+                report += "\n ToString: " + s.ToString();
+            }
+            catch (Exception)
+            {
+                report += "\n SSet creation failed";
+            }
+            return report;
+        }
+
+        public string tSSetCapacity()
+        {
+            int capacity = 3;
+            string report = "\nSSet(capacity) Test:";
+            try
+            {
+                SSet s = new SSet(capacity);
+                report += "\n SSet with initial capacity 3 created successfully";
+                report += "\n ToString: " + s.ToString();
+
+                report += "\n\n Adding < 3 elements to SSet: ";
+                try
+                {
+                    s.Clear();
+                    s.Add("A");
+                    s.Add("B");
+                    report += " Success\n SSet: ";
+                    foreach (string i in s)
+                    {
+                        report += i + " ";
+                    }
+                }
+                catch (Exception)
+                {
+                    report += " Fail";
+                }
+
+                report += "\n\n Adding 3 elements to SSet: ";
+                try
+                {
+                    s.Clear();
+                    s.Add("A");
+                    s.Add("B");
+                    s.Add("C");
+                    report += " Success\n SSet: ";
+                    foreach (string i in s)
+                    {
+                        report += i + " ";
+                    }
+                }
+                catch (Exception)
+                {
+                    report += " Fail";
+                }
+
+                report += "\n\n Adding > 3 elements to SSet: ";
+                try
+                {
+                    s.Clear();
+                    s.Add("A");
+                    s.Add("B");
+                    s.Add("C");
+                    s.Add("D");
+                    report += " Success\n SSet: ";
+                    foreach (string i in s)
+                    {
+                        report += i + " ";
+                    }
+                }
+                catch (Exception)
+                {
+                    report += " Fail";
+                }
+
+            }
+            catch (Exception)
+            {
+                report += "\n SSet Creation failed";
+            }
+            return report;
+        }
+
+
+        #endregion
+
+
+        #region SetEnumerator Tests
+
+
+
+        #endregion
     }
 }
