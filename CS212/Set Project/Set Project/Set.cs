@@ -43,6 +43,16 @@ namespace SetProject
         }
 
         /// <summary>
+        /// Clear the set, reset count to 0
+        /// </summary>
+        public new void Clear()
+        {
+            base.Clear();
+            count = 0;
+        }
+
+
+        /// <summary>
         /// Creates a new object that is a copy of the current instance.
         /// </summary>
         /// <returns>object</returns>
@@ -113,7 +123,7 @@ namespace SetProject
             {
                 count++;
                 base.Add(key, count);
-                Console.WriteLine("{0}: {1}", key, base[key]);
+                //Console.WriteLine("{0}: {1}", key, base[key]);
                 return true;
             }
             catch (ArgumentNullException)
