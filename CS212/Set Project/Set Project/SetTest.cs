@@ -360,6 +360,36 @@ namespace SetProject
 
         #endregion
 
+        public string runSetTests()
+        {
+            string report = "";
+            report += "\n\n==Testing Set<T>==";
+            report += "\n";
+            report += tSet();
+            report += "\n";
+            report += tSetCapacity();
+            report += "\n";
+            report += tSetIEquality();
+            report += "\n";
+            report += tClone();
+            report += "\n";
+            report += tValues();
+            report += "\n";
+            report += tList();
+            report += "\n";
+            report += tAdd();
+            report += "\n";
+            report += tAddRangeICol();
+            report += "\n";
+            report += tAddRangeIDict();
+            report += "\n";
+            report += tContains();
+            report += "\n";
+            report += tIEnum();
+            report += "\n==End Testing Set<T>==\n";
+            return report;
+        }
+
         #region SSet Tests
 
         public string tSSet()
@@ -453,6 +483,16 @@ namespace SetProject
 
         #endregion
 
+        public string runSSetTests()
+        {
+            string report = "";
+            report += "\n\n==Testing SSet==";
+            report += tSSet();
+            report += "\n";
+            report += tSSetCapacity();
+            report += "\n==End Testing SSet==\n";
+            return report;
+        }
 
         #region SetEnumerator Tests
 
@@ -718,5 +758,22 @@ namespace SetProject
         }
 
         #endregion
+
+        public string runSetEnumTests()
+        {
+            string report = "";
+            report += "\n\n==Testing SetEnumerator==";
+            report += tSE();
+            report += "\n";
+            report += tSECurrent();
+            report += "\n";
+            report += tSEDispose();
+            report += "\n";
+            report += tSEMoveNext();
+            report += "\n";
+            report += tSEReset();
+            report += "\n==End Testing SetEnumerator==\n";
+            return report;
+        }
     }
 }

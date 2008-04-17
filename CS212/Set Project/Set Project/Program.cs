@@ -2,7 +2,7 @@
  * Christopher Kwan
  * ckwan@bu.edu     U37-02-3645
  * CS212 Project Set
- * Main program
+ * Main program to run others
  */
 
 using System;
@@ -21,11 +21,15 @@ namespace SetProject
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            //Application.Run(new Form1());
+            Application.Run(new Form1());
 
-            Console.WriteLine("Hello World");
+            //Console.WriteLine("Hello World");
 
+
+            /*
             SetTest test = new SetTest();
+            
+            
             Console.WriteLine("\n==Testing Set<T>==");
             Console.WriteLine(test.tSet());
             Console.WriteLine(test.tSetCapacity());
@@ -55,10 +59,9 @@ namespace SetProject
             Console.WriteLine("\n==End Testing SetEnumerator==");
 
 
-
-
-
             Console.ReadLine();
+            
+             */
         }
     }
 }
