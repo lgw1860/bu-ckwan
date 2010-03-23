@@ -11,7 +11,7 @@ int main(int argc, char* argv[])
 {
 	CS585Hw4 homework;
 
-	string menu = "\n_________________\nSelect an option: "
+	string menu = "\nImage Registration\n__________________\nSelect an option: "
 		"\n (l) Lung\n (q) Quit\n"
 		"\nOption: ";
 
