@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
 		{
 			case 'l':
 				cout << "\nLung Dataset:\n" << endl;
-				homework.processImages("Datasets/Lung", 1, option);
+				homework.processImages("Datasets/Lung", 2, option);
 				break;
 			case 'q':
 				cout << "\nQuit:\n" << endl;
