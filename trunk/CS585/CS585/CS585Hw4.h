@@ -74,22 +74,6 @@ public:
 			//different functions depending on which dataset(option) you are analyzing
 			switch(option)
 			{
-				case 'b':
-					cout << "Bats function:\n" << endl;
-					this->functionBats(processedImage,processedImage);
-					break;
-				case 'c':
-					cout << "Cells function:\n" << endl;
-					this->functionCells(processedImage,processedImage);
-					break;
-				case 'e':
-					cout << "Eyes function:\n" << endl;
-					this->functionEyes(processedImage,processedImage);
-					break;
-				case 'h':
-					cout << "Hands function:\n" << endl;
-					this->functionHands(processedImage,processedImage);
-					break;
 				case 'l':
 					cout << "Lung function:\n" << endl;
 					this->functionLung(processedImage,processedImage);
