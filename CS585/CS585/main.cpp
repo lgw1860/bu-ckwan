@@ -12,7 +12,7 @@ int main(int argc, char* argv[])
 	CS585Hw4 homework;
 
 	string menu = "\n_________________\nSelect an option: "
-		"\n (b) Bats\n (c) Cells\n (e) Eyes\n (h) Hands\n (l) Lung\n (q) Quit\n"
+		"\n (l) Lung\n (q) Quit\n"
 		"\nOption: ";
 
 	char option = ' ';
@@ -24,22 +24,6 @@ int main(int argc, char* argv[])
 	{
 		switch(option)
 		{
-			case 'b':
-				cout << "\nBats Dataset:\n" << endl;
-				homework.processImages("Datasets/Bats", 5, option);
-				break;
-			case 'c':
-				cout << "\nCells Dataset:\n" << endl;
-				homework.processImages("Datasets/Cells", 2, option);
-				break;
-			case 'e':
-				cout << "\nEyes Dataset:\n" << endl;
-				homework.processImages("Datasets/Eyes", 9, option);
-				break;
-			case 'h':
-				cout << "\nHands Dataset:\n" << endl;
-				homework.processImages("Datasets/Hands", 5, option);
-				break;
 			case 'l':
 				cout << "\nLung Dataset:\n" << endl;
 				homework.processImages("Datasets/Lung", 1, option);
