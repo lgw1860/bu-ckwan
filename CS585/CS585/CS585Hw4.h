@@ -84,6 +84,8 @@ public:
 
 
 		//compute error image
+		computeErrorImage(image1,image2Transformed,errorImage);
+		//computeErrorImage(image1,image1,errorImage); //testing: error of same image is 0
 
 /*
 		for (int imageNum = 1; imageNum <= numImages; imageNum++)
@@ -162,7 +164,7 @@ public:
 		imshow("Image 1", image1);
 		imshow("Image 2", image2);
 		imshow("Image 2 Transformed", image2Transformed);
-		
+		imshow("Error Image", errorImage);
 		
 		waitKey(5000);
 		
@@ -339,6 +341,40 @@ private:
 
 	}//end mapImage
 
+	
+	//assume both src Matrices are the same size
+	void computeErrorImage(Mat& src1, Mat& src2, Mat& dst)
+	{
+		Mat src1Gray;
+		Mat src2Gray;
+
+		cvtColor(src1,src1Gray,CV_BGR2GRAY);
+		cvtColor(src2,src2Gray,CV_BGR2GRAY);
+
+		src1Gray.copyTo(dst);
+
+		int curImg1Val = 0;
+		int curImg2Val = 0;
+
+		for(int x=0; x<src1.cols; x++)
+		{
+			for(int y=0; y<src1.rows; y++)
+			{
+				curImg1Val = src1Gray.data[y*src1Gray.step+src1Gray.channels()*x];
+				curImg2Val = src2Gray.data[y*src2Gray.step+src2Gray.channels()*x];
+
+				//white is error
+				//dst.data[y*dst.step+dst.channels()*x] = abs(curImg1Val - curImg2Val);
+				////dst.data[y*dst.step+dst.channels()*x] = (curImg1Val - curImg2Val);
+
+				//black is error
+				dst.data[y*dst.step+dst.channels()*x] = 255 - abs(curImg1Val - curImg2Val);
+				//dst.data[y*dst.step+dst.channels()*x] = 255 - (curImg1Val - curImg2Val);
+
+			}//end for y
+		}//end for x
+	}//end computeErrorImage
+	
 	//Find the two tumors in the picture of the lung (on the right)
 	void functionLung(Mat& src, Mat& dst)
 	{
