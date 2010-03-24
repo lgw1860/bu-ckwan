@@ -48,6 +48,47 @@ public:
 		cout << "y0: " << y0 << endl;
 
 
+		//6. Map image 2 to image 1 with warpAffine
+		//Combine rotation and translation into one 2x3 matrix
+		//Mat rotTrans = Mat(2,3,CV_32FC1);
+
+		//from: http://opencv.willowgarage.com/documentation/cpp/basic_structures.html?#mat
+		//create 2x3 double-precision matrix
+		//Mat rotTrans = (Mat_<double>(2,3) << cos(theta), -1*sin(theta), x0, sin(theta), cos(theta), y0);
+
+		//Mat rotTrans = (Mat_<double>(2,3) << 1, 2, 3, 4, 5, 6);
+
+
+		/*
+		double a[] = { 1,  2,  3,  4,
+               5,  6,  7,  8,
+               9, 10, 11, 12 };
+
+CvMat Ma=cvMat(3, 4, CV_64FC1, a);
+		*/
+
+
+		double a[] = { 1,  2,  3,  4,
+               5,  6,  7,  8,
+               9, 10, 11, 12 };
+
+		CvMat rotTrans=cvMat(3, 4, CV_64FC1, a);
+
+		cout << cvmGet(&rotTrans,0,1) << endl;
+
+		/*
+		for(int x=0; x<rotTrans.cols; x++)
+		{
+			for(int y=0; y<rotTrans.rows; y++)
+			{
+				//cout << rotTrans.data[y*rotTrans.step+rotTrans.channels()*x] << endl;
+				//cout << rotTrans(y,x) << endl;
+				cvmGet(rotTrans,x,y);
+			}//end for y
+		}//end for x
+		*/
+		//cout << sizeof(double) << endl;
+
 		for (int imageNum = 1; imageNum <= numImages; imageNum++)
 		{
 			Mat image;
@@ -269,6 +310,24 @@ private:
 		x0 = xBar2 - (cosTheta * xBar1 - sinTheta * yBar1);
 		y0 = yBar2 - (sinTheta * xBar1 + cosTheta * yBar1);
 	}//end computeTranslation
+
+
+
+	//user warpAffine instead!
+	void mapImage(Mat& src, Mat& dst, double& theta, double& x0, double& y0)
+	{
+		src.copyTo(dst);
+
+		for(int x=0; x<dst.cols; x++)
+		{
+			for(int y=0; y<dst.rows; y++)
+			{
+				//dst.data[y*dst.step+dst.channels()*x] 
+				//dst.data[y*dst.step+dst.channels()*x]
+			}//end for y
+		}//end for x
+
+	}//end mapImage
 
 	//Find the two tumors in the picture of the lung (on the right)
 	void functionLung(Mat& src, Mat& dst)
