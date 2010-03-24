@@ -23,6 +23,9 @@ public:
 	//process images in a folder using the procedure defined by option
 	void processImages(string folderName, int numImages, char option)
 	{
+		//n corresponding point pair landmarks
+		getLandmarks();
+
 		for (int imageNum = 1; imageNum <= numImages; imageNum++)
 		{
 			Mat image;
@@ -68,7 +71,7 @@ public:
 			}
 
 			//cleanup data structures in preparation for another dataset
-			this->cleanup();
+			//this->cleanup();
 
 			//write output images to same folder
 			string outname;
@@ -90,7 +93,8 @@ public:
 			waitKey(1000);
 		}//end for
 		
-		//close all the windows in prep for the next call
+		//cleanup in prep for the next call to processImages
+		destroyDataStructures();
 		cvDestroyAllWindows();
 
 		cout << endl;
@@ -120,6 +124,49 @@ private:
 		return s;
 	}//end intToString()
 		
+	//print out points in a vector
+	void printVector(vector<Point>& vec)
+	{
+		for(int i=0;i<(int)vec.size();i++)
+		{
+			cout << vec[i].x << "," << vec[i].y << endl;
+		}
+	}
+
+
+	
+
+	void getLandmarks()
+	{
+		image1Landmarks = new vector<Point>();
+		image2Landmarks = new vector<Point>();
+
+		//hard coded values for testing
+		image1Landmarks->push_back(Point(232,112));
+		image2Landmarks->push_back(Point(224,122));
+
+		image1Landmarks->push_back(Point(241,239));
+		image2Landmarks->push_back(Point(247,254));
+
+		image1Landmarks->push_back(Point(233,323));
+		image2Landmarks->push_back(Point(255,332));
+
+		image1Landmarks->push_back(Point(29,266));
+		image2Landmarks->push_back(Point(52,316));
+
+		image1Landmarks->push_back(Point(441,270));
+		image2Landmarks->push_back(Point(455,259));
+
+
+		cout << "Image 1 Landmarks:" << endl;
+		this->printVector(*image1Landmarks);
+		cout << endl;
+
+		cout << "Image 2 Landmarks:" << endl;
+		this->printVector(*image2Landmarks);
+		cout << endl;
+	}
+
 	
 	//Find the two tumors in the picture of the lung (on the right)
 	void functionLung(Mat& src, Mat& dst)
@@ -129,15 +176,20 @@ private:
 	}//end functionLung
 
 
-	//cleanup for next dataset, free allocated memory for data structures
-	void cleanup()
-	{
-
-	}//end cleanup
-
-
-	//Class variables:	
 	
+	//free allocated memory for data structures
+	void destroyDataStructures()
+	{
+		//delete landmark vectors
+		delete image1Landmarks;
+		delete image2Landmarks;
+
+	}//end destroyDataStructures
+
+
+	//Class variables:
+	vector<Point> *image1Landmarks;
+	vector<Point> *image2Landmarks;
 
 };//end class
 
