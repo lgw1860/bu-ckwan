@@ -31,10 +31,6 @@ int main(int argc, char* argv[])
 			case 'q':
 				cout << "\nQuit:\n" << endl;
 				break;
-			case 't':
-				cout << "\nTest Dataset:\n" << endl;
-				homework.processImages("Datasets/Test", 4, option);
-				break;
 			default:
 				cout << "\nPlease select a different option.\n" << endl;
 		}

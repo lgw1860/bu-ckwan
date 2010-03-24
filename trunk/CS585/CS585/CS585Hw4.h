@@ -70,7 +70,7 @@ public:
 
 		//6. Map image 2 to image 1 with warpAffine
 		//Combine rotation and translation into one 2x3 matrix as input to warpAffine
-		Mat rotTransMat = (Mat_<double>(2,3) << cos(theta), -1*sin(theta), x0, sin(theta), cos(theta), y0); //for testing
+		Mat rotTransMat = (Mat_<double>(2,3) << cos(theta), -1*sin(theta), x0, sin(theta), cos(theta), y0);
 		
 		/*
 		for(int row=0; row<rotTransMat.rows; row++)
@@ -242,23 +242,63 @@ private:
 		image2Landmarks = new vector<Point>();
 
 		//case
-		image1Landmarks->push_back(Point(232,112));
-		image2Landmarks->push_back(Point(224,122));
 
-		
+		/*
+		//n = 15
+		//top white oval
+		image1Landmarks->push_back(Point(253,114));
+		image2Landmarks->push_back(Point(241,124));
+		//middle dark spot
+		image1Landmarks->push_back(Point(238,252));
+		image2Landmarks->push_back(Point(243,262));
+		//bottom middle circle
+		image1Landmarks->push_back(Point(232,333));
+		image2Landmarks->push_back(Point(255,342));
+		//bottom left squiggle
+		image1Landmarks->push_back(Point(56,298));
+		image2Landmarks->push_back(Point(82,342));
+		//bottom right squiggle
+		image1Landmarks->push_back(Point(434,285));
+		image2Landmarks->push_back(Point(448,277));
+
+		//n = 10
+		//top white oval
+		image1Landmarks->push_back(Point(218,104));
+		image2Landmarks->push_back(Point(205,117));
+		//middle dark spot
+		image1Landmarks->push_back(Point(241,228));
+		image2Landmarks->push_back(Point(244,240));
+		//bottom middle circle
+		image1Landmarks->push_back(Point(232,313));
+		image2Landmarks->push_back(Point(253,321));
+		//bottom left squiggle
+		image1Landmarks->push_back(Point(30,255));
+		image2Landmarks->push_back(Point(47,306));
+		//bottom right squiggle
+		image1Landmarks->push_back(Point(443,252));
+		image2Landmarks->push_back(Point(457,242));
+
+		//n = 5
+		//bottom left squiggle
+		image1Landmarks->push_back(Point(29,266));
+		image2Landmarks->push_back(Point(52,316));
+		//bottom right squiggle
+		image1Landmarks->push_back(Point(441,270));
+		image2Landmarks->push_back(Point(455,259));
+		*/
+
+		//n = 3
+		//middle dark spot
 		image1Landmarks->push_back(Point(241,239));
 		image2Landmarks->push_back(Point(247,254));
 
-
-		
+		//n = 2
+		//top white oval
+		image1Landmarks->push_back(Point(232,112));
+		image2Landmarks->push_back(Point(224,122));
+		//bottom middle circle
 		image1Landmarks->push_back(Point(233,323));
 		image2Landmarks->push_back(Point(255,332));
-
-		image1Landmarks->push_back(Point(29,266));
-		image2Landmarks->push_back(Point(52,316));
-
-		image1Landmarks->push_back(Point(441,270));
-		image2Landmarks->push_back(Point(455,259));
 		
 
 		//output a list of the landmarks
