@@ -37,6 +37,11 @@ public:
 		cout << "xBar2: " << xBar2 << endl;
 		cout << "yBar2: " << yBar2 << endl;
 
+		//3. Transform point coordinates
+		//4. Compute theta
+		computeTheta(*image1Landmarks,*image2Landmarks,xBar1,yBar1,xBar2,yBar2,theta);
+		cout << "theta: " << theta << endl;
+
 		for (int imageNum = 1; imageNum <= numImages; imageNum++)
 		{
 			Mat image;
@@ -152,6 +157,13 @@ private:
 		image2Landmarks = new vector<Point>();
 
 		//hard coded values for testing
+
+		/*
+		image1Landmarks->push_back(Point(90,90));
+		image2Landmarks->push_back(Point(90,90));
+		*/
+
+		
 		image1Landmarks->push_back(Point(232,112));
 		image2Landmarks->push_back(Point(224,122));
 
@@ -166,6 +178,7 @@ private:
 
 		image1Landmarks->push_back(Point(441,270));
 		image2Landmarks->push_back(Point(455,259));
+		
 
 
 		cout << "Image 1 Landmarks:" << endl;
@@ -178,7 +191,7 @@ private:
 	}
 
 	
-	void computeCentroids(vector<Point>& points, int& xBar, int& yBar)
+	void computeCentroids(vector<Point>& points, double& xBar, double& yBar)
 	{
 		int sumX = 0;
 		int sumY = 0;
@@ -194,11 +207,45 @@ private:
 
 		if(numPoints > 0)
 		{
-			xBar = sumX / numPoints;
-			yBar = sumY / numPoints;
+			xBar = (double)sumX / (double)numPoints;
+			yBar = (double)sumY / (double)numPoints;
 		}//end if
 	}//end computeCentroids
 
+	
+	void computeTheta(vector<Point>& img1Pts, vector<Point>& img2Pts, 
+		double& xBar1, double& yBar1, double& xBar2, double& yBar2, double& theta)
+	{
+								//l = left = 1, and r = right = 2
+		double numer = 0.0;		//SUM { y'_r,i * x'_l,i - x'_r,i * y'_l,i }
+		double denom = 0.0;		//SUM { x'_r,i * x'_l,i + y'_r,i * y'_l,i }
+		double tanTheta = 0.0;	//numer / denom
+
+		double xPrime1 = 0.0;	//x'_l,i = x_l,i - xBar_l
+		double yPrime1 = 0.0;	//y'_l,i = y_l,i - yBar_l
+		double xPrime2 = 0.0;	//x'_r,i = x_r,i - xBar_r
+		double yPrime2 = 0.0;	//y'_r,i = y_r,i - yBar_r
+
+
+		//assume that img1 and img2 have same number of points
+		int numPoints = (int)img1Pts.size();
+
+		for(int i=0; i<numPoints; i++)
+		{
+			xPrime1 = img1Pts[i].x - xBar1;
+			yPrime1 = img1Pts[i].y - yBar1;
+			xPrime2 = img2Pts[i].x - xBar2;
+			yPrime2 = img2Pts[i].y - yBar2;
+
+			numer += yPrime2 * xPrime1 - xPrime2 * yPrime1;
+			denom += xPrime2 * xPrime1 + yPrime2 * yPrime1;
+
+		}//end for
+
+		tanTheta = numer / denom;
+		theta = atan(tanTheta);
+	}//end computeTheta
+	
 	//Find the two tumors in the picture of the lung (on the right)
 	void functionLung(Mat& src, Mat& dst)
 	{
@@ -221,7 +268,8 @@ private:
 	//Class variables:
 	vector<Point> *image1Landmarks;
 	vector<Point> *image2Landmarks;
-	int xBar1, yBar1, xBar2, yBar2;
+	double xBar1, yBar1, xBar2, yBar2;
+	double theta;
 
 };//end class
 
