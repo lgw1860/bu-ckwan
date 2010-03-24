@@ -50,49 +50,23 @@ public:
 
 		//6. Map image 2 to image 1 with warpAffine
 		//Combine rotation and translation into one 2x3 matrix
-		//Mat rotTrans = Mat(2,3,CV_32FC1);
-
-		//from: http://opencv.willowgarage.com/documentation/cpp/basic_structures.html?#mat
-		//create 2x3 double-precision matrix
-		//Mat rotTrans = (Mat_<double>(2,3) << cos(theta), -1*sin(theta), x0, sin(theta), cos(theta), y0);
-
-		//Mat rotTrans = (Mat_<double>(2,3) << 1, 2, 3, 4, 5, 6);
-
-
-		/*
-		double a[] = { 1,  2,  3,  4,
-               5,  6,  7,  8,
-               9, 10, 11, 12 };
-
-CvMat Ma=cvMat(3, 4, CV_64FC1, a);
-		*/
-
-
-		double a[] = { 1,  2,  3,  4,
-               5,  6,  7,  8,
-               9, 10, 11, 12 };
-
-		//CvMat rotTrans=cvMat(3, 4, CV_64FC1, a);
-
-		//cout << cvmGet(&rotTrans,0,1) << endl;
-
-		Mat rotTrans = Mat(3,4,CV_32FC1, a);
 		
-		for(int x=0; x<rotTrans.cols; x++)
+		//Mat rotTransMat = (Mat_<double>(2,3) << 1, 2, 3, 4, 5, 6); //for testing
+		Mat rotTransMat = (Mat_<double>(2,3) << cos(theta), -1*sin(theta), x0, sin(theta), cos(theta), y0); //for testing
+		
+		for(int row=0; row<rotTransMat.rows; row++)
 		{
-			for(int y=0; y<rotTrans.rows; y++)
+			for(int col=0; col<rotTransMat.cols; col++)
 			{
-				//cout << rotTrans.data[y*rotTrans.step+rotTrans.channels()*x] << endl;
-				//cout << rotTrans(y,x) << endl;
-				//cout << cvmGet(&rotTrans,x,y) << endl;
-
-				cout << rotTrans.at<double>(x,y) << endl;
-
-			}//end for y
+				//at uses row,col coords, not x,y coords!
+				cout << rotTransMat.at<double>(row,col) << endl;
+			}//end for col
 			cout << endl;
-		}//end for x
+		}//end for row
 		
-		//cout << sizeof(double) << endl;
+		
+		//warpAffine time!
+
 
 		for (int imageNum = 1; imageNum <= numImages; imageNum++)
 		{
