@@ -16,58 +16,62 @@ class CS585Hw4
 public:
 	CS585Hw4()
 	{
-		//initialize data structures
+		//initialize class variables
+		image1Landmarks = NULL;
+		image2Landmarks = NULL;
+		xBar1 = 0.0;
+		yBar1 = 0.0;
+		xBar2 = 0.0;
+		yBar2 = 0.0;
+		theta = 0.0;
+		x0 = 0.0;
+		y0 = 0.0;
 
 	}//end constructor
 
 	//process images in a folder using the procedure defined by option
 	void processImages(string folderName, int numImages, char option)
 	{
-
-		//read in images from folders
 		Mat image1;
 		Mat image2;
+		Mat image1WithLandmarks;
+		Mat image2WithLandmarks;
 		Mat image2Transformed;
 		Mat errorImage;
 		
+		//0. Read in images from folders
 		image1 = imread("Datasets/Lung/01.jpg");
 		image2 = imread("Datasets/Lung/02.jpg");
-		
 
-
-		//create mats and processed mats
-
-		//1. get n corresponding point pair landmarks
+		//1. Get n corresponding point pairs (landmarks)
 		getLandmarks();
+		image1.copyTo(image1WithLandmarks);
+		image2.copyTo(image2WithLandmarks);
 
-		//2. compute centroids
-		computeCentroids(*image1Landmarks,xBar1,yBar1);
-		cout << "xBar1: " << xBar1 << endl;
-		cout << "yBar1: " << yBar1 << endl;
-
+		//2. Compute centroids
+		computeCentroid(*image1Landmarks,xBar1,yBar1);
+		computeCentroid(*image2Landmarks,xBar2,yBar2);
+		cout << "Centroid of Image 1: (xBar1, yBar1) = (" << xBar1 << ", " << yBar1 << ")" << endl;
 		cout << endl;
-
-		computeCentroids(*image2Landmarks,xBar2,yBar2);
-		cout << "xBar2: " << xBar2 << endl;
-		cout << "yBar2: " << yBar2 << endl;
+		cout << "Centroid of Image 2: (xBar2, yBar2) = (" << xBar2 << ", " << yBar2 << ")" << endl;
+		cout << endl;
 
 		//3. Transform point coordinates
 		//4. Compute theta
 		computeTheta(*image1Landmarks,*image2Landmarks,xBar1,yBar1,xBar2,yBar2,theta);
-		cout << "theta: " << theta << endl;
+		cout << "Rotation angle: theta = " << theta << endl;
+		cout << endl;
 
 		//5. Compute translation vector: r0 = (x0, y0)
 		computeTranslation(xBar1,yBar1,xBar2,yBar2,theta,x0,y0);
-		cout << "x0: " << x0 << endl;
-		cout << "y0: " << y0 << endl;
-
+		cout << "Translation vector: (x0, y0) = (" << x0 << ", " << y0 << ")" << endl;
+		cout << endl;
 
 		//6. Map image 2 to image 1 with warpAffine
-		//Combine rotation and translation into one 2x3 matrix
-		
-		//Mat rotTransMat = (Mat_<double>(2,3) << 1, 2, 3, 4, 5, 6); //for testing
+		//Combine rotation and translation into one 2x3 matrix as input to warpAffine
 		Mat rotTransMat = (Mat_<double>(2,3) << cos(theta), -1*sin(theta), x0, sin(theta), cos(theta), y0); //for testing
 		
+		/*
 		for(int row=0; row<rotTransMat.rows; row++)
 		{
 			for(int col=0; col<rotTransMat.cols; col++)
@@ -77,15 +81,15 @@ public:
 			}//end for col
 			cout << endl;
 		}//end for row
-		
-		
-		//warpAffine time!
+		*/
+
 		warpAffine(image2,image2Transformed,rotTransMat,image2.size(),WARP_INVERSE_MAP);
 
-
-		//compute error image
+		//7. Compute error image between image2transformed and image 1
 		computeErrorImage(image1,image2Transformed,errorImage);
-		//computeErrorImage(image1,image1,errorImage); //testing: error of same image is 0
+
+		//8. Output parameters to textfile
+
 
 /*
 		for (int imageNum = 1; imageNum <= numImages; imageNum++)
@@ -156,16 +160,30 @@ public:
 		}//end for
 		*/
 
+
+		//output processed images to files
+		imwrite("Datasets/Lung/01withLandmarks.jpg",image1WithLandmarks);
+		imwrite("Datasets/Lung/02withLandmarks.jpg",image2WithLandmarks);
+		imwrite("Datasets/Lung/02Transformed.jpg",image2Transformed);
+		imwrite("Datasets/Lung/errorImage.jpg",errorImage);
+
+
+		//show the processed images
 		namedWindow("Image 1",CV_WINDOW_AUTOSIZE);		
-		namedWindow("Image 2",CV_WINDOW_AUTOSIZE);	
-		namedWindow("Image 2 Transformed",CV_WINDOW_AUTOSIZE);	
+		namedWindow("Image 2",CV_WINDOW_AUTOSIZE);
+		namedWindow("Image 1 With Landmarks",CV_WINDOW_AUTOSIZE);		
+		namedWindow("Image 2 With Landmarks",CV_WINDOW_AUTOSIZE);
+		namedWindow("Image 2 Transformed",CV_WINDOW_AUTOSIZE);
 		namedWindow("Error Image",CV_WINDOW_AUTOSIZE);	
-		
+
 		imshow("Image 1", image1);
 		imshow("Image 2", image2);
+		imshow("Image 1 With Landmarks", image1WithLandmarks);
+		imshow("Image 2 With Landmarks", image2WithLandmarks);
 		imshow("Image 2 Transformed", image2Transformed);
 		imshow("Error Image", errorImage);
 		
+		//wait so user has time to look at the images
 		waitKey(5000);
 		
 		//cleanup in prep for the next call to processImages
@@ -173,7 +191,6 @@ public:
 		cvDestroyAllWindows();
 
 		cout << endl;
-
 	}//end processImages
 
 
@@ -189,6 +206,7 @@ private:
 	}//end intToString()
 
 
+	
 	//convert a double to a string
 	string doubleToString(double number)
 	{
@@ -204,31 +222,29 @@ private:
 	{
 		for(int i=0;i<(int)vec.size();i++)
 		{
-			cout << vec[i].x << "," << vec[i].y << endl;
-		}
-	}
-
+			cout << "(" << vec[i].x << "," << vec[i].y << ") ";
+		}//end for
+		cout << endl;
+	}//end printVector
 
 	
+	//get n corresponding point pairs (landmarks) in two images
+	//these values have been picked by me and hardcoded into the method
 	void getLandmarks()
 	{
+		//initialize data structures for storing landmarks
 		image1Landmarks = new vector<Point>();
 		image2Landmarks = new vector<Point>();
 
-		//hard coded values for testing
-
-		/*
-		image1Landmarks->push_back(Point(90,90));
-		image2Landmarks->push_back(Point(90,90));
-		*/
-
-		
+		//case
 		image1Landmarks->push_back(Point(232,112));
 		image2Landmarks->push_back(Point(224,122));
 
+		
 		image1Landmarks->push_back(Point(241,239));
 		image2Landmarks->push_back(Point(247,254));
 
+		
 		image1Landmarks->push_back(Point(233,323));
 		image2Landmarks->push_back(Point(255,332));
 
@@ -238,19 +254,19 @@ private:
 		image1Landmarks->push_back(Point(441,270));
 		image2Landmarks->push_back(Point(455,259));
 		
-
-
-		cout << "Image 1 Landmarks:" << endl;
+		//output a list of the landmarks
+		cout << "Image 1 Landmarks (" << image1Landmarks->size() << "):" << endl;
 		this->printVector(*image1Landmarks);
 		cout << endl;
 
-		cout << "Image 2 Landmarks:" << endl;
+		cout << "Image 2 Landmarks (" << image2Landmarks->size() << "):" << endl;
 		this->printVector(*image2Landmarks);
 		cout << endl;
-	}
+	}//end getLandmarks
 
 	
-	void computeCentroids(vector<Point>& points, double& xBar, double& yBar)
+	//compute the coordinates of the centroid of a set of points
+	void computeCentroid(vector<Point>& points, double& xBar, double& yBar)
 	{
 		int sumX = 0;
 		int sumY = 0;
@@ -269,9 +285,10 @@ private:
 			xBar = (double)sumX / (double)numPoints;
 			yBar = (double)sumY / (double)numPoints;
 		}//end if
-	}//end computeCentroids
+	}//end computeCentroid
 
 	
+	//compute the angle, theta, in order to transform point coordinates
 	void computeTheta(vector<Point>& img1Pts, vector<Point>& img2Pts, 
 		double& xBar1, double& yBar1, double& xBar2, double& yBar2, double& theta)
 	{
@@ -298,14 +315,13 @@ private:
 
 			numer += yPrime2 * xPrime1 - xPrime2 * yPrime1;
 			denom += xPrime2 * xPrime1 + yPrime2 * yPrime1;
-
 		}//end for
 
 		tanTheta = numer / denom;
 		theta = atan(tanTheta);
 	}//end computeTheta
 	
-
+	//compute the translation vector r0 = (x0, y0) given angle and centroids
 	void computeTranslation(double& xBar1, double& yBar1, double& xBar2, double& yBar2, 
 		double& theta, double& x0, double& y0)
 	{
@@ -316,35 +332,16 @@ private:
 
 		double cosTheta = cos(theta);
 		double sinTheta = sin(theta);
-		//double x0 = 0.0;
-		//double y0 = 0.0;
 
 		x0 = xBar2 - (cosTheta * xBar1 - sinTheta * yBar1);
 		y0 = yBar2 - (sinTheta * xBar1 + cosTheta * yBar1);
 	}//end computeTranslation
-
-
-
-	//user warpAffine instead!
-	void mapImage(Mat& src, Mat& dst, double& theta, double& x0, double& y0)
-	{
-		src.copyTo(dst);
-
-		for(int x=0; x<dst.cols; x++)
-		{
-			for(int y=0; y<dst.rows; y++)
-			{
-				//dst.data[y*dst.step+dst.channels()*x] 
-				//dst.data[y*dst.step+dst.channels()*x]
-			}//end for y
-		}//end for x
-
-	}//end mapImage
-
 	
+	//compute the error image of two images
 	//assume both src Matrices are the same size
 	void computeErrorImage(Mat& src1, Mat& src2, Mat& dst)
 	{
+		//convert both images to grayscale so we only have to compare one channel
 		Mat src1Gray;
 		Mat src2Gray;
 
@@ -353,9 +350,10 @@ private:
 
 		src1Gray.copyTo(dst);
 
-		int curImg1Val = 0;
-		int curImg2Val = 0;
+		int curImg1Val = 0;	//current pixel in image1 being compared
+		int curImg2Val = 0;	//current pixel in image2 being compared
 
+		//compare all pixels in both images and create error image
 		for(int x=0; x<src1.cols; x++)
 		{
 			for(int y=0; y<src1.rows; y++)
@@ -363,26 +361,12 @@ private:
 				curImg1Val = src1Gray.data[y*src1Gray.step+src1Gray.channels()*x];
 				curImg2Val = src2Gray.data[y*src2Gray.step+src2Gray.channels()*x];
 
-				//white is error
-				//dst.data[y*dst.step+dst.channels()*x] = abs(curImg1Val - curImg2Val);
-				////dst.data[y*dst.step+dst.channels()*x] = (curImg1Val - curImg2Val);
-
-				//black is error
-				dst.data[y*dst.step+dst.channels()*x] = 255 - abs(curImg1Val - curImg2Val);
-				//dst.data[y*dst.step+dst.channels()*x] = 255 - (curImg1Val - curImg2Val);
-
+				//error = absolute difference btn intensities in img2 and img1
+				//lighter pixels mean higher error
+				dst.data[y*dst.step+dst.channels()*x] = abs(curImg2Val - curImg1Val);
 			}//end for y
 		}//end for x
 	}//end computeErrorImage
-	
-	//Find the two tumors in the picture of the lung (on the right)
-	void functionLung(Mat& src, Mat& dst)
-	{
-		src.copyTo(dst);
-
-	}//end functionLung
-
-
 	
 	//free allocated memory for data structures
 	void destroyDataStructures()
@@ -393,7 +377,7 @@ private:
 
 	}//end destroyDataStructures
 
-
+	
 	//Class variables:
 	vector<Point> *image1Landmarks;
 	vector<Point> *image2Landmarks;
