@@ -1,1 +1,7 @@
 http://en.wikipedia.org/wiki/Image_registration 2:49 PM 3/23/2010
+http://opencv.willowgarage.com/documentation/cpp/geometric_image_transformations.html?#warpAffine 10:55 AM 3/24/2010
+http://en.wikipedia.org/wiki/Affine_transformation 10:55 AM 3/24/2010
+http://www.cs.iit.edu/~agam/cs512/lect-notes/opencv-intro/opencv-intro.html 11:39 AM 3/24/2010
+http://opencv.willowgarage.com/documentation/cpp/basic_structures.html?#mat 11:39 AM 3/24/2010
+http://opencv.willowgarage.com/wiki/faq#Howtoaccessmatrixelements.3F 11:52 AM 3/24/2010
+http://www.cs.iit.edu/~agam/cs512/lect-notes/opencv-intro/opencv-intro.html#SECTION00060000000000000000 11:56 AM 3/24/2010
