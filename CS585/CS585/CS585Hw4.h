@@ -23,6 +23,20 @@ public:
 	//process images in a folder using the procedure defined by option
 	void processImages(string folderName, int numImages, char option)
 	{
+
+		//read in images from folders
+		Mat image1;
+		Mat image2;
+		Mat image2Transformed;
+		Mat errorImage;
+		
+		image1 = imread("Datasets/Lung/01.jpg");
+		image2 = imread("Datasets/Lung/02.jpg");
+		
+
+
+		//create mats and processed mats
+
 		//1. get n corresponding point pair landmarks
 		getLandmarks();
 
@@ -66,8 +80,12 @@ public:
 		
 		
 		//warpAffine time!
+		warpAffine(image2,image2Transformed,rotTransMat,image2.size(),WARP_INVERSE_MAP);
 
 
+		//compute error image
+
+/*
 		for (int imageNum = 1; imageNum <= numImages; imageNum++)
 		{
 			Mat image;
@@ -134,6 +152,19 @@ public:
 			//wait 1 sec btn each image so you can actually see it
 			waitKey(1000);
 		}//end for
+		*/
+
+		namedWindow("Image 1",CV_WINDOW_AUTOSIZE);		
+		namedWindow("Image 2",CV_WINDOW_AUTOSIZE);	
+		namedWindow("Image 2 Transformed",CV_WINDOW_AUTOSIZE);	
+		namedWindow("Error Image",CV_WINDOW_AUTOSIZE);	
+		
+		imshow("Image 1", image1);
+		imshow("Image 2", image2);
+		imshow("Image 2 Transformed", image2Transformed);
+		
+		
+		waitKey(5000);
 		
 		//cleanup in prep for the next call to processImages
 		destroyDataStructures();
