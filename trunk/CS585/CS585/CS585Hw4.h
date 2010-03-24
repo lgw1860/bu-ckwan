@@ -72,21 +72,26 @@ CvMat Ma=cvMat(3, 4, CV_64FC1, a);
                5,  6,  7,  8,
                9, 10, 11, 12 };
 
-		CvMat rotTrans=cvMat(3, 4, CV_64FC1, a);
+		//CvMat rotTrans=cvMat(3, 4, CV_64FC1, a);
 
-		cout << cvmGet(&rotTrans,0,1) << endl;
+		//cout << cvmGet(&rotTrans,0,1) << endl;
 
-		/*
+		Mat rotTrans = Mat(3,4,CV_32FC1, a);
+		
 		for(int x=0; x<rotTrans.cols; x++)
 		{
 			for(int y=0; y<rotTrans.rows; y++)
 			{
 				//cout << rotTrans.data[y*rotTrans.step+rotTrans.channels()*x] << endl;
 				//cout << rotTrans(y,x) << endl;
-				cvmGet(rotTrans,x,y);
+				//cout << cvmGet(&rotTrans,x,y) << endl;
+
+				cout << rotTrans.at<double>(x,y) << endl;
+
 			}//end for y
+			cout << endl;
 		}//end for x
-		*/
+		
 		//cout << sizeof(double) << endl;
 
 		for (int imageNum = 1; imageNum <= numImages; imageNum++)
