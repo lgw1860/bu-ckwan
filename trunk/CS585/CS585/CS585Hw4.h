@@ -26,6 +26,7 @@ public:
 		theta = 0.0;
 		x0 = 0.0;
 		y0 = 0.0;
+		errorSum = 0;
 
 	}//end constructor
 
@@ -44,13 +45,13 @@ public:
 		image2 = imread("Datasets/Lung/02.jpg");
 
 		//1. Get n corresponding point pairs (landmarks)
-		getLandmarks();
 		image1.copyTo(image1WithLandmarks);
 		image2.copyTo(image2WithLandmarks);
+		getLandmarks(image1WithLandmarks,image2WithLandmarks);
 
 		//2. Compute centroids
-		computeCentroid(*image1Landmarks,xBar1,yBar1);
-		computeCentroid(*image2Landmarks,xBar2,yBar2);
+		computeCentroid(image1WithLandmarks,*image1Landmarks,xBar1,yBar1);
+		computeCentroid(image2WithLandmarks,*image2Landmarks,xBar2,yBar2);
 		cout << "Centroid of Image 1: (xBar1, yBar1) = (" << xBar1 << ", " << yBar1 << ")" << endl;
 		cout << endl;
 		cout << "Centroid of Image 2: (xBar2, yBar2) = (" << xBar2 << ", " << yBar2 << ")" << endl;
@@ -86,10 +87,9 @@ public:
 		warpAffine(image2,image2Transformed,rotTransMat,image2.size(),WARP_INVERSE_MAP);
 
 		//7. Compute error image between image2transformed and image 1
-		computeErrorImage(image1,image2Transformed,errorImage);
-
-		//8. Output parameters to textfile
-
+		computeErrorImage(image1,image2Transformed,errorImage,errorSum);
+		cout << "Error sum: " << errorSum << endl;
+		cout << endl;
 
 /*
 		for (int imageNum = 1; imageNum <= numImages; imageNum++)
@@ -217,20 +217,25 @@ private:
 		return s;
 	}//end intToString()
 		
-	//print out points in a vector
-	void printVector(vector<Point>& vec)
+	//output landmarks to console and mark them on the image
+	void outputLandmarks(Mat& dst, vector<Point>& landmarkPts)
 	{
-		for(int i=0;i<(int)vec.size();i++)
+		for(int i=0;i<(int)landmarkPts.size();i++)
 		{
-			cout << "(" << vec[i].x << "," << vec[i].y << ") ";
+			cout << "(" << landmarkPts[i].x << "," << landmarkPts[i].y << ") ";
+			
+			//draw green circles over the landmarks in the image
+			circle(dst,landmarkPts[i],2,Scalar(0,255,0),2);
+
 		}//end for
 		cout << endl;
-	}//end printVector
+	}//end outputLandmarks
 
 	
 	//get n corresponding point pairs (landmarks) in two images
 	//these values have been picked by me and hardcoded into the method
-	void getLandmarks()
+	//n presets: 1, 2, 5, 10, 15 
+	void getLandmarks(Mat& dst1, Mat& dst2)
 	{
 		//initialize data structures for storing landmarks
 		image1Landmarks = new vector<Point>();
@@ -244,6 +249,7 @@ private:
 		image1Landmarks->push_back(Point(241,239));
 		image2Landmarks->push_back(Point(247,254));
 
+
 		
 		image1Landmarks->push_back(Point(233,323));
 		image2Landmarks->push_back(Point(255,332));
@@ -254,19 +260,21 @@ private:
 		image1Landmarks->push_back(Point(441,270));
 		image2Landmarks->push_back(Point(455,259));
 		
+
 		//output a list of the landmarks
 		cout << "Image 1 Landmarks (" << image1Landmarks->size() << "):" << endl;
-		this->printVector(*image1Landmarks);
+		this->outputLandmarks(dst1,*image1Landmarks);
 		cout << endl;
 
 		cout << "Image 2 Landmarks (" << image2Landmarks->size() << "):" << endl;
-		this->printVector(*image2Landmarks);
+		this->outputLandmarks(dst2,*image2Landmarks);
 		cout << endl;
+
 	}//end getLandmarks
 
 	
-	//compute the coordinates of the centroid of a set of points
-	void computeCentroid(vector<Point>& points, double& xBar, double& yBar)
+	//compute the coordinates of the centroid of a set of points and mark it on the image
+	void computeCentroid(Mat& dst, vector<Point>& points, double& xBar, double& yBar)
 	{
 		int sumX = 0;
 		int sumY = 0;
@@ -285,6 +293,10 @@ private:
 			xBar = (double)sumX / (double)numPoints;
 			yBar = (double)sumY / (double)numPoints;
 		}//end if
+
+		//draw a red circle over the centroid in the image
+		circle(dst,Point((int)xBar,(int)yBar),2,Scalar(0,0,255),2);
+
 	}//end computeCentroid
 
 	
@@ -339,7 +351,7 @@ private:
 	
 	//compute the error image of two images
 	//assume both src Matrices are the same size
-	void computeErrorImage(Mat& src1, Mat& src2, Mat& dst)
+	void computeErrorImage(Mat& src1, Mat& src2, Mat& dst, int& errorSum)
 	{
 		//convert both images to grayscale so we only have to compare one channel
 		Mat src1Gray;
@@ -352,6 +364,7 @@ private:
 
 		int curImg1Val = 0;	//current pixel in image1 being compared
 		int curImg2Val = 0;	//current pixel in image2 being compared
+		int sumAbsDiff = 0;	//sum of all the absolute pixel intensity differences
 
 		//compare all pixels in both images and create error image
 		for(int x=0; x<src1.cols; x++)
@@ -364,8 +377,11 @@ private:
 				//error = absolute difference btn intensities in img2 and img1
 				//lighter pixels mean higher error
 				dst.data[y*dst.step+dst.channels()*x] = abs(curImg2Val - curImg1Val);
+				sumAbsDiff += abs(curImg2Val - curImg1Val);
 			}//end for y
 		}//end for x
+
+		errorSum = sumAbsDiff;
 	}//end computeErrorImage
 	
 	//free allocated memory for data structures
@@ -384,6 +400,7 @@ private:
 	double xBar1, yBar1, xBar2, yBar2;
 	double theta;
 	double x0, y0;
+	int errorSum;
 
 };//end class
 
