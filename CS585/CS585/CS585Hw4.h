@@ -23,8 +23,19 @@ public:
 	//process images in a folder using the procedure defined by option
 	void processImages(string folderName, int numImages, char option)
 	{
-		//n corresponding point pair landmarks
+		//1. get n corresponding point pair landmarks
 		getLandmarks();
+
+		//2. compute centroids
+		computeCentroids(*image1Landmarks,xBar1,yBar1);
+		cout << "xBar1: " << xBar1 << endl;
+		cout << "yBar1: " << yBar1 << endl;
+
+		cout << endl;
+
+		computeCentroids(*image2Landmarks,xBar2,yBar2);
+		cout << "xBar2: " << xBar2 << endl;
+		cout << "yBar2: " << yBar2 << endl;
 
 		for (int imageNum = 1; imageNum <= numImages; imageNum++)
 		{
@@ -135,7 +146,6 @@ private:
 
 
 	
-
 	void getLandmarks()
 	{
 		image1Landmarks = new vector<Point>();
@@ -168,6 +178,27 @@ private:
 	}
 
 	
+	void computeCentroids(vector<Point>& points, int& xBar, int& yBar)
+	{
+		int sumX = 0;
+		int sumY = 0;
+
+		int numPoints = 0;
+		numPoints = (int)points.size();
+
+		for(int i=0; i<numPoints; i++)
+		{
+			sumX += points[i].x;
+			sumY += points[i].y;
+		}//end for
+
+		if(numPoints > 0)
+		{
+			xBar = sumX / numPoints;
+			yBar = sumY / numPoints;
+		}//end if
+	}//end computeCentroids
+
 	//Find the two tumors in the picture of the lung (on the right)
 	void functionLung(Mat& src, Mat& dst)
 	{
@@ -190,6 +221,7 @@ private:
 	//Class variables:
 	vector<Point> *image1Landmarks;
 	vector<Point> *image2Landmarks;
+	int xBar1, yBar1, xBar2, yBar2;
 
 };//end class
 
