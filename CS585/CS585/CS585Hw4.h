@@ -42,6 +42,12 @@ public:
 		computeTheta(*image1Landmarks,*image2Landmarks,xBar1,yBar1,xBar2,yBar2,theta);
 		cout << "theta: " << theta << endl;
 
+		//5. Compute translation vector: r0 = (x0, y0)
+		computeTranslation(xBar1,yBar1,xBar2,yBar2,theta,x0,y0);
+		cout << "x0: " << x0 << endl;
+		cout << "y0: " << y0 << endl;
+
+
 		for (int imageNum = 1; imageNum <= numImages; imageNum++)
 		{
 			Mat image;
@@ -246,6 +252,24 @@ private:
 		theta = atan(tanTheta);
 	}//end computeTheta
 	
+
+	void computeTranslation(double& xBar1, double& yBar1, double& xBar2, double& yBar2, 
+		double& theta, double& x0, double& y0)
+	{
+		//r0		= rBar_r - R*rBar_l
+		//(x0,y0)	= (xBar_r, yBar_r) - R*(xBar_l, yBar_l)
+		/* R =	[cosTheta	-sinTheta]
+				[sinTheta	cosTheta ] */
+
+		double cosTheta = cos(theta);
+		double sinTheta = sin(theta);
+		//double x0 = 0.0;
+		//double y0 = 0.0;
+
+		x0 = xBar2 - (cosTheta * xBar1 - sinTheta * yBar1);
+		y0 = yBar2 - (sinTheta * xBar1 + cosTheta * yBar1);
+	}//end computeTranslation
+
 	//Find the two tumors in the picture of the lung (on the right)
 	void functionLung(Mat& src, Mat& dst)
 	{
@@ -270,6 +294,7 @@ private:
 	vector<Point> *image2Landmarks;
 	double xBar1, yBar1, xBar2, yBar2;
 	double theta;
+	double x0, y0;
 
 };//end class
 
