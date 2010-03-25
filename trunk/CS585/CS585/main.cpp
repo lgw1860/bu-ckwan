@@ -11,8 +11,9 @@ int main(int argc, char* argv[])
 {
 	CS585Hw4 homework;
 
-	string menu = "\nImage Registration\n__________________\nSelect an option: "
-		"\n (l) Lung\n (q) Quit\n"
+	string menu = "\nImage Registration of Lung Images\n___________________________________"
+		"\nSelect a number of landmark points: "
+		"\n (a) 15\n (b) 10\n (c) 5\n (d) 3\n (e) 2\n (q) Quit\n"
 		"\nOption: ";
 
 	char option = ' ';
@@ -24,9 +25,20 @@ int main(int argc, char* argv[])
 	{
 		switch(option)
 		{
-			case 'l':
-				cout << "\nLung Dataset:\n" << endl;
-				homework.processImages("Datasets/Lung", 2, option);
+			case 'a':
+				homework.registerImages(15);
+				break;
+			case 'b':
+				homework.registerImages(10);
+				break;
+			case 'c':
+				homework.registerImages(5);
+				break;
+			case 'd':
+				homework.registerImages(3);
+				break;
+			case 'e':
+				homework.registerImages(2);
 				break;
 			case 'q':
 				cout << "\nQuit:\n" << endl;

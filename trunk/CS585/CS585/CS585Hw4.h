@@ -31,7 +31,7 @@ public:
 	}//end constructor
 
 	//process images in a folder using the procedure defined by option
-	void processImages(string folderName, int numImages, char option)
+	void registerImages(int numLandmarkPoints)
 	{
 		Mat image1;
 		Mat image2;
@@ -44,10 +44,10 @@ public:
 		image1 = imread("Datasets/Lung/01.jpg");
 		image2 = imread("Datasets/Lung/02.jpg");
 
-		//1. Get n corresponding point pairs (landmarks)
+		//1. Set n corresponding point pairs (landmarks)
 		image1.copyTo(image1WithLandmarks);
 		image2.copyTo(image2WithLandmarks);
-		getLandmarks(image1WithLandmarks,image2WithLandmarks);
+		setLandmarks(image1WithLandmarks,image2WithLandmarks,numLandmarkPoints);
 
 		//2. Compute centroids
 		computeCentroid(image1WithLandmarks,*image1Landmarks,xBar1,yBar1);
@@ -71,19 +71,6 @@ public:
 		//6. Map image 2 to image 1 with warpAffine
 		//Combine rotation and translation into one 2x3 matrix as input to warpAffine
 		Mat rotTransMat = (Mat_<double>(2,3) << cos(theta), -1*sin(theta), x0, sin(theta), cos(theta), y0);
-		
-		/*
-		for(int row=0; row<rotTransMat.rows; row++)
-		{
-			for(int col=0; col<rotTransMat.cols; col++)
-			{
-				//at uses row,col coords, not x,y coords!
-				cout << rotTransMat.at<double>(row,col) << endl;
-			}//end for col
-			cout << endl;
-		}//end for row
-		*/
-
 		warpAffine(image2,image2Transformed,rotTransMat,image2.size(),WARP_INVERSE_MAP);
 
 		//7. Compute error image between image2transformed and image 1
@@ -91,82 +78,11 @@ public:
 		cout << "Error sum: " << errorSum << endl;
 		cout << endl;
 
-/*
-		for (int imageNum = 1; imageNum <= numImages; imageNum++)
-		{
-			Mat image;
-			Mat processedImage;
-			
-			//reading in images from a folder
-			string filename;
-			filename.append(folderName);
-			filename.append("/");
-			filename.append("0");
-			filename.append(intToString(imageNum));
-			
-			//output textfile filename - add .txt
-			string outputTXTFilename;
-			outputTXTFilename.append(filename);
-			outputTXTFilename.append(".txt");
-
-			filename.append(".jpg");
-			image = imread(filename);
-
-			//show the original image
-			namedWindow(filename,CV_WINDOW_AUTOSIZE);
-			imshow(filename, image);
-
-			//copy from image to processedImage
-			image.copyTo(processedImage);
-
-			//different functions depending on which dataset(option) you are analyzing
-			switch(option)
-			{
-				case 'l':
-					cout << "Lung function:\n" << endl;
-					this->functionLung(processedImage,processedImage);
-					break;
-				case 'q':
-					cout << "Quit\n" << endl;
-					break;
-				case 't':
-					cout << "Test\n" << endl;
-					break;
-				default:
-					cout << "Not a valid option.\n" << endl;
-			}
-
-			//cleanup data structures in preparation for another dataset
-			//this->cleanup();
-
-			//write output images to same folder
-			string outname;
-			outname.append(folderName);
-			outname.append("/");
-			outname.append("out");
-			outname.append("0");
-			outname.append(intToString(imageNum));
-			outname.append(".jpg");
-
-			cout << "Output image: " << outname << endl;
-			imwrite(outname,processedImage);
-
-			//show the processed image
-			namedWindow(outname,CV_WINDOW_AUTOSIZE);
-			imshow(outname, processedImage);
-
-			//wait 1 sec btn each image so you can actually see it
-			waitKey(1000);
-		}//end for
-		*/
-
-
 		//output processed images to files
 		imwrite("Datasets/Lung/01withLandmarks.jpg",image1WithLandmarks);
 		imwrite("Datasets/Lung/02withLandmarks.jpg",image2WithLandmarks);
 		imwrite("Datasets/Lung/02Transformed.jpg",image2Transformed);
 		imwrite("Datasets/Lung/errorImage.jpg",errorImage);
-
 
 		//show the processed images
 		namedWindow("Image 1",CV_WINDOW_AUTOSIZE);		
@@ -186,12 +102,13 @@ public:
 		//wait so user has time to look at the images
 		waitKey(5000);
 		
-		//cleanup in prep for the next call to processImages
+		//cleanup in prep for the next call to registerImages
 		destroyDataStructures();
 		cvDestroyAllWindows();
 
+		cout << "Please see Datasets/Lung/ for the output images." << endl;
 		cout << endl;
-	}//end processImages
+	}//end registerImages
 
 
 private:
@@ -232,75 +149,74 @@ private:
 	}//end outputLandmarks
 
 	
-	//get n corresponding point pairs (landmarks) in two images
+	//set n corresponding point pairs (landmarks) in two images
 	//these values have been picked by me and hardcoded into the method
 	//n presets: 1, 2, 5, 10, 15 
-	void getLandmarks(Mat& dst1, Mat& dst2)
+	void setLandmarks(Mat& dst1, Mat& dst2, int numLandmarks)
 	{
 		//initialize data structures for storing landmarks
 		image1Landmarks = new vector<Point>();
 		image2Landmarks = new vector<Point>();
 
-		//case
-
-		/*
-		//n = 15
-		//top white oval
-		image1Landmarks->push_back(Point(253,114));
-		image2Landmarks->push_back(Point(241,124));
-		//middle dark spot
-		image1Landmarks->push_back(Point(238,252));
-		image2Landmarks->push_back(Point(243,262));
-		//bottom middle circle
-		image1Landmarks->push_back(Point(232,333));
-		image2Landmarks->push_back(Point(255,342));
-		//bottom left squiggle
-		image1Landmarks->push_back(Point(56,298));
-		image2Landmarks->push_back(Point(82,342));
-		//bottom right squiggle
-		image1Landmarks->push_back(Point(434,285));
-		image2Landmarks->push_back(Point(448,277));
-
-		//n = 10
-		//top white oval
-		image1Landmarks->push_back(Point(218,104));
-		image2Landmarks->push_back(Point(205,117));
-		//middle dark spot
-		image1Landmarks->push_back(Point(241,228));
-		image2Landmarks->push_back(Point(244,240));
-		//bottom middle circle
-		image1Landmarks->push_back(Point(232,313));
-		image2Landmarks->push_back(Point(253,321));
-		//bottom left squiggle
-		image1Landmarks->push_back(Point(30,255));
-		image2Landmarks->push_back(Point(47,306));
-		//bottom right squiggle
-		image1Landmarks->push_back(Point(443,252));
-		image2Landmarks->push_back(Point(457,242));
-
-		//n = 5
-		//bottom left squiggle
-		image1Landmarks->push_back(Point(29,266));
-		image2Landmarks->push_back(Point(52,316));
-		//bottom right squiggle
-		image1Landmarks->push_back(Point(441,270));
-		image2Landmarks->push_back(Point(455,259));
-		*/
-
-		//n = 3
-		//middle dark spot
-		image1Landmarks->push_back(Point(241,239));
-		image2Landmarks->push_back(Point(247,254));
-
-		//n = 2
-		//top white oval
-		image1Landmarks->push_back(Point(232,112));
-		image2Landmarks->push_back(Point(224,122));
-		//bottom middle circle
-		image1Landmarks->push_back(Point(233,323));
-		image2Landmarks->push_back(Point(255,332));
+		//note: there are no 'breaks' intentionally (except for the last case)
+		//so that cases fall through and all the points get added
+		switch(numLandmarks)
+		{
+			case 15:
+				//top white oval
+				image1Landmarks->push_back(Point(253,114));
+				image2Landmarks->push_back(Point(241,124));
+				//middle dark spot
+				image1Landmarks->push_back(Point(238,252));
+				image2Landmarks->push_back(Point(243,262));
+				//bottom middle circle
+				image1Landmarks->push_back(Point(232,333));
+				image2Landmarks->push_back(Point(255,342));
+				//bottom left squiggle
+				image1Landmarks->push_back(Point(56,298));
+				image2Landmarks->push_back(Point(82,342));
+				//bottom right squiggle
+				image1Landmarks->push_back(Point(434,285));
+				image2Landmarks->push_back(Point(448,277));
+			case 10:
+				//top white oval
+				image1Landmarks->push_back(Point(218,104));
+				image2Landmarks->push_back(Point(205,117));
+				//middle dark spot
+				image1Landmarks->push_back(Point(241,228));
+				image2Landmarks->push_back(Point(244,240));
+				//bottom middle circle
+				image1Landmarks->push_back(Point(232,313));
+				image2Landmarks->push_back(Point(253,321));
+				//bottom left squiggle
+				image1Landmarks->push_back(Point(30,255));
+				image2Landmarks->push_back(Point(47,306));
+				//bottom right squiggle
+				image1Landmarks->push_back(Point(443,252));
+				image2Landmarks->push_back(Point(457,242));
+			case 5:
+				//bottom left squiggle
+				image1Landmarks->push_back(Point(29,266));
+				image2Landmarks->push_back(Point(52,316));
+				//bottom right squiggle
+				image1Landmarks->push_back(Point(441,270));
+				image2Landmarks->push_back(Point(455,259));
+			case 3:
+				//middle dark spot
+				image1Landmarks->push_back(Point(241,239));
+				image2Landmarks->push_back(Point(247,254));
+			case 2:
+				//top white oval
+				image1Landmarks->push_back(Point(232,112));
+				image2Landmarks->push_back(Point(224,122));
+				//bottom middle circle
+				image1Landmarks->push_back(Point(233,323));
+				image2Landmarks->push_back(Point(255,332));
+				break;
+			default:
+				cout << "Not a valid number of landmarks.\n" << endl;
+		}
 		
-
 		//output a list of the landmarks
 		cout << "Image 1 Landmarks (" << image1Landmarks->size() << "):" << endl;
 		this->outputLandmarks(dst1,*image1Landmarks);
@@ -310,7 +226,7 @@ private:
 		this->outputLandmarks(dst2,*image2Landmarks);
 		cout << endl;
 
-	}//end getLandmarks
+	}//end setLandmarks
 
 	
 	//compute the coordinates of the centroid of a set of points and mark it on the image
