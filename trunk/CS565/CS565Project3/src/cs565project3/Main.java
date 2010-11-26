@@ -5,6 +5,8 @@
 
 package cs565project3;
 
+import java.io.*;
+
 /**
  *
  * @author Chris
@@ -31,6 +33,37 @@ public class Main {
             System.out.println("orig: " + wordsToStem[i]);
             System.out.println("\tstemmed: " + stemmer.toString());
         }
+
+        //file io test
+        System.out.println("Working dir " + System.getProperty("user.dir"));
+        String workDir = System.getProperty("user.dir");
+        File dir = new File(workDir);
+        File[] children = dir.listFiles();
+        if(children == null)
+        {
+            System.out.println("no children");
+        }
+        else
+        {
+            for(int i=0; i<children.length; i++)
+            {
+                System.out.print("name: " + children[i].getName());
+                if(children[i].isFile())
+                {
+                    System.out.print(" is a file\n");
+                }
+                else if(children[i].isDirectory())
+                {
+                    System.out.print(" is a directory\n");
+                }
+                else
+                {
+                    System.out.print(" is neither!");
+                }
+
+            }
+        }
+
     }
 
 }
