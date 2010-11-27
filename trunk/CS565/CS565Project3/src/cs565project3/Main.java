@@ -22,16 +22,17 @@ public class Main {
 
         //Stemmer test
         Stemmer stemmer = new Stemmer();
-        String wordsToStem[] = {"algorithm", "algorithmic", "algorithms", "Algorithms", "algo"};
+        String wordsToStem[] = {"algorithm", "algorithmic", "greetings", "algorithms", "Algorithms", "algo"};
         //String wordsToStem[] = {"truck", "trucker", "truckers", "trucks", "trucking"};
         for (int i=0; i<wordsToStem.length; i++)
         {
             //stem each word
-            String curWord = wordsToStem[i].toLowerCase();
-            stemmer.add(curWord.toCharArray(), curWord.length());
-            stemmer.stem();
+//            String curWord = wordsToStem[i].toLowerCase();
+//            stemmer.add(curWord.toCharArray(), curWord.length());
+//            stemmer.stem();
             System.out.println("orig: " + wordsToStem[i]);
-            System.out.println("\tstemmed: " + stemmer.toString());
+            System.out.println("\tstemmed: " + EmailCleaner.stem(wordsToStem[i]));
+            //System.out.println("\tstemmed: " + stemmer.toString());
         }
 
         //file io test
@@ -48,6 +49,12 @@ public class Main {
             for(int i=0; i<children.length; i++)
             {
                 System.out.print("name: " + children[i].getName());
+                
+                if(children[i].isHidden())
+                {
+                    System.out.print(" is hidden and");
+                }
+
                 if(children[i].isFile())
                 {
                     System.out.print(" is a file\n");
@@ -61,9 +68,16 @@ public class Main {
                     System.out.print(" is neither!");
                 }
 
-            }
-        }
+            }//end for
+        }//end else
 
-    }
+        //EmailCleaner test
+        //String filename = "testalgo.txt";
+        String filename = "0001.ea7e79d3153e7469e7a9c3e0af6a357e";
+        //EmailCleaner.readFile(filename);
+
+        EmailCleaner.parseFile(filename);
+
+    }//end Main
 
 }
