@@ -22,7 +22,7 @@ public class Main {
 
         //Stemmer test
         Stemmer stemmer = new Stemmer();
-        String wordsToStem[] = {"algorithm", "algorithmic", "greetings", "algorithms", "Algorithms", "algo"};
+        String wordsToStem[] = {"flyiing", "algorithm", "algorithmic", "greetings", "algorithms", "Algorithms", "algo"};
         //String wordsToStem[] = {"truck", "trucker", "truckers", "trucks", "trucking"};
         for (int i=0; i<wordsToStem.length; i++)
         {
@@ -78,6 +78,7 @@ public class Main {
 
         EmailCleaner.parseFile(filename);
 
+        
     }//end Main
 
 }
