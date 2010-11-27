@@ -39,6 +39,7 @@ public class EmailCleaner {
 //                //String newWord = stemmer.toString();
 //                //System.out.println(newWord);
                 s = stem(s);
+                
                 System.out.println(s);
             }
         }
