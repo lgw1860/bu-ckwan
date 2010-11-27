@@ -9,6 +9,7 @@ import java.io.*;
 import java.util.Scanner;
 import java.util.Collections;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.regex.Pattern;
 /**
  *
@@ -95,19 +96,31 @@ public class EmailCleaner {
 
             }
             System.out.println("I: " + i);
-            
+
+            HashMap<String,Integer> map = new HashMap<String,Integer>();
             Iterator<String> iter = list.iterator();
             int j=0;
             String curString;
             while(iter.hasNext())
             {
                 curString = iter.next();
+                map.put(curString, 1);
                 System.out.println("j: " + j + ": " + curString);
                 j++;
             }
             System.out.println("\nJ: " + j);
 
             //add the files to a hashmap
+            Set mapSet = map.entrySet();
+            Iterator iterMapSet = mapSet.iterator();
+            int k = 0;
+            while(iterMapSet.hasNext())
+            {
+                Entry entry = (Entry)(iterMapSet.next());
+                System.out.println("k: " + k + " " + entry.toString());
+                k++;
+            }
+            System.out.println("K: " + k);
 
         }
         catch(Exception e)
