@@ -53,6 +53,21 @@ public class EmailCleaner {
         return stringBuffer.toString();
     }
 
+    public static boolean onlyDigits(String word)
+    {
+        StringBuffer stringBuffer = new StringBuffer();
+        char curChar;
+        for(int i=0; i<word.length(); i++)
+        {
+            curChar = word.charAt(i);
+            if(!Character.isDigit(curChar))
+            {
+                stringBuffer.append(curChar);
+            }
+        }
+        return !(stringBuffer.length() > 0);
+    }
+
     //read in text
     //find first empty line
     //create new file
@@ -69,9 +84,15 @@ public class EmailCleaner {
             {
                 String s = scanner.next();
                 s = stem(s);
-                list.add(s);
-                //System.out.println("i: " + i + ": " + s);
-                i++;
+
+                //ignore words < 3 chars and words that are only numbers
+                if(s.length() > 2 && !onlyDigits(s))
+                {
+                    list.add(s);
+                    //System.out.println("i: " + i + ": " + s);
+                    i++;
+                }
+
             }
             System.out.println("I: " + i);
             
@@ -81,10 +102,10 @@ public class EmailCleaner {
             while(iter.hasNext())
             {
                 curString = iter.next();
-                //System.out.println("j: " + j + ": " + curString);
+                System.out.println("j: " + j + ": " + curString);
                 j++;
             }
-            System.out.println("J: " + j);
+            System.out.println("\nJ: " + j);
 
             //add the files to a hashmap
 
