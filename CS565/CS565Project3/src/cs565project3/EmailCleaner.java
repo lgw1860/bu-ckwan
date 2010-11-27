@@ -70,7 +70,7 @@ public class EmailCleaner {
                 String s = scanner.next();
                 s = stem(s);
                 list.add(s);
-                System.out.println("i: " + i + ": " + s);
+                //System.out.println("i: " + i + ": " + s);
                 i++;
             }
             System.out.println("I: " + i);
@@ -81,10 +81,13 @@ public class EmailCleaner {
             while(iter.hasNext())
             {
                 curString = iter.next();
-                System.out.println("j: " + j + ": " + curString);
+                //System.out.println("j: " + j + ": " + curString);
                 j++;
             }
             System.out.println("J: " + j);
+
+            //add the files to a hashmap
+
         }
         catch(Exception e)
         {
