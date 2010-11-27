@@ -12,12 +12,41 @@ import java.util.Scanner;
  * @author Chris
  */
 public class EmailCleaner {
+    /**
+     * Stems a word using the Porter stemming algorithm.
+     * You should also check if the stemmed word is empty.
+     * @param word
+     * @return
+     */
     public static String stem(String word)
     {
         Stemmer stemmer = new Stemmer();
-        stemmer.add(word.toCharArray(), word.length());
+        String newWord = word;
+        newWord = onlyLettersDigits(word);
+        newWord = newWord.toLowerCase();
+        stemmer.add(newWord.toCharArray(), newWord.length());
         stemmer.stem();
         return stemmer.toString();
+    }
+
+    /**
+     * Keep only letters and digits in a string.
+     * It is possible for an empty string to be returned.
+     * @param word
+     * @return
+     */
+    public static String onlyLettersDigits(String word)
+    {
+        StringBuffer stringBuffer = new StringBuffer();
+        for(int i=0; i<word.length(); i++)
+        {
+            if(Character.isLetter(word.charAt(i)) ||
+                    Character.isDigit(word.charAt(i)))
+            {
+                stringBuffer.append(word.charAt(i));
+            }
+        }
+        return stringBuffer.toString();
     }
 
     //read in text
@@ -31,16 +60,12 @@ public class EmailCleaner {
             while(scanner.hasNext())
             {
                 String s = scanner.next();
-//
-//                Stemmer stemmer = new Stemmer();
-//                stemmer.add(s.toCharArray(), s.length());
-//                stemmer.stem();
-//                s = stemmer.toString();
-//                //String newWord = stemmer.toString();
-//                //System.out.println(newWord);
+                //s = onlyLettersDigits(s);
                 s = stem(s);
-                
-                System.out.println(s);
+                if(!s.isEmpty())
+                {
+                    System.out.println(s);
+                }
             }
         }
         catch(Exception e)
