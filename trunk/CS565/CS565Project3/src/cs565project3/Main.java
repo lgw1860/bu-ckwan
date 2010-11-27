@@ -17,7 +17,7 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        //testStemmer();
+        testStemmer();
         //testFileIO();
         testEmailCleaner();
     }
@@ -27,8 +27,8 @@ public class Main {
         //EmailCleaner.readFile(filename);
         //EmailCleaner test
         //String filename = "testalgo.txt";
-        String filename = "0001.ea7e79d3153e7469e7a9c3e0af6a357e";
-        //String filename = "2007_12_20071223-151359-customercare@cvs_com-Your_New_Account-1.eml";
+        //String filename = "0001.ea7e79d3153e7469e7a9c3e0af6a357e";
+        String filename = "2007_12_20071223-151359-customercare@cvs_com-Your_New_Account-1.eml";
         //EmailCleaner.readFile(filename);
         EmailCleaner.parseFile(filename);
     }
@@ -63,7 +63,7 @@ public class Main {
     private static void testStemmer() {
         //Stemmer test
         Stemmer stemmer = new Stemmer();
-        String[] wordsToStem = {"ies", "flyies", "flyi2ing$", "algori$thm", "$algorithmic", "greetings", "algorithms", "Algorithms", "algo"};
+        String[] wordsToStem = {"sex", "sexy", "viagra", "ies", "flyies", "flyi2ing$", "algori$thm", "$algorithmic", "greetings", "algorithms", "Algorithms", "algo"};
         //String wordsToStem[] = {"truck", "trucker", "truckers", "trucks", "trucking"};
         for (int i = 0; i < wordsToStem.length; i++) {
             //stem each word
