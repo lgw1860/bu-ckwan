@@ -9,6 +9,7 @@ import java.io.*;
 import java.util.Scanner;
 import java.util.Collections;
 import java.util.*;
+import java.util.regex.Pattern;
 /**
  *
  * @author Chris
@@ -44,8 +45,7 @@ public class EmailCleaner {
         for(int i=0; i<word.length(); i++)
         {
             curChar = word.charAt(i);
-            if(Character.isLetter(curChar) || Character.isDigit(curChar)
-                || curChar== '<' || curChar == '>')
+            if(Character.isLetter(curChar) || Character.isDigit(curChar))
             {
                 stringBuffer.append(word.charAt(i));
             }
@@ -60,41 +60,36 @@ public class EmailCleaner {
     {
         try
         {
-            ArrayList<String> list = new ArrayList<String>();
+            //TreeSet<String> list = new TreeSet<String>();
+            HashSet<String> list = new HashSet<String>();
             Scanner scanner = new Scanner(new File(filename));
-            //scanner.useDelimiter("\n\n");
-            //scanner.useDelimiter(" ");
+            scanner.useDelimiter(Pattern.compile("\\s|\\W"));
             int i = 0;
             while(scanner.hasNext())
             {
                 String s = scanner.next();
-                s = onlyLettersDigits(s);
                 s = stem(s);
-//                if(!s.isEmpty())
-//                {
-//                    System.out.println(s);
-//                }
-//                if(s.length() == 1 && Character.isWhitespace(s.charAt(0)))
-//                    System.out.print(s + " has length 1\n!!!!!!!!!!!!!!!!");
-//                else
-                    System.out.println(i + " " + s);
-                    i++;
-                    list.add(s);
+                list.add(s);
+                System.out.println("i: " + i + ": " + s);
+                i++;
             }
             System.out.println("I: " + i);
-
-            Collections.sort(list);
-            for(int j=0; j<list.size(); j++)
+            
+            Iterator<String> iter = list.iterator();
+            int j=0;
+            String curString;
+            while(iter.hasNext())
             {
-                System.out.println("j: " + j + " " + list.get(j));
+                curString = iter.next();
+                System.out.println("j: " + j + ": " + curString);
+                j++;
             }
-
+            System.out.println("J: " + j);
         }
         catch(Exception e)
         {
             e.printStackTrace();
         }
-        
     }
 
     public static void readFile(String filename)
