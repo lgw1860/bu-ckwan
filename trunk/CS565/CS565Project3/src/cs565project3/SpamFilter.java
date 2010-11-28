@@ -279,6 +279,21 @@ public class SpamFilter {
         classify(set);
     }
 
+
+    /**
+     * Return the accuracy of the classifier.
+     * Accuracy = TP + TN) / (TP+TN+FP+FN).
+     * @return
+     */
+    public double accuracy()
+    {
+        //(TP + TN) / (TP+TN+FP+FN)
+        double acc = (double)(this.truePositives + this.trueNegatives) /
+                (double)(this.truePositives + this.trueNegatives +
+                this.falsePositives + this.falseNegatives);
+        return acc;
+    }
+
     public void test()
     {
         classify("test"); //testing dividing by 0
@@ -317,6 +332,20 @@ public class SpamFilter {
         System.out.println("FP: " + this.falsePositives);
         System.out.println("TN: " + this.trueNegatives);
         System.out.println("FN: " + this.falseNegatives);
+
+        //for testing
+        //to delete
+//        this.truePositives = 150;
+//        this.trueNegatives = 250;
+//        this.falsePositives = 60;
+//        this.falseNegatives = 40;
+
+        this.truePositives = 250;
+        this.trueNegatives = 200;
+        this.falsePositives = 5;
+        this.falseNegatives = 45;
+
+        System.out.println("Accuracy: " + this.accuracy());
     }
     
 }
