@@ -25,6 +25,11 @@ public class SpamFilter {
     private HashMap<String, Integer> mapSpam;  //map of words to spam counts
     private HashMap<String, Integer> mapHam;   //map of words to ham counts
 
+    private int truePositives = 0;
+    private int falsePositives = 0;
+    private int trueNegatives = 0;
+    private int falseNegatives = 0;
+
     public SpamFilter()
     {
         mapSpam = new HashMap<String, Integer>();
@@ -180,10 +185,12 @@ public class SpamFilter {
         {
             if(result) //classified as spam
             {
+                this.truePositives++;
                 System.out.println("TRUE POSITIVE");
             }
             else //classified as ham
             {
+                this.falseNegatives++;
                 System.out.println("FALSE NEGATIVE");
             }
         }
@@ -191,10 +198,12 @@ public class SpamFilter {
         {
             if(result) //classified as spam
             {
+                this.falsePositives++;
                 System.out.println("FALSE POSITIVE");
             }
             else //classifed as ham
             {
+                this.trueNegatives++;
                 System.out.println("TRUE NEGATIVE");
             }
         }
@@ -303,6 +312,11 @@ public class SpamFilter {
         {
             System.out.println(iterHam.next());
         }
+
+        System.out.println("TP: " + this.truePositives);
+        System.out.println("FP: " + this.falsePositives);
+        System.out.println("TN: " + this.trueNegatives);
+        System.out.println("FN: " + this.falseNegatives);
     }
     
 }
