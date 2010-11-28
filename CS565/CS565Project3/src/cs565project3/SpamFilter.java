@@ -118,7 +118,9 @@ public class SpamFilter {
         System.out.println("probHam: " + probHam);
 
         double probAllWordsSpam = 1.0;
+        double probAllWordsHam = 1.0;
         System.out.print("probAllWordsSpam = ");
+        System.out.print("probAllWordsHam = ");
 
         //for all words
         Iterator<String> iterEmail = emailWordSet.iterator();
@@ -127,37 +129,67 @@ public class SpamFilter {
             String word = iterEmail.next();
             System.out.print(word + ": ");
             int wordSpamCount = 0;
+            int wordHamCount = 0;
+            
+            //spam stuff
             if(this.mapSpam.containsKey(word))
             {
                 wordSpamCount = this.mapSpam.get(word);
             }
-
             double probWordSpam = 0.0; //P(word | C_Spam)
-            double numer = 0.0; //numerator for P(word | C_Spam)
-            double denom = 0.0; //denominator for P(word | C_Spam)
             //to avoid probabilities of 0, we use Laplacian correction and add 1
             if(wordSpamCount <= 0)
             {
-                numer = 1.0;
-                denom = (double)(this.numSpamEmails+1);
+                probWordSpam = 1.0 / (double)(this.numSpamEmails+1);
             }
             else
             {
-                numer = (double)wordSpamCount;
-                denom = (double)this.numSpamEmails;
+                probWordSpam = (double)wordSpamCount / (double)this.numSpamEmails;
             }
-
-            probWordSpam = numer / denom;
             System.out.print(probWordSpam + " * ");
             probAllWordsSpam = probAllWordsSpam * probWordSpam;
+            //end spam stuff
+
+            //ham stuff
+            if(this.mapHam.containsKey(word))
+            {
+                wordHamCount = this.mapHam.get(word);
+            }
+            double probWordHam = 0.0; //P(word | C_Ham)
+            //to avoid probabilities of 0, we use Laplacian correction and add 1
+            if(wordHamCount <= 0)
+            {
+                probWordHam = 1.0 / (double)(this.numHamEmails+1);
+            }
+            else
+            {
+                probWordHam = (double)wordHamCount / (double)this.numHamEmails;
+            }
+            System.out.print(probWordHam + " * ");
+            probAllWordsHam = probAllWordsHam * probWordHam;
+            //end spam stuff
+
         }//end while
-        //end for
 
         System.out.println(" = " + probAllWordsSpam);
+        System.out.println(" = " + probAllWordsHam);
 
         //P(word | C_Spam) * P(C_Spam) <- we only look at the numerator
         double probSpamWordNumer = probAllWordsSpam * probSpam;
         System.out.println("prob that email is SPAM is: " + probSpamWordNumer);
+
+        //P(word | C_Ham) * P(C_Ham) <- we only look at the numerator
+        double probHamWordNumer = probAllWordsHam * probHam;
+        System.out.println("prob that email is HAM is: " + probHamWordNumer);
+
+        if(probSpamWordNumer > probHamWordNumer)
+        {
+            System.out.println("SPAM!!!");
+        }
+        else
+        {
+            System.out.println("HAM~~~");
+        }
     }
 
     public void test()
@@ -198,6 +230,7 @@ public class SpamFilter {
 
         //classify(this.processEmailFile(filename));
         //train("smtp",false);
+        //train("smtp",true);
         classify("smtp");
     }
 
