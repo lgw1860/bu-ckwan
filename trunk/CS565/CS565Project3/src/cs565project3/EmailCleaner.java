@@ -76,8 +76,8 @@ public class EmailCleaner {
     {
         try
         {
-            //TreeSet<String> list = new TreeSet<String>();
-            HashSet<String> list = new HashSet<String>();
+            //TreeSet<String> hashSet = new TreeSet<String>();
+            HashSet<String> hashSet = new HashSet<String>();
             Scanner scanner = new Scanner(new File(filename));
             scanner.useDelimiter(Pattern.compile("\\s|\\W"));
             int i = 0;
@@ -89,7 +89,7 @@ public class EmailCleaner {
                 //ignore words < 3 chars and words that are only numbers
                 if(s.length() > 2 && !onlyDigits(s))
                 {
-                    list.add(s);
+                    hashSet.add(s);
                     //System.out.println("i: " + i + ": " + s);
                     i++;
                 }
@@ -98,7 +98,7 @@ public class EmailCleaner {
             System.out.println("I: " + i);
 
             HashMap<String,Integer> map = new HashMap<String,Integer>();
-            Iterator<String> iter = list.iterator();
+            Iterator<String> iter = hashSet.iterator();
             int j=0;
             String curString;
             while(iter.hasNext())
