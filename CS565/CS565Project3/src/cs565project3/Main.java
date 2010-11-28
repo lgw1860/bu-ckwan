@@ -26,9 +26,9 @@ public class Main {
         //String filename = "2007_12_20071223-151359-customercare@cvs_com-Your_New_Account-1.eml";
         //EmailCleaner.readFile(filename);
         //EmailCleaner test
-        //String filename = "testalgo.txt";
+        String filename = "testalgo.txt";
         //String filename = "0001.ea7e79d3153e7469e7a9c3e0af6a357e";
-        String filename = "2007_12_20071223-151359-customercare@cvs_com-Your_New_Account-1.eml";
+        //String filename = "2007_12_20071223-151359-customercare@cvs_com-Your_New_Account-1.eml";
         //EmailCleaner.readFile(filename);
         EmailCleaner.parseFile(filename);
     }
