@@ -15,52 +15,41 @@ import java.util.Map.Entry;
  */
 public class SpamFilter {
 
-    Integer numSpamEmails;
-    Integer numHamEmails;
-    HashMap<String, Integer> mapSpamCount;
-    HashMap<String, Integer> mapHamCount;
+    private int numSpamEmails;  //total spam emails trained on
+    private int numHamEmails;   //total ham emails trained on
+    private HashMap<String, Integer> mapSpam;  //map of words to spam counts
+    private HashMap<String, Integer> mapHam;   //map of words to ham counts
 
     public SpamFilter()
     {
-        numSpamEmails = new Integer(0);
-        numHamEmails = new Integer(0);
-        mapSpamCount = new HashMap<String, Integer>();
-        mapHamCount = new HashMap<String, Integer>();
+        mapSpam = new HashMap<String, Integer>();
+        mapHam = new HashMap<String, Integer>();
     }
 
-    void train(String word, boolean isSpam)
+    //TODO change this to take in a file
+    public void train(String word, boolean isSpam)
     {
-        Integer numEmails;
-        HashMap<String, Integer> mapCount;
+        HashMap<String, Integer> map;
 
         if(isSpam)
         {
-            //numEmails = numSpamEmails;
-            mapCount = mapSpamCount;
-        }
-        else
-        {
-            //numEmails = numHamEmails;
-            mapCount = mapHamCount;
-        }
-
-        if(mapCount.containsKey(word))
-        {
-            int oldCount = mapCount.get(word);
-            mapCount.put(word, oldCount+1);
-        }
-        else
-        {
-            mapCount.put(word, 1);
-        }
-        //numEmails = new Integer(99);
-        if(isSpam)
-        {
+            map = this.mapSpam;
             this.numSpamEmails++;
         }
         else
         {
+            map = this.mapHam;
             this.numHamEmails++;
+        }
+
+        if(map.containsKey(word))
+        {
+            int oldCount = map.get(word);
+            map.put(word, oldCount+1);
+        }
+        else
+        {
+            map.put(word, 1);
         }
     }
 
@@ -72,22 +61,23 @@ public class SpamFilter {
         train("cat", true);
         train("dog", true);
         train("cat", true);
+        train("mouse", false);
     }
 
-    void print()
+    public void print()
     {
         System.out.println("num spam: " + this.numSpamEmails);
         System.out.println("num ham: " + this.numHamEmails);
 
         System.out.println("\nSpam Counts:");
-        Iterator<Entry<String,Integer>> iterSpam = this.mapSpamCount.entrySet().iterator();
+        Iterator<Entry<String,Integer>> iterSpam = this.mapSpam.entrySet().iterator();
         while(iterSpam.hasNext())
         {
             System.out.println(iterSpam.next());
         }
 
         System.out.println("\nHam Counts:");
-        Iterator<Entry<String,Integer>> iterHam = this.mapHamCount.entrySet().iterator();
+        Iterator<Entry<String,Integer>> iterHam = this.mapHam.entrySet().iterator();
         while(iterHam.hasNext())
         {
             System.out.println(iterHam.next());
