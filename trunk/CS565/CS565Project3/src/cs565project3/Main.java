@@ -17,9 +17,12 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        testStemmer();
+        //testStemmer();
         //testFileIO();
-        testEmailCleaner();
+        //testEmailCleaner();
+        SpamFilter spamFilter = new SpamFilter();
+        spamFilter.test();
+        spamFilter.print();
     }
 
     private static void testEmailCleaner() {
@@ -31,6 +34,8 @@ public class Main {
         //String filename = "2007_12_20071223-151359-customercare@cvs_com-Your_New_Account-1.eml";
         //EmailCleaner.readFile(filename);
         EmailCleaner.parseFile(filename);
+
+
     }
 
     private static void testFileIO() {
