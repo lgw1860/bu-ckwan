@@ -105,44 +105,61 @@ public class SpamFilter {
 
     public void classify(String word)
     {
+        Set<String> set = new HashSet<String>();
+        set.add(word);
+        classify(set);
+    }
+    public void classify(Set<String> emailWordSet)
+    {
         double totalEmails = this.numSpamEmails + this.numHamEmails;
         double probSpam = (double)this.numSpamEmails/totalEmails; //P(C_Spam)
         double probHam = (double)this.numHamEmails/totalEmails; //P(C_Ham)
         System.out.println("\nprobSpam: " + probSpam);
         System.out.println("probHam: " + probHam);
 
-        
-        int wordSpamCount = 0;
-        double probWordSpam = 0.0;
-        double numer = 0.0; //numerator for P(word | C_Spam)
-        double denom = 0.0; //denominator for P(word | C_Spam)
-        if(this.mapSpam.containsKey(word))
-        {
-            wordSpamCount = this.mapSpam.get(word);
-        }
-        
-        //to avoid probabilities of 0, we use Laplacian correction and add 1
-        if(wordSpamCount <= 0)
-        {
-            numer = 1.0;
-            denom = (double)(this.numSpamEmails+1);
-        }
-        else
-        {
-            numer = (double)wordSpamCount;
-            denom = (double)this.numSpamEmails;
-        }
-        //P(word | C_Spam)
-        probWordSpam = numer / denom;
-        System.out.print("P(word|Spam): " + probWordSpam + "\n");
+        double probAllWordsSpam = 1.0;
+        System.out.print("probAllWordsSpam = ");
 
+        //for all words
+        Iterator<String> iterEmail = emailWordSet.iterator();
+        while(iterEmail.hasNext())
+        {
+            String word = iterEmail.next();
+            System.out.print(word + ": ");
+            int wordSpamCount = 0;
+            if(this.mapSpam.containsKey(word))
+            {
+                wordSpamCount = this.mapSpam.get(word);
+            }
 
-        
+            double probWordSpam = 0.0; //P(word | C_Spam)
+            double numer = 0.0; //numerator for P(word | C_Spam)
+            double denom = 0.0; //denominator for P(word | C_Spam)
+            //to avoid probabilities of 0, we use Laplacian correction and add 1
+            if(wordSpamCount <= 0)
+            {
+                numer = 1.0;
+                denom = (double)(this.numSpamEmails+1);
+            }
+            else
+            {
+                numer = (double)wordSpamCount;
+                denom = (double)this.numSpamEmails;
+            }
+            probWordSpam = numer / denom;
+            System.out.print(probWordSpam + " * ");
+            probAllWordsSpam = probAllWordsSpam * probWordSpam;
+        }//end while
+        //end for
+
+        System.out.println(" = " + probAllWordsSpam);
+
 
         //P(word | C_Spam) * P(C_Spam) <- we only look at the numerator
-        double probSpamWordNumer = probWordSpam * probSpam;
 
-        System.out.print("prob that " + word + " is SPAM is: ");
+
+        double probSpamWordNumer = probAllWordsSpam * probSpam;
+        System.out.print("prob that email is SPAM is: ");
         System.out.println("Bayes prob: " + probSpamWordNumer);
 //        int wordHamCount = 0;
 //        if(this.mapHam.containsKey(word))
@@ -171,11 +188,19 @@ public class SpamFilter {
         train(this.processEmailFile(filename),true);
 
         train("bababa goose", false);
-        train("bababa goose", true);
+        //train("bababa goose", true);
+
+        //classify("algorithm");
+        //classify("bababa goose");
+        //classify("nullo");
+
+        filename = "testalgo.txt";
+        Set<String> testSet = this.processEmailFile(filename);
+        System.out.println(testSet);
+        classify(testSet);
 
         classify("algorithm");
         classify("bababa goose");
-        classify("nullo");
     }
 
     public void print()
