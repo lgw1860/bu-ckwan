@@ -103,93 +103,129 @@ public class SpamFilter {
         }
     }
 
-    public void classify(String word)
+
+    /**
+     * Return P(Word | Class), ie the probability of that word given 
+     * that its email is in class Spam/Ham.
+     * @param word
+     * @param isClassSpam
+     * @return
+     */
+    private double probWordClass(String word, boolean isClassSpam)
     {
-        Set<String> set = new HashSet<String>();
-        set.add(word);
-        classify(set);
+        //Select the appropriate map and number of emails based on the class
+        HashMap<String,Integer> map;
+        int numClassEmails = 0;
+        if(isClassSpam)
+        {
+            map = this.mapSpam;
+            numClassEmails = this.numSpamEmails;
+        }
+        else
+        {
+            map = this.mapHam;
+            numClassEmails = this.numHamEmails;
+        }
+
+        //Get how many spams/hams this word has appeared in
+        int wordClassCount = 0;
+        if(map.containsKey(word))
+        {
+            wordClassCount = map.get(word);
+        }
+        double probWordClass = 0.0; //P(word | Class)
+        //to avoid probabilities of 0, we use Laplacian correction and add 1
+        if(wordClassCount <= 0)
+        {
+            probWordClass = 1.0 / (double)(numClassEmails+1);
+        }
+        else
+        {
+            probWordClass = (double)wordClassCount / (double)numClassEmails;
+        }
+        return probWordClass;
     }
-    public void classify(Set<String> emailWordSet)
+
+    /**
+     * Return P(Word | Spam), ie the probability of that word
+     * given that its email is a Spam.
+     * @param word
+     * @return
+     */
+    private double probWordSpam(String word)
+    {
+        return probWordClass(word,true);
+    }
+
+    /**
+     * Return P(Word | Ham), ie the probability of that word
+     * given that its email is a Ham.
+     * @param word
+     * @return
+     */
+    private double probWordHam(String word)
+    {
+        return probWordClass(word,false);
+    }
+
+
+    /**
+     * Return true if the email is classified as Spam, false if Ham.
+     * @param emailWordSet
+     * @return
+     */
+    public boolean classify(Set<String> emailWordSet)
     {
         double totalEmails = this.numSpamEmails + this.numHamEmails;
-        double probSpam = (double)this.numSpamEmails/totalEmails; //P(C_Spam)
-        double probHam = (double)this.numHamEmails/totalEmails; //P(C_Ham)
+        double probSpam = (double)this.numSpamEmails/totalEmails; //P(Spam)
+        double probHam = (double)this.numHamEmails/totalEmails; //P(Ham)
         System.out.println("\nprobSpam: " + probSpam);
         System.out.println("probHam: " + probHam);
 
-        double probAllWordsSpam = 1.0;
-        double probAllWordsHam = 1.0;
-        System.out.print("probAllWordsSpam = ");
-        System.out.print("probAllWordsHam = ");
+        double probAllWordsSpam = 1.0; //Product sum of P(Word_i | Spam)
+        double probAllWordsHam = 1.0; //Product sum of P(Word_i | Ham)
 
         //for all words
         Iterator<String> iterEmail = emailWordSet.iterator();
         while(iterEmail.hasNext())
         {
             String word = iterEmail.next();
-            System.out.print(word + ": ");
-            int wordSpamCount = 0;
-            int wordHamCount = 0;
-            
-            //spam stuff
-            if(this.mapSpam.containsKey(word))
-            {
-                wordSpamCount = this.mapSpam.get(word);
-            }
-            double probWordSpam = 0.0; //P(word | C_Spam)
-            //to avoid probabilities of 0, we use Laplacian correction and add 1
-            if(wordSpamCount <= 0)
-            {
-                probWordSpam = 1.0 / (double)(this.numSpamEmails+1);
-            }
-            else
-            {
-                probWordSpam = (double)wordSpamCount / (double)this.numSpamEmails;
-            }
-            System.out.print(probWordSpam + " * ");
-            probAllWordsSpam = probAllWordsSpam * probWordSpam;
-            //end spam stuff
+            System.out.println("\t" + word + ": ");
+            //compute the prob of the word and incorporate it in product sum
+            probAllWordsSpam = probAllWordsSpam * probWordSpam(word);
+            probAllWordsHam = probAllWordsHam * probWordHam(word);
+        }
 
-            //ham stuff
-            if(this.mapHam.containsKey(word))
-            {
-                wordHamCount = this.mapHam.get(word);
-            }
-            double probWordHam = 0.0; //P(word | C_Ham)
-            //to avoid probabilities of 0, we use Laplacian correction and add 1
-            if(wordHamCount <= 0)
-            {
-                probWordHam = 1.0 / (double)(this.numHamEmails+1);
-            }
-            else
-            {
-                probWordHam = (double)wordHamCount / (double)this.numHamEmails;
-            }
-            System.out.print(probWordHam + " * ");
-            probAllWordsHam = probAllWordsHam * probWordHam;
-            //end spam stuff
+        System.out.println("probAllWordsSpam: " + probAllWordsSpam);
+        System.out.println("probAllWordsHam: " + probAllWordsHam);
 
-        }//end while
-
-        System.out.println(" = " + probAllWordsSpam);
-        System.out.println(" = " + probAllWordsHam);
-
-        //P(word | C_Spam) * P(C_Spam) <- we only look at the numerator
+        //ProdSum[P(Word_i | Spam)] * P(Spam) <- we only look at the numerator
         double probSpamWordNumer = probAllWordsSpam * probSpam;
         System.out.println("prob that email is SPAM is: " + probSpamWordNumer);
 
-        //P(word | C_Ham) * P(C_Ham) <- we only look at the numerator
+        //ProdSum[P(Word_i | Ham)] * P(Ham) <- we only look at the numerator
         double probHamWordNumer = probAllWordsHam * probHam;
         System.out.println("prob that email is HAM is: " + probHamWordNumer);
 
+        //condition is > not >= b/c in case they are equal, it is better to let
+        //a spam through than to falsely classify a ham as spam
         if(probSpamWordNumer > probHamWordNumer)
         {
             System.out.println("SPAM!!!");
+            return true;
         }
         else
         {
             System.out.println("HAM~~~");
+            return false;
         }
+    }
+
+    public void classify(String word)
+    {
+        Set<String> set = new HashSet<String>();
+        set.add(word);
+        classify(set);
     }
 
     public void test()
@@ -229,7 +265,7 @@ public class SpamFilter {
         //train(this.processEmailFile(filename),true);
 
         //classify(this.processEmailFile(filename));
-        //train("smtp",false);
+        train("smtp",false);
         //train("smtp",true);
         classify("smtp");
     }
