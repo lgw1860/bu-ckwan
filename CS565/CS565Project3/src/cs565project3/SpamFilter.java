@@ -168,6 +168,37 @@ public class SpamFilter {
         return probWordClass(word,false);
     }
 
+    /**
+     * Classify an email given ground truth class to evaluate the classifier.
+     * @param emailWordSet
+     * @param isSpam
+     */
+    public void classifyWithGroundTruth(Set<String> emailWordSet, boolean isSpam)
+    {
+        boolean result = classify(emailWordSet);
+        if(isSpam) //email actually is spam
+        {
+            if(result) //classified as spam
+            {
+                System.out.println("TRUE POSITIVE");
+            }
+            else //classified as ham
+            {
+                System.out.println("FALSE NEGATIVE");
+            }
+        }
+        else //email actually is ham
+        {
+            if(result) //classified as spam
+            {
+                System.out.println("FALSE POSITIVE");
+            }
+            else //classifed as ham
+            {
+                System.out.println("TRUE NEGATIVE");
+            }
+        }
+    }
 
     /**
      * Return true if the email is classified as Spam, false if Ham.
@@ -176,6 +207,16 @@ public class SpamFilter {
      */
     public boolean classify(Set<String> emailWordSet)
     {
+        //prevent against probabilities of 0 and dividing by 0
+        if(this.numSpamEmails <=0)
+        {
+            this.numSpamEmails = 1;
+        }
+        if(this.numHamEmails <= 0)
+        {
+            this.numHamEmails = 1;
+        }
+        
         double totalEmails = this.numSpamEmails + this.numHamEmails;
         double probSpam = (double)this.numSpamEmails/totalEmails; //P(Spam)
         double probHam = (double)this.numHamEmails/totalEmails; //P(Ham)
@@ -190,7 +231,8 @@ public class SpamFilter {
         while(iterEmail.hasNext())
         {
             String word = iterEmail.next();
-            System.out.println("\t" + word + ": ");
+            System.out.println("\t" + word + ": spam: " + probWordSpam(word)
+                    + " ham: " + probWordHam(word));
             //compute the prob of the word and incorporate it in product sum
             probAllWordsSpam = probAllWordsSpam * probWordSpam(word);
             probAllWordsHam = probAllWordsHam * probWordHam(word);
@@ -235,39 +277,12 @@ public class SpamFilter {
         String filename = "";
         //filename = "2007_12_20071223-151359-customercare@cvs_com-Your_New_Account-1.eml";
         filename = "testalgo.txt";
+        //filename = "testturtles.txt";
         train(this.processEmailFile(filename),true);
-
-        filename = "testalgo.txt";
-        train(this.processEmailFile(filename),true);
-
-        filename = "testalgo.txt";
-        train(this.processEmailFile(filename),false);
 
         filename = "testturtles.txt";
-        train(this.processEmailFile(filename),true);
-
-        train("bababa goose", false);
-        //train("bababa goose", true);
-
-        //classify("algorithm");
-        //classify("bababa goose");
-        //classify("nullo");
-
-        filename = "testalgo.txt";
-        Set<String> testSet = this.processEmailFile(filename);
-        System.out.println(testSet);
-        classify(testSet);
-
-        classify("algorithm");
-        classify("bababa goose");
-
-        //filename = "2007_12_20071223-151359-customercare@cvs_com-Your_New_Account-1.eml";
-        //train(this.processEmailFile(filename),true);
-
-        //classify(this.processEmailFile(filename));
-        train("smtp",false);
-        //train("smtp",true);
-        classify("smtp");
+        //filename = "testalgo.txt";
+        classifyWithGroundTruth(this.processEmailFile(filename),true);
     }
 
     public void print()
