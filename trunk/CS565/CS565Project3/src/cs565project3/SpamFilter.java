@@ -108,25 +108,42 @@ public class SpamFilter {
         double totalEmails = this.numSpamEmails + this.numHamEmails;
         double probSpam = (double)this.numSpamEmails/totalEmails; //P(C_Spam)
         double probHam = (double)this.numHamEmails/totalEmails; //P(C_Ham)
-
-        System.out.println("probSpam: " + probSpam);
+        System.out.println("\nprobSpam: " + probSpam);
         System.out.println("probHam: " + probHam);
 
-        System.out.print("prob that " + word + " is SPAM is: ");
+        
         int wordSpamCount = 0;
         double probWordSpam = 0.0;
+        double numer = 0.0; //numerator for P(word | C_Spam)
+        double denom = 0.0; //denominator for P(word | C_Spam)
         if(this.mapSpam.containsKey(word))
         {
             wordSpamCount = this.mapSpam.get(word);
         }
+        
+        //to avoid probabilities of 0, we use Laplacian correction and add 1
+        if(wordSpamCount <= 0)
+        {
+            numer = 1.0;
+            denom = (double)(this.numSpamEmails+1);
+        }
+        else
+        {
+            numer = (double)wordSpamCount;
+            denom = (double)this.numSpamEmails;
+        }
         //P(word | C_Spam)
-        probWordSpam = (double)wordSpamCount / (double)this.numSpamEmails;
-        System.out.print(probWordSpam + "\n");
+        probWordSpam = numer / denom;
+        System.out.print("P(word|Spam): " + probWordSpam + "\n");
+
+
+        
 
         //P(word | C_Spam) * P(C_Spam) <- we only look at the numerator
         double probSpamWordNumer = probWordSpam * probSpam;
-        System.out.println("Bayes prob: " + probSpamWordNumer);
 
+        System.out.print("prob that " + word + " is SPAM is: ");
+        System.out.println("Bayes prob: " + probSpamWordNumer);
 //        int wordHamCount = 0;
 //        if(this.mapHam.containsKey(word))
 //        {
@@ -137,6 +154,8 @@ public class SpamFilter {
 
     public void test()
     {
+        classify("test"); //testing dividing by 0
+        
         String filename = "";
         //filename = "2007_12_20071223-151359-customercare@cvs_com-Your_New_Account-1.eml";
         filename = "testalgo.txt";
@@ -156,7 +175,7 @@ public class SpamFilter {
 
         classify("algorithm");
         classify("bababa goose");
-        classify("null");
+        classify("nullo");
     }
 
     public void print()
