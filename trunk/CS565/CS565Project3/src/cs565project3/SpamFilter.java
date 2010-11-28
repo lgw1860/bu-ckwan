@@ -146,6 +146,7 @@ public class SpamFilter {
                 numer = (double)wordSpamCount;
                 denom = (double)this.numSpamEmails;
             }
+
             probWordSpam = numer / denom;
             System.out.print(probWordSpam + " * ");
             probAllWordsSpam = probAllWordsSpam * probWordSpam;
@@ -154,19 +155,9 @@ public class SpamFilter {
 
         System.out.println(" = " + probAllWordsSpam);
 
-
         //P(word | C_Spam) * P(C_Spam) <- we only look at the numerator
-
-
         double probSpamWordNumer = probAllWordsSpam * probSpam;
-        System.out.print("prob that email is SPAM is: ");
-        System.out.println("Bayes prob: " + probSpamWordNumer);
-//        int wordHamCount = 0;
-//        if(this.mapHam.containsKey(word))
-//        {
-//            wordHamCount = this.mapHam.get(word);
-//        }
-//        System.out.println(word + " is in " + wordHamCount + " hams ");
+        System.out.println("prob that email is SPAM is: " + probSpamWordNumer);
     }
 
     public void test()
@@ -201,6 +192,13 @@ public class SpamFilter {
 
         classify("algorithm");
         classify("bababa goose");
+
+        //filename = "2007_12_20071223-151359-customercare@cvs_com-Your_New_Account-1.eml";
+        //train(this.processEmailFile(filename),true);
+
+        //classify(this.processEmailFile(filename));
+        //train("smtp",false);
+        classify("smtp");
     }
 
     public void print()
