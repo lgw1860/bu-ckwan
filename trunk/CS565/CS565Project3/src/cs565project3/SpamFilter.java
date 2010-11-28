@@ -305,6 +305,18 @@ public class SpamFilter {
         return pre;
     }
 
+    /**
+     * Return the recall of the classifier.
+     * Recall = TP / (TP + FN)
+     * @return
+     */
+    public double recall()
+    {
+        double rec = (double)this.truePositives /
+                (double)(this.truePositives + this.falseNegatives);
+        return rec;
+    }
+
     public void test()
     {
         classify("test"); //testing dividing by 0
@@ -358,6 +370,7 @@ public class SpamFilter {
 
         System.out.println("Accuracy: " + this.accuracy());
         System.out.println("Precision: " + this.precision());
+        System.out.println("Recall: " + this.recall());
     }
     
 }
