@@ -317,6 +317,20 @@ public class SpamFilter {
         return rec;
     }
 
+    /**
+     * Return the F-measure of the classifier.
+     * F-measure = (2*rec*pre) / (rec + pre)
+     * F-measure = 2TP / (2TP + FP + FN)
+     * @return
+     */
+    public double fMeasure()
+    {
+        double f = 2.0*this.truePositives /
+                (2.0*this.truePositives +
+                this.falsePositives + this.falseNegatives);
+        return f;
+    }
+
     public void test()
     {
         classify("test"); //testing dividing by 0
@@ -371,6 +385,7 @@ public class SpamFilter {
         System.out.println("Accuracy: " + this.accuracy());
         System.out.println("Precision: " + this.precision());
         System.out.println("Recall: " + this.recall());
+        System.out.println("F-measure: " + this.fMeasure());
     }
     
 }
