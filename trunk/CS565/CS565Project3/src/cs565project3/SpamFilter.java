@@ -343,6 +343,18 @@ public class SpamFilter {
         return tpr;
     }
 
+    /**
+     * Return the False Positive Rate of the classifier.
+     * FPR = FP / (FP + TN)
+     * @return
+     */
+    public double falsePositiveRate()
+    {
+        double fpr = (double)this.falsePositives /
+                (double)(this.falsePositives + this.trueNegatives);
+        return fpr;
+    }
+
     public void test()
     {
         classify("test"); //testing dividing by 0
@@ -399,6 +411,7 @@ public class SpamFilter {
         System.out.println("Recall: " + this.recall());
         System.out.println("F-measure: " + this.fMeasure());
         System.out.println("True Positive Rate: " + this.truePositiveRate());
+        System.out.println("False Positive Rate: " + this.falsePositiveRate());
     }
     
 }
