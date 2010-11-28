@@ -103,6 +103,38 @@ public class SpamFilter {
         }
     }
 
+    public void classify(String word)
+    {
+        double totalEmails = this.numSpamEmails + this.numHamEmails;
+        double probSpam = (double)this.numSpamEmails/totalEmails; //P(C_Spam)
+        double probHam = (double)this.numHamEmails/totalEmails; //P(C_Ham)
+
+        System.out.println("probSpam: " + probSpam);
+        System.out.println("probHam: " + probHam);
+
+        System.out.print("prob that " + word + " is SPAM is: ");
+        int wordSpamCount = 0;
+        double probWordSpam = 0.0;
+        if(this.mapSpam.containsKey(word))
+        {
+            wordSpamCount = this.mapSpam.get(word);
+        }
+        //P(word | C_Spam)
+        probWordSpam = (double)wordSpamCount / (double)this.numSpamEmails;
+        System.out.print(probWordSpam + "\n");
+
+        //P(word | C_Spam) * P(C_Spam) <- we only look at the numerator
+        double probSpamWordNumer = probWordSpam * probSpam;
+        System.out.println("Bayes prob: " + probSpamWordNumer);
+
+//        int wordHamCount = 0;
+//        if(this.mapHam.containsKey(word))
+//        {
+//            wordHamCount = this.mapHam.get(word);
+//        }
+//        System.out.println(word + " is in " + wordHamCount + " hams ");
+    }
+
     public void test()
     {
         String filename = "";
@@ -120,6 +152,11 @@ public class SpamFilter {
         train(this.processEmailFile(filename),true);
 
         train("bababa goose", false);
+        train("bababa goose", true);
+
+        classify("algorithm");
+        classify("bababa goose");
+        classify("null");
     }
 
     public void print()
