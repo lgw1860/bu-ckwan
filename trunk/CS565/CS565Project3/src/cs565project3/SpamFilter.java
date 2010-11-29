@@ -757,6 +757,28 @@ public class SpamFilter {
         this.strBufStats.append("False Positive Rate," + this.falsePositiveRate() + "\n");
     }
 
+    /**
+     * Compute the True Positive Rate of the classifier given TP and FN.
+     * TPR = TP / (TP + FN)
+     * @return
+     */
+    public double computeTPR(double TP, double FN)
+    {
+        double tpr = TP / (TP + FN);
+        return tpr;
+    }
+
+    /**
+     * Compute the False Positive Rate of the classifier given FP and TN.
+     * FPR = FP / (FP + TN)
+     * @return
+     */
+    public double computeFPR(double FP, double TN)
+    {
+        double fpr = FP / (FP + TN);
+        return fpr;
+    }
+
     public void outputROCPointsForExcel()
     {
         //sort points by probability in descending order
@@ -807,7 +829,9 @@ public class SpamFilter {
                 //output lastProb + counts
                 System.out.println("Prob: " + lastProb + ", TP:" + totalTP +
                         ", FP:" + totalFP + ", FN: " +
-                        totalFN + "TN: " + totalTN);
+                        totalFN + ", TN: " + totalTN +
+                        ", TPR: " + computeTPR(totalTP, totalFN) +
+                        ", FPR: " + computeFPR(totalFP, totalTN));
                 //update lastProb to this prob
                 lastProb = curProb;
             }
@@ -829,7 +853,9 @@ public class SpamFilter {
         //special case to print last element
         System.out.println("Prob: " + lastProb + ", TP:" + totalTP +
                         ", FP:" + totalFP + ", FN: " +
-                        totalFN + "TN: " + totalTN);
+                        totalFN + "TN: " + totalTN +
+                        ", TPR: " + computeTPR(totalTP, totalFN) +
+                        ", FPR: " + computeFPR(totalFP, totalTN));
     }
 
     public void print()
