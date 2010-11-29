@@ -261,7 +261,9 @@ public class SpamFilter {
         double totalEmails = this.numSpamEmails + this.numHamEmails;
         double probSpam = (double)this.numSpamEmails/totalEmails; //P(Spam)
         double probHam = (double)this.numHamEmails/totalEmails; //P(Ham)
-        System.out.println("\nprobSpam: " + probSpam);
+        System.out.println("\nnumSpam: " + this.numSpamEmails);
+        System.out.println("numHam: " + this.numHamEmails);
+        System.out.println("probSpam: " + probSpam);
         System.out.println("probHam: " + probHam);
 
         double probAllWordsSpam = 1.0; //Product sum of P(Word_i | Spam)
@@ -280,20 +282,24 @@ public class SpamFilter {
             probAllWordsSpam = probAllWordsSpam * probWordSpam(word);
             probAllWordsHam = probAllWordsHam * probWordHam(word);
 
-            int numSpamsWithWord = 1;
-            if(this.mapSpam.containsKey(word))
-            {
-                numSpamsWithWord = this.mapSpam.get(word);
-            }
-            int numHamsWithWord = 1;
-            if(this.mapHam.containsKey(word))
-            {
-                numHamsWithWord = this.mapHam.get(word);
-            }
-
-            double totalEmailsWithWord = numSpamsWithWord + numHamsWithWord;
-            probAllWords = probAllWords *
-                    (totalEmailsWithWord / totalEmails);
+//            int numSpamsWithWord = 0;//1; //in case spam count is 0
+//            //totalEmails = totalEmails + 1; //Laplacian correction
+//            if(this.mapSpam.containsKey(word)) //but if spam count is > 0
+//            {
+//                numSpamsWithWord = this.mapSpam.get(word);
+//                //totalEmails = totalEmails - 1; //undo the Laplacian correction
+//            }
+//            int numHamsWithWord = 0;//1;
+//            //totalEmails = totalEmails + 1;
+//            if(this.mapHam.containsKey(word))
+//            {
+//                numHamsWithWord = this.mapHam.get(word);
+//                //totalEmails = totalEmails - 1;
+//            }
+//
+//            double totalEmailsWithWord = numSpamsWithWord + numHamsWithWord;
+//            probAllWords = probAllWords *
+//                    (totalEmailsWithWord / totalEmails);
         }
 
         System.out.println("probAllWordsSpam: " + probAllWordsSpam);
@@ -301,13 +307,15 @@ public class SpamFilter {
         System.out.println("probAllWords: " + probAllWords);
 
         //ProdSum[P(Word_i | Spam)] * P(Spam) <- we only look at the numerator
-        //double probSpamWordNumer = probAllWordsSpam * probSpam;
-        double probSpamWordNumer = (probAllWordsSpam * probSpam) / probAllWords;
+        double probSpamWordNumer = probAllWordsSpam * probSpam;
+        System.out.println("prob that email is SPAM is: " + probSpamWordNumer);
+        probSpamWordNumer = (probAllWordsSpam * probSpam) / probAllWords;
         System.out.println("prob that email is SPAM is: " + probSpamWordNumer);
 
         //ProdSum[P(Word_i | Ham)] * P(Ham) <- we only look at the numerator
-        //double probHamWordNumer = probAllWordsHam * probHam;
-        double probHamWordNumer = (probAllWordsHam * probHam) / probAllWords;
+        double probHamWordNumer = probAllWordsHam * probHam;
+        System.out.println("prob that email is HAM is: " + probHamWordNumer);
+        probHamWordNumer = (probAllWordsHam * probHam) / probAllWords;
         System.out.println("prob that email is HAM is: " + probHamWordNumer);
 
         //TODO return a probability
@@ -408,6 +416,17 @@ public class SpamFilter {
         }//end while ham
     }
 
+    /**
+     * Reset classifier by removing all data from training.
+     */
+    private void resetClassifier()
+    {
+        this.mapSpam.clear();
+        this.mapHam.clear();
+        this.numSpamEmails = 0;
+        this.numHamEmails = 0;
+    }
+
     public void crossValidate(int k, String spamFolderPath, String hamFolderPath)
     {
         //randomly partition all emails into k buckets
@@ -466,6 +485,9 @@ public class SpamFilter {
                 File testFileHam = iterTestHam.next();
                 this.classifyWithGroundTruth(this.processEmailFile(testFileHam),false);
             }
+
+            //reset classifier for the next round
+            this.resetClassifier();
         }//end for i
 
         //TODO
