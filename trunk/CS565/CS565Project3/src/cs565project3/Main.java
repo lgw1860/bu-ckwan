@@ -24,6 +24,7 @@ public class Main {
         SpamFilter spamFilter = new SpamFilter();
         spamFilter.test();
         spamFilter.printStats();
+        spamFilter.printStringBuffers();
         //spamFilter.print();
 
 //        int k = 10;

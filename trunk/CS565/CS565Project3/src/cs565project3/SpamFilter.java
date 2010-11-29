@@ -36,10 +36,19 @@ public class SpamFilter {
     private int trueNegatives = 0;
     private int falseNegatives = 0;
 
+    private StringBuffer strBufResults; //results of classification on all files
+    private StringBuffer strBufStats; //statistics about the classifier
+
     public SpamFilter()
     {
         mapSpam = new HashMap<String, Integer>();
         mapHam = new HashMap<String, Integer>();
+
+        strBufResults = new StringBuffer();
+        strBufResults.append("File,Probability,Actual,Classified,Observation\n");
+        
+        strBufStats = new StringBuffer();
+        strBufStats.append("Measure,Value\n");
     }
 
     //TODO change this to take in a file
@@ -220,37 +229,47 @@ public class SpamFilter {
         boolean result = classify(emailWordSet);
         if(isSpam) //email actually is spam
         {
-            System.out.println("Actual: Spam");
+            //System.out.println("Actual: Spam");
+            this.strBufResults.append("SPAM,");
             if(result) //classified as spam
             {
                 this.truePositives++;
-                System.out.println("Classified: Spam");
-                System.out.println("TRUE POSITIVE");
+                //System.out.println("Classified: Spam");
+                this.strBufResults.append("SPAM,");
+                //System.out.println("TRUE POSITIVE");
+                this.strBufResults.append("TP\n");
             }
             else //classified as ham
             {
                 this.falseNegatives++;
-                System.out.println("Classified: Ham");
-                System.out.println("FALSE NEGATIVE");
+                //System.out.println("Classified: Ham");
+                this.strBufResults.append("HAM,");
+                //System.out.println("FALSE NEGATIVE");
+                this.strBufResults.append("FN\n");
             }
         }
         else //email actually is ham
         {
-            System.out.println("Actual: Ham");
+            //System.out.println("Actual: Ham");
+            this.strBufResults.append("HAM,");
             if(result) //classified as spam
             {
                 this.falsePositives++;
-                System.out.println("Classified: Spam");
-                System.out.println("FALSE POSITIVE");
+                //System.out.println("Classified: Spam");
+                this.strBufResults.append("SPAM,");
+                //System.out.println("FALSE POSITIVE");
+                this.strBufResults.append("FP\n");
             }
             else //classifed as ham
             {
                 this.trueNegatives++;
-                System.out.println("Classified: Ham");
-                System.out.println("TRUE NEGATIVE");
+                //System.out.println("Classified: Ham");
+                this.strBufResults.append("HAM,");
+                //System.out.println("TRUE NEGATIVE");
+                this.strBufResults.append("TN\n");
             }
         }
-        System.out.println("---");
+        //System.out.println("---");
     }
 
     /**
@@ -311,13 +330,15 @@ public class SpamFilter {
         if(probSpamWordNumer > probHamWordNumer) //classified as spam
         {
             //System.out.println("SPAM!!!");
-            System.out.println("Prob: " + probSpamWordNumer);
+            //System.out.println("Prob: " + probSpamWordNumer);
+            this.strBufResults.append(probSpamWordNumer + ",");
             return true;
         }
         else //classified as ham
         {
             //System.out.println("HAM~~~");
-            System.out.println("Prob: " + probHamWordNumer);
+            //System.out.println("Prob: " + probHamWordNumer);
+            this.strBufResults.append(probHamWordNumer + ",");
             return false;
         }
     }
@@ -412,8 +433,11 @@ public class SpamFilter {
         this.numHamEmails = 0;
     }
 
+
+
     public void crossValidate(int k, String spamFolderPath, String hamFolderPath)
     {
+
         //randomly partition all emails into k buckets
         this.randomlyPartitionEmails(k, spamFolderPath, hamFolderPath);
 
@@ -459,7 +483,8 @@ public class SpamFilter {
             while(iterTestSpam.hasNext())
             {
                 File testFileSpam = iterTestSpam.next();
-                System.out.println("File: " + testFileSpam);
+                //System.out.println("File: " + testFileSpam);
+                this.strBufResults.append(testFileSpam + ",");
                 this.classifyWithGroundTruth(this.processEmailFile(testFileSpam),true);
             }
 
@@ -469,7 +494,8 @@ public class SpamFilter {
             while(iterTestHam.hasNext())
             {
                 File testFileHam = iterTestHam.next();
-                System.out.println("File: " + testFileHam);
+                //System.out.println("File: " + testFileHam);
+                this.strBufResults.append(testFileHam + ",");
                 this.classifyWithGroundTruth(this.processEmailFile(testFileHam),false);
             }
 
@@ -583,8 +609,14 @@ public class SpamFilter {
         //this.randomlyPartitionEmails(2, "testdata/spam", "testdata/ham");
         //this.randomlyPartitionEmails(4, "testdata/spam", "testdata/ham");
 
-        this.crossValidate(2, "testdata/spam", "testdata/ham");
+        this.crossValidate(10, "testdata/spam", "testdata/ham");
 
+    }
+
+    public void printStringBuffers()
+    {
+        System.out.println(this.strBufResults.toString());
+        System.out.println(this.strBufStats.toString());
     }
 
     /**
