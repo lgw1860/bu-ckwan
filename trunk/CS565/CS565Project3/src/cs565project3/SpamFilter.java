@@ -267,6 +267,8 @@ public class SpamFilter {
         double probAllWordsSpam = 1.0; //Product sum of P(Word_i | Spam)
         double probAllWordsHam = 1.0; //Product sum of P(Word_i | Ham)
 
+        double probAllWords = 1.0; //Product sum of P(Word_i)
+
         //for all words
         Iterator<String> iterEmail = emailWordSet.iterator();
         while(iterEmail.hasNext())
@@ -277,18 +279,41 @@ public class SpamFilter {
             //compute the prob of the word and incorporate it in product sum
             probAllWordsSpam = probAllWordsSpam * probWordSpam(word);
             probAllWordsHam = probAllWordsHam * probWordHam(word);
+
+            int numSpamsWithWord = 1;
+            if(this.mapSpam.containsKey(word))
+            {
+                numSpamsWithWord = this.mapSpam.get(word);
+            }
+            int numHamsWithWord = 1;
+            if(this.mapHam.containsKey(word))
+            {
+                numHamsWithWord = this.mapHam.get(word);
+            }
+
+            double totalEmailsWithWord = numSpamsWithWord + numHamsWithWord;
+            probAllWords = probAllWords *
+                    (totalEmailsWithWord / totalEmails);
         }
 
         System.out.println("probAllWordsSpam: " + probAllWordsSpam);
         System.out.println("probAllWordsHam: " + probAllWordsHam);
+        System.out.println("probAllWords: " + probAllWords);
 
         //ProdSum[P(Word_i | Spam)] * P(Spam) <- we only look at the numerator
-        double probSpamWordNumer = probAllWordsSpam * probSpam;
+        //double probSpamWordNumer = probAllWordsSpam * probSpam;
+        double probSpamWordNumer = (probAllWordsSpam * probSpam) / probAllWords;
         System.out.println("prob that email is SPAM is: " + probSpamWordNumer);
 
         //ProdSum[P(Word_i | Ham)] * P(Ham) <- we only look at the numerator
-        double probHamWordNumer = probAllWordsHam * probHam;
+        //double probHamWordNumer = probAllWordsHam * probHam;
+        double probHamWordNumer = (probAllWordsHam * probHam) / probAllWords;
         System.out.println("prob that email is HAM is: " + probHamWordNumer);
+
+        //TODO return a probability
+
+        //P(W)
+        //double probWord = (double)()
 
         //condition is > not >= b/c in case they are equal, it is better to let
         //a spam through than to falsely classify a ham as spam
