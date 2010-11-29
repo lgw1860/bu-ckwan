@@ -328,9 +328,28 @@ public class SpamFilter {
                     fileAddedInBucket = true;
                 }
             }
-        }//end while
+        }//end while spam
 
         //for each ham email file
+        //add it to a random bucket
+        Iterator<File> iterHam = listHamFiles.iterator();
+        while(iterHam.hasNext())
+        {
+            File curFile = iterHam.next();
+            boolean fileAddedInBucket = false;
+            while(!fileAddedInBucket)
+            {
+                Random rand = new Random();
+                int bucketIndex = rand.nextInt(k);
+                ArrayList<File> curBucket = listHamBuckets.get(bucketIndex);
+                if(curBucket.size() < hamBucketSize)
+                {
+                    curBucket.add(curFile);
+                    fileAddedInBucket = true;
+                }
+            }
+        }//end while ham
+
         //get a data structure of emails
 
 
