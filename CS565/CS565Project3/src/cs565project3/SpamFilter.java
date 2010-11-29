@@ -9,6 +9,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -40,9 +41,13 @@ public class SpamFilter {
     //for the ROC curve: a list for each email:
     //the classifier's probability for that email being Spam
     //and whether the email is actually Spam
-    private ArrayList<Entry<Double,Boolean>> listROCPoints;
+    private ArrayList<DoubleBooleanPair> listROCPoints;
 
-    public class DoubleBooleanPair
+    /**
+     * Class so you can return both a double and a boolean at once.
+     * Used for the classifier and for generating ROC curves.
+     */
+    public class DoubleBooleanPair implements Comparable<DoubleBooleanPair>
     {
         private double probability = 0.0;
         private boolean isSpam = false;
@@ -82,6 +87,36 @@ public class SpamFilter {
         {
             return ("<" + this.probability + ", " + this.isSpam + ">");
         }
+
+        public int compareTo(DoubleBooleanPair o) {
+            //the pair with the smaller probability is smaller
+            if(this.probability < o.getProbability())
+            {
+                return -1;
+            }
+            //if probs are the same, if this has false
+            //and o has true, this is smaller
+            else if(this.probability == o.getProbability())
+            {
+                if(!this.isSpam && o.getIsSpam())
+                {
+                    return -1;
+                }
+                //both prob and bool are equal
+                else if(this.isSpam == o.getIsSpam())
+                {
+                    return 0;
+                }
+                else //isSpam && !o.isSpam
+                {
+                    return 1;
+                }
+            }
+            else //this probability is greater
+            {
+                return 1;
+            }
+        }
     }
 
     public SpamFilter()
@@ -95,7 +130,7 @@ public class SpamFilter {
         strBufStats = new StringBuffer();
         strBufStats.append("Measure,Value\n");
 
-        listROCPoints = new ArrayList<Entry<Double, Boolean>>();
+        listROCPoints = new ArrayList<DoubleBooleanPair>();
     }
 
     //TODO change this to take in a file
@@ -273,6 +308,7 @@ public class SpamFilter {
      */
     public void classifyWithGroundTruth(Set<String> emailWordSet, boolean isSpam)
     {
+        //grab classification results from the classifier
         DoubleBooleanPair pairFromClassify = classify(emailWordSet);
         boolean result = pairFromClassify.getIsSpam();
 
@@ -319,12 +355,14 @@ public class SpamFilter {
             }
         }
         //System.out.println("---");
+
         //create a pair of <classifier probability, actual class>
         //for use in creating the ROC curve
         DoubleBooleanPair pairForRoc = new DoubleBooleanPair();
         pairForRoc.setIsSpam(isSpam);
         pairForRoc.setProbability(pairFromClassify.getProbability());
-        System.out.println(pairForRoc);
+        this.listROCPoints.add(pairForRoc);
+        //System.out.println(pairForRoc);
     }
 
     /**
@@ -566,6 +604,7 @@ public class SpamFilter {
         //compute all those fun stats
         this.addStatsToStringBuffer();
         this.writeStringBuffersToFiles();
+        this.outputROCPointsForExcel();
     }
 
     /**
@@ -716,6 +755,19 @@ public class SpamFilter {
 
         //System.out.println("False Positive Rate: " + this.falsePositiveRate());
         this.strBufStats.append("False Positive Rate," + this.falsePositiveRate() + "\n");
+    }
+
+    public void outputROCPointsForExcel()
+    {
+        //sort points by probability in descending order
+        //Collections.sort(this.listROCPoints);
+
+        DoubleBooleanPair a = new DoubleBooleanPair(0.5,true);
+        DoubleBooleanPair b = new DoubleBooleanPair(0.5,false);
+        System.out.println(a);
+        System.out.println(b);
+        System.out.println(a.compareTo(b));
+
     }
 
     public void print()
