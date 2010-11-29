@@ -22,7 +22,7 @@ public class Main {
         //testEmailCleaner();
         SpamFilter spamFilter = new SpamFilter();
         spamFilter.test();
-        spamFilter.print();
+        //spamFilter.print();
     }
 
     private static void testEmailCleaner() {

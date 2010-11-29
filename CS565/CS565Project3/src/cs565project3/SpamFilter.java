@@ -280,6 +280,17 @@ public class SpamFilter {
     }
 
 
+
+    public void crossValidate(int k, String spamFolderPath, String hamFolderPath)
+    {
+        //create k buckets
+
+        //get number of files in spam and ham folders
+
+
+    }
+
+
     /**
      * Return the accuracy of the classifier.
      * Accuracy = TP + TN) / (TP+TN+FP+FN).
@@ -365,9 +376,20 @@ public class SpamFilter {
         //filename = "testturtles.txt";
         train(this.processEmailFile(filename),true);
 
-        filename = "testturtles.txt";
-        //filename = "testalgo.txt";
+        filename = "testalgo.txt";
+        train(this.processEmailFile(filename),true);
+
+        filename = "testalgo.txt";
+        //filename = "testturtles.txt";
+        train(this.processEmailFile(filename),true);
+
+        //filename = "testturtles.txt";
+        filename = "testalgo.txt";
         classifyWithGroundTruth(this.processEmailFile(filename),true);
+
+        classifyWithGroundTruth(this.processEmailFile(filename),true);
+
+        Utility.numFilesInFolder("testdata/spam");
     }
 
     public void print()

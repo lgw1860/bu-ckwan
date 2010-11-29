@@ -5,6 +5,8 @@
 
 package cs565project3;
 
+import java.io.File;
+
 /**
  *
  * @author Chris
@@ -67,5 +69,13 @@ public class Utility {
             }
         }
         return !(stringBuffer.length() > 0);
+    }
+
+    public static int numFilesInFolder(String folderPath)
+    {
+        File folder = new File(folderPath);
+        System.out.println(folder.getAbsolutePath());
+        
+        return 0;
     }
 }
