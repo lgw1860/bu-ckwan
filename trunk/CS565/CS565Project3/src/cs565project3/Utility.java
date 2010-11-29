@@ -74,26 +74,67 @@ public class Utility {
 
     public static int numFilesInFolder(String folderPath)
     {
-        File folder = new File(folderPath);
-        System.out.println(folder.getAbsolutePath());
-        File[] files = folder.listFiles();
-        ArrayList<File> goodFiles = new ArrayList<File>();
-        System.out.println("files length: " + files.length);
-        for(int i=0; i<files.length; i++)
+        try
         {
-            System.out.println(files[i]);
-            File curFile = files[i];
-            if(curFile.isFile() && !curFile.isHidden())
+            File folder = new File(folderPath);
+            System.out.println(folder.getAbsolutePath());
+            File[] files = folder.listFiles();
+            ArrayList<File> goodFiles = new ArrayList<File>();
+            System.out.println("files length: " + files.length);
+            for(int i=0; i<files.length; i++)
             {
-                goodFiles.add(curFile);
+                System.out.println(files[i]);
+                File curFile = files[i];
+                if(curFile.isFile() && !curFile.isHidden())
+                {
+                    goodFiles.add(curFile);
+                }
             }
-        }
 
-        System.out.println("good files length: " + goodFiles.size());
-        for(int j=0; j<goodFiles.size(); j++)
-        {
-            System.out.println(goodFiles.get(j));
+            System.out.println("good files length: " + goodFiles.size());
+            for(int j=0; j<goodFiles.size(); j++)
+            {
+                System.out.println(goodFiles.get(j));
+            }
+            return goodFiles.size();
         }
-        return goodFiles.size();
+        catch(Exception e)
+        {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    public static ArrayList<File> listOfFiles(String folderPath)
+    {
+        try
+        {
+            File folder = new File(folderPath);
+            System.out.println(folder.getAbsolutePath());
+            File[] files = folder.listFiles();
+            ArrayList<File> goodFiles = new ArrayList<File>();
+            System.out.println("files length: " + files.length);
+            for(int i=0; i<files.length; i++)
+            {
+                System.out.println(files[i]);
+                File curFile = files[i];
+                if(curFile.isFile() && !curFile.isHidden())
+                {
+                    goodFiles.add(curFile);
+                }
+            }
+
+            System.out.println("good files length: " + goodFiles.size());
+            for(int j=0; j<goodFiles.size(); j++)
+            {
+                System.out.println(goodFiles.get(j));
+            }
+            return goodFiles;
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
