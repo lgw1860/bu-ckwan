@@ -399,6 +399,7 @@ public class SpamFilter {
         //for each of k buckets in listBuckets
         //for each file in the bucket
 
+        //TODO generalize for HAM
         //SPAM
         //for all k buckets
         //train on all k-1 buckets and classify the last one
@@ -429,6 +430,39 @@ public class SpamFilter {
                 this.classifyWithGroundTruth(this.processEmailFile(testFile),true);
             }
         }//end for i
+        //end SPAM
+
+        //HAM
+        //for all k buckets
+        //train on all k-1 buckets and classify the last one
+        for(int i=0; i<k; i++)
+        {
+            //for each bucket != i
+            for(int j=0; j<k; j++)
+            {
+                if(j != i)
+                {
+                    //for each file in the bucket
+                    ArrayList<File> curList = this.listHamBuckets.get(j);
+                    Iterator<File> iter = curList.iterator();
+                    while(iter.hasNext())
+                    {
+                        File curFile = iter.next();
+                        this.train(this.processEmailFile(curFile), false);
+                    }//end while
+                }//end if
+            }//end for j
+
+            //use remaining bucket for testing
+            ArrayList<File> testList = this.listHamBuckets.get(i);
+            Iterator<File> iterTest = testList.iterator();
+            while(iterTest.hasNext())
+            {
+                File testFile = iterTest.next();
+                this.classifyWithGroundTruth(this.processEmailFile(testFile),false);
+            }
+        }//end for i
+        //end HAM
 
         //output prob | actual class to text file
         //compute all those fun stats
