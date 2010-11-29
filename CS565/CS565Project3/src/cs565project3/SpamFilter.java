@@ -760,8 +760,6 @@ public class SpamFilter {
     public void outputROCPointsForExcel()
     {
         //sort points by probability in descending order
-        //Collections.reverseOrder();
-        //Collections.sort(this.listROCPoints);
         Collections.sort(this.listROCPoints, Collections.reverseOrder());
         
         Iterator<DoubleBooleanPair> iter = this.listROCPoints.iterator();
@@ -770,6 +768,68 @@ public class SpamFilter {
             DoubleBooleanPair curDBP = iter.next();
             System.out.println(curDBP);
         }
+
+        int totalTP = 0;
+        int totalFP = 0;
+        int totalTN = 0;
+        int totalFN = 0;
+
+        double lastProb = 1.0; //the previous threshold for plotting a point
+
+        //initially at prob 1, all emails are FN or TN
+        Iterator<DoubleBooleanPair> iterRoc = this.listROCPoints.iterator();
+        while(iterRoc.hasNext())
+        {
+            DoubleBooleanPair curDbp = iterRoc.next();
+            if(curDbp.getIsSpam()) //is actually Spam
+            {
+                totalFN++; //but got classified as Ham
+            }
+            else //is actually Ham
+            {
+                totalTN++; //and got classified as Ham
+            }
+        }
+
+        System.out.println("total emails: " + listROCPoints.size());
+        System.out.println("total FN: " + totalFN);
+        System.out.println("total TN: " + totalTN);
+
+        //now go through the list, stopping at each distinct probability
+        //count how many FN or TN will get converted to TP or FP respectively
+        Iterator<DoubleBooleanPair> iterProb = listROCPoints.iterator();
+        while(iterProb.hasNext())
+        {
+            DoubleBooleanPair curDbp = iterProb.next();
+            double curProb = curDbp.getProbability();
+            if(curProb != lastProb)
+            {
+                //output lastProb + counts
+                System.out.println("Prob: " + lastProb + ", TP:" + totalTP +
+                        ", FP:" + totalFP + ", FN: " +
+                        totalFN + "TN: " + totalTN);
+                //update lastProb to this prob
+                lastProb = curProb;
+            }
+
+            //see which FN and TN are now TP and FP respectively
+            boolean curIsSpam = curDbp.getIsSpam();
+            if(curIsSpam) //actually Spam
+            {
+                totalTP++; //and classified as Spam
+                totalFN--;
+            }
+            else //actually Ham
+            {
+                totalFP++; //but classified as Spam
+                totalTN--;
+            } 
+        }//end while
+
+        //special case to print last element
+        System.out.println("Prob: " + lastProb + ", TP:" + totalTP +
+                        ", FP:" + totalFP + ", FN: " +
+                        totalFN + "TN: " + totalTN);
     }
 
     public void print()
