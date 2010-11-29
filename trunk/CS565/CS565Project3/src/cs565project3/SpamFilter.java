@@ -681,5 +681,14 @@ public class SpamFilter {
             System.out.println(iterHam.next());
         }
     }
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        System.out.println("Please wait...");
+        SpamFilter spamFilter = new SpamFilter();
+        spamFilter.test();
+    }
     
 }
