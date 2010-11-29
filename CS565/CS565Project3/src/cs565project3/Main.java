@@ -23,7 +23,7 @@ public class Main {
         //testEmailCleaner();
         SpamFilter spamFilter = new SpamFilter();
         spamFilter.test();
-        spamFilter.printStats();
+        //spamFilter.outputStats();
         spamFilter.printStringBuffers();
         //spamFilter.print();
 

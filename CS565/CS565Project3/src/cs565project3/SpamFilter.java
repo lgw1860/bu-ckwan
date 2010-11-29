@@ -506,6 +506,7 @@ public class SpamFilter {
         //TODO
         //output prob | actual class to text file
         //compute all those fun stats
+        this.outputStats();
     }
 
     /**
@@ -620,29 +621,38 @@ public class SpamFilter {
     }
 
     /**
-     * Print out statistics for the classifier.
+     * Output statistics for the classifier.
      */
-    public void printStats() {
-        System.out.println("TP: " + this.truePositives);
-        System.out.println("FP: " + this.falsePositives);
-        System.out.println("TN: " + this.trueNegatives);
-        System.out.println("FN: " + this.falseNegatives);
-        //for testing
-        //to delete
-        //        this.truePositives = 150;
-        //        this.trueNegatives = 250;
-        //        this.falsePositives = 60;
-        //        this.falseNegatives = 40;
-        //        this.truePositives = 250;
-        //        this.trueNegatives = 200;
-        //        this.falsePositives = 5;
-        //        this.falseNegatives = 45;
-        System.out.println("Accuracy: " + this.accuracy());
-        System.out.println("Precision: " + this.precision());
-        System.out.println("Recall: " + this.recall());
-        System.out.println("F-measure: " + this.fMeasure());
-        System.out.println("True Positive Rate: " + this.truePositiveRate());
-        System.out.println("False Positive Rate: " + this.falsePositiveRate());
+    public void outputStats() {
+        //System.out.println("TP: " + this.truePositives);
+        this.strBufStats.append("True Positives," + this.truePositives + "\n");
+
+        //System.out.println("FP: " + this.falsePositives);
+        this.strBufStats.append("False Positives," + this.falsePositives + "\n");
+
+        //System.out.println("TN: " + this.trueNegatives);
+        this.strBufStats.append("True Negatives," + this.trueNegatives + "\n");
+
+        //System.out.println("FN: " + this.falseNegatives);
+        this.strBufStats.append("False Negatives," + this.falseNegatives + "\n");
+
+        //System.out.println("Accuracy: " + this.accuracy());
+        this.strBufStats.append("Accuracy," + this.accuracy() + "\n");
+
+        //System.out.println("Precision: " + this.precision());
+        this.strBufStats.append("Precision: " + this.precision() + "\n");
+
+        //System.out.println("Recall: " + this.recall());
+        this.strBufStats.append("Recall: " + this.recall() + "\n");
+
+        //System.out.println("F-measure: " + this.fMeasure());
+        this.strBufStats.append("F-measure: " + this.fMeasure() + "\n");
+
+        //System.out.println("True Positive Rate: " + this.truePositiveRate());
+        this.strBufStats.append("True Positive Rate: " + this.truePositiveRate() + "\n");
+
+        //System.out.println("False Positive Rate: " + this.falsePositiveRate());
+        this.strBufStats.append("False Positive Rate: " + this.falsePositiveRate() + "\n");
     }
 
     public void print()
