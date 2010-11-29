@@ -321,7 +321,7 @@ public class SpamFilter {
      * @param spamFolderPath
      * @param hamFolderPath
      */
-    public void randomlyPartitionEmails(int k, String spamFolderPath, String hamFolderPath)
+    private void randomlyPartitionEmails(int k, String spamFolderPath, String hamFolderPath)
     {
         //get number of files in spam and ham folders
         ArrayList<File> listSpamFiles = Utility.listOfFiles(spamFolderPath);
@@ -381,26 +381,16 @@ public class SpamFilter {
                 }
             }
         }//end while ham
-
-        //get a data structure of emails
-
-
-        System.out.println("test");
-
-
-
     }
 
     public void crossValidate(int k, String spamFolderPath, String hamFolderPath)
     {
-        //make sure randomlyPartitionEmails is called first
+        //randomly partition all emails into k buckets
         this.randomlyPartitionEmails(k, spamFolderPath, hamFolderPath);
 
         //for each of k buckets in listBuckets
         //for each file in the bucket
 
-        //TODO generalize for HAM
-        //SPAM
         //for all k buckets
         //train on all k-1 buckets and classify the last one
         for(int i=0; i<k; i++)
@@ -410,60 +400,50 @@ public class SpamFilter {
             {
                 if(j != i)
                 {
+                    //train spams
                     //for each file in the bucket
-                    ArrayList<File> curList = this.listSpamBuckets.get(j);
-                    Iterator<File> iter = curList.iterator();
-                    while(iter.hasNext())
+                    ArrayList<File> curListSpam = this.listSpamBuckets.get(j);
+                    Iterator<File> iterSpam = curListSpam.iterator();
+                    while(iterSpam.hasNext())
                     {
-                        File curFile = iter.next();
-                        this.train(this.processEmailFile(curFile), true);
+                        File curFileSpam = iterSpam.next();
+                        this.train(this.processEmailFile(curFileSpam), true);
                     }//end while
-                }//end if
+
+                    //train hams
+                    //for each file in the bucket
+                    ArrayList<File> curListHam = this.listHamBuckets.get(j);
+                    Iterator<File> iterHam = curListHam.iterator();
+                    while(iterHam.hasNext())
+                    {
+                        File curFileHam = iterHam.next();
+                        this.train(this.processEmailFile(curFileHam), false);
+                    }//end while
+                }//end if j != i
             }//end for j
 
             //use remaining bucket for testing
-            ArrayList<File> testList = this.listSpamBuckets.get(i);
-            Iterator<File> iterTest = testList.iterator();
-            while(iterTest.hasNext())
+            
+            //test spam
+            ArrayList<File> testListSpam = this.listSpamBuckets.get(i);
+            Iterator<File> iterTestSpam = testListSpam.iterator();
+            while(iterTestSpam.hasNext())
             {
-                File testFile = iterTest.next();
-                this.classifyWithGroundTruth(this.processEmailFile(testFile),true);
+                File testFileSpam = iterTestSpam.next();
+                this.classifyWithGroundTruth(this.processEmailFile(testFileSpam),true);
+            }
+
+            //test ham
+            ArrayList<File> testListHam = this.listHamBuckets.get(i);
+            Iterator<File> iterTestHam = testListHam.iterator();
+            while(iterTestHam.hasNext())
+            {
+                File testFileHam = iterTestHam.next();
+                this.classifyWithGroundTruth(this.processEmailFile(testFileHam),false);
             }
         }//end for i
-        //end SPAM
 
-        //HAM
-        //for all k buckets
-        //train on all k-1 buckets and classify the last one
-        for(int i=0; i<k; i++)
-        {
-            //for each bucket != i
-            for(int j=0; j<k; j++)
-            {
-                if(j != i)
-                {
-                    //for each file in the bucket
-                    ArrayList<File> curList = this.listHamBuckets.get(j);
-                    Iterator<File> iter = curList.iterator();
-                    while(iter.hasNext())
-                    {
-                        File curFile = iter.next();
-                        this.train(this.processEmailFile(curFile), false);
-                    }//end while
-                }//end if
-            }//end for j
-
-            //use remaining bucket for testing
-            ArrayList<File> testList = this.listHamBuckets.get(i);
-            Iterator<File> iterTest = testList.iterator();
-            while(iterTest.hasNext())
-            {
-                File testFile = iterTest.next();
-                this.classifyWithGroundTruth(this.processEmailFile(testFile),false);
-            }
-        }//end for i
-        //end HAM
-
+        //TODO
         //output prob | actual class to text file
         //compute all those fun stats
     }
@@ -604,10 +584,10 @@ public class SpamFilter {
 //        this.falsePositives = 60;
 //        this.falseNegatives = 40;
 
-        this.truePositives = 250;
-        this.trueNegatives = 200;
-        this.falsePositives = 5;
-        this.falseNegatives = 45;
+//        this.truePositives = 250;
+//        this.trueNegatives = 200;
+//        this.falsePositives = 5;
+//        this.falseNegatives = 45;
 
         System.out.println("Accuracy: " + this.accuracy());
         System.out.println("Precision: " + this.precision());
