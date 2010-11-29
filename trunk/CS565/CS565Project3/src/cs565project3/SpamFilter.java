@@ -760,14 +760,16 @@ public class SpamFilter {
     public void outputROCPointsForExcel()
     {
         //sort points by probability in descending order
+        //Collections.reverseOrder();
         //Collections.sort(this.listROCPoints);
-
-        DoubleBooleanPair a = new DoubleBooleanPair(0.5,true);
-        DoubleBooleanPair b = new DoubleBooleanPair(0.5,false);
-        System.out.println(a);
-        System.out.println(b);
-        System.out.println(a.compareTo(b));
-
+        Collections.sort(this.listROCPoints, Collections.reverseOrder());
+        
+        Iterator<DoubleBooleanPair> iter = this.listROCPoints.iterator();
+        while(iter.hasNext())
+        {
+            DoubleBooleanPair curDBP = iter.next();
+            System.out.println(curDBP);
+        }
     }
 
     public void print()
