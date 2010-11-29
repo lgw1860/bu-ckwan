@@ -282,19 +282,19 @@ public class SpamFilter {
             probAllWordsSpam = probAllWordsSpam * probWordSpam(word);
             probAllWordsHam = probAllWordsHam * probWordHam(word);
 
-//            int numSpamsWithWord = 0;//1; //in case spam count is 0
-//            //totalEmails = totalEmails + 1; //Laplacian correction
+//            int numSpamsWithWord = 1; //in case spam count is 0
+//            totalEmails = totalEmails + 1; //Laplacian correction
 //            if(this.mapSpam.containsKey(word)) //but if spam count is > 0
 //            {
 //                numSpamsWithWord = this.mapSpam.get(word);
-//                //totalEmails = totalEmails - 1; //undo the Laplacian correction
+//                totalEmails = totalEmails - 1; //undo the Laplacian correction
 //            }
-//            int numHamsWithWord = 0;//1;
-//            //totalEmails = totalEmails + 1;
+//            int numHamsWithWord = 1;
+//            totalEmails = totalEmails + 1;
 //            if(this.mapHam.containsKey(word))
 //            {
 //                numHamsWithWord = this.mapHam.get(word);
-//                //totalEmails = totalEmails - 1;
+//                totalEmails = totalEmails - 1;
 //            }
 //
 //            double totalEmailsWithWord = numSpamsWithWord + numHamsWithWord;
