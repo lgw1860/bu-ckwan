@@ -50,6 +50,32 @@ public class SpamFilter {
         train(set,isSpam);
     }
 
+    private Set<String> processEmailFile(File file)
+    {
+        try
+        {
+            Set<String> set = new HashSet<String>();
+            Scanner scanner = new Scanner(file);
+            scanner.useDelimiter(Pattern.compile("\\s|\\W"));
+            while(scanner.hasNext())
+            {
+                String s = scanner.next();
+                s = Utility.stem(s);
+                //ignore words < 3 chars and words that are only numbers
+                if(s.length() > 2 && !Utility.isOnlyNumeric(s))
+                {
+                    set.add(s);
+                }
+            }
+            return set;
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     /**
      * Convert an email text file into a Set of Strings.
      * @param filename
@@ -286,8 +312,8 @@ public class SpamFilter {
     }
 
 
-    ArrayList<ArrayList<File>> listSpamBuckets;
-    ArrayList<ArrayList<File>> listHamBuckets;
+    private ArrayList<ArrayList<File>> listSpamBuckets;
+    private ArrayList<ArrayList<File>> listHamBuckets;
 
     /**
      * Randomly place spams and hams into k buckets for k-fold cross validation.
@@ -365,6 +391,48 @@ public class SpamFilter {
 
     }
 
+    public void crossValidate(int k, String spamFolderPath, String hamFolderPath)
+    {
+        //make sure randomlyPartitionEmails is called first
+        this.randomlyPartitionEmails(k, spamFolderPath, hamFolderPath);
+
+        //for each of k buckets in listBuckets
+        //for each file in the bucket
+
+        //SPAM
+        //for all k buckets
+        //train on all k-1 buckets and classify the last one
+        for(int i=0; i<k; i++)
+        {
+            //for each bucket != i
+            for(int j=0; j<k; j++)
+            {
+                if(j != i)
+                {
+                    //for each file in the bucket
+                    ArrayList<File> curList = this.listSpamBuckets.get(j);
+                    Iterator<File> iter = curList.iterator();
+                    while(iter.hasNext())
+                    {
+                        File curFile = iter.next();
+                        this.train(this.processEmailFile(curFile), true);
+                    }//end while
+                }//end if
+            }//end for j
+
+            //use remaining bucket for testing
+            ArrayList<File> testList = this.listSpamBuckets.get(i);
+            Iterator<File> iterTest = testList.iterator();
+            while(iterTest.hasNext())
+            {
+                File testFile = iterTest.next();
+                this.classifyWithGroundTruth(this.processEmailFile(testFile),true);
+            }
+        }//end for i
+
+        //output prob | actual class to text file
+        //compute all those fun stats
+    }
 
     /**
      * Return the accuracy of the classifier.
@@ -443,29 +511,32 @@ public class SpamFilter {
 
     public void test()
     {
-        classify("test"); //testing dividing by 0
+        //classify("test"); //testing dividing by 0
         
-        String filename = "";
+        //String filename = "";
         //filename = "2007_12_20071223-151359-customercare@cvs_com-Your_New_Account-1.eml";
-        filename = "testalgo.txt";
+        //filename = "testalgo.txt";
         //filename = "testturtles.txt";
-        train(this.processEmailFile(filename),true);
+        //train(this.processEmailFile(filename),true);
 
-        filename = "testalgo.txt";
-        train(this.processEmailFile(filename),true);
+//        filename = "testalgo.txt";
+//        train(this.processEmailFile(filename),true);
 
-        filename = "testalgo.txt";
-        //filename = "testturtles.txt";
-        train(this.processEmailFile(filename),true);
+//        filename = "testalgo.txt";
+//        //filename = "testturtles.txt";
+//        train(this.processEmailFile(filename),true);
 
-        //filename = "testturtles.txt";
-        filename = "testalgo.txt";
-        classifyWithGroundTruth(this.processEmailFile(filename),true);
+//        //filename = "testturtles.txt";
+//        filename = "testalgo.txt";
+//        classifyWithGroundTruth(this.processEmailFile(filename),true);
+//
+//        classifyWithGroundTruth(this.processEmailFile(filename),true);
 
-        classifyWithGroundTruth(this.processEmailFile(filename),true);
-
-        this.randomlyPartitionEmails(2, "testdata/spam", "testdata/ham");
+        //this.randomlyPartitionEmails(2, "testdata/spam", "testdata/ham");
         //this.randomlyPartitionEmails(4, "testdata/spam", "testdata/ham");
+
+        this.crossValidate(2, "testdata/spam", "testdata/ham");
+
     }
 
     public void print()
