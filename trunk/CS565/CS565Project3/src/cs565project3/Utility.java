@@ -6,6 +6,7 @@
 package cs565project3;
 
 import java.io.File;
+import java.util.ArrayList;
 
 /**
  *
@@ -75,7 +76,24 @@ public class Utility {
     {
         File folder = new File(folderPath);
         System.out.println(folder.getAbsolutePath());
-        
-        return 0;
+        File[] files = folder.listFiles();
+        ArrayList<File> goodFiles = new ArrayList<File>();
+        System.out.println("files length: " + files.length);
+        for(int i=0; i<files.length; i++)
+        {
+            System.out.println(files[i]);
+            File curFile = files[i];
+            if(curFile.isFile() && !curFile.isHidden())
+            {
+                goodFiles.add(curFile);
+            }
+        }
+
+        System.out.println("good files length: " + goodFiles.size());
+        for(int j=0; j<goodFiles.size(); j++)
+        {
+            System.out.println(goodFiles.get(j));
+        }
+        return goodFiles.size();
     }
 }

@@ -286,6 +286,14 @@ public class SpamFilter {
         //create k buckets
 
         //get number of files in spam and ham folders
+        int spamFolderCount = Utility.numFilesInFolder(spamFolderPath);
+        int hamFolderCount = Utility.numFilesInFolder(hamFolderPath);
+
+        int spamBucketSize = (int)Math.ceil((double)spamFolderCount / (double)k);
+        int hamBucketSize = (int)Math.ceil((double)hamFolderCount / (double)k);
+
+
+
 
 
     }
@@ -390,6 +398,8 @@ public class SpamFilter {
         classifyWithGroundTruth(this.processEmailFile(filename),true);
 
         Utility.numFilesInFolder("testdata/spam");
+
+        this.crossValidate(4, "testdata/spam", "testdata/ham");
     }
 
     public void print()
