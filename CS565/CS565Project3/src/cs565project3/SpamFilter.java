@@ -7,11 +7,7 @@ package cs565project3;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.File;
-import java.io.File;
 import java.io.FileWriter;
-import java.util.ArrayList;
-import java.util.ArrayList;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -41,6 +37,53 @@ public class SpamFilter {
     private StringBuffer strBufResults; //results of classification on all files
     private StringBuffer strBufStats; //statistics about the classifier
 
+    //for the ROC curve: a list for each email:
+    //the classifier's probability for that email being Spam
+    //and whether the email is actually Spam
+    private ArrayList<Entry<Double,Boolean>> listROCPoints;
+
+    public class DoubleBooleanPair
+    {
+        private double probability = 0.0;
+        private boolean isSpam = false;
+
+        public DoubleBooleanPair()
+        {
+            
+        }
+
+        public DoubleBooleanPair(double prob, boolean isS)
+        {
+            this.probability = prob;
+            this.isSpam = isS;
+        }
+
+        public double getProbability()
+        {
+            return this.probability;
+        }
+
+        public void setProbability(double prob)
+        {
+            this.probability = prob;
+        }
+
+        public boolean getIsSpam()
+        {
+            return this.isSpam;
+        }
+
+        public void setIsSpam(boolean isS)
+        {
+            this.isSpam = isS;
+        }
+
+        @Override public String toString()
+        {
+            return ("<" + this.probability + ", " + this.isSpam + ">");
+        }
+    }
+
     public SpamFilter()
     {
         mapSpam = new HashMap<String, Integer>();
@@ -51,6 +94,8 @@ public class SpamFilter {
         
         strBufStats = new StringBuffer();
         strBufStats.append("Measure,Value\n");
+
+        listROCPoints = new ArrayList<Entry<Double, Boolean>>();
     }
 
     //TODO change this to take in a file
@@ -228,7 +273,9 @@ public class SpamFilter {
      */
     public void classifyWithGroundTruth(Set<String> emailWordSet, boolean isSpam)
     {
-        boolean result = classify(emailWordSet);
+        DoubleBooleanPair pairFromClassify = classify(emailWordSet);
+        boolean result = pairFromClassify.getIsSpam();
+
         if(isSpam) //email actually is spam
         {
             //System.out.println("Actual: Spam");
@@ -272,14 +319,21 @@ public class SpamFilter {
             }
         }
         //System.out.println("---");
+        //create a pair of <classifier probability, actual class>
+        //for use in creating the ROC curve
+        DoubleBooleanPair pairForRoc = new DoubleBooleanPair();
+        pairForRoc.setIsSpam(isSpam);
+        pairForRoc.setProbability(pairFromClassify.getProbability());
+        System.out.println(pairForRoc);
     }
 
     /**
-     * Return true if the email is classified as Spam, false if Ham.
+     * Return <true if the email is classified as Spam, false if Ham,
+     * classifier's probility for the email>
      * @param emailWordSet
      * @return
      */
-    public boolean classify(Set<String> emailWordSet)
+    public DoubleBooleanPair classify(Set<String> emailWordSet)
     {
         //prevent against probabilities of 0 and dividing by 0
         if(this.numSpamEmails <=0)
@@ -334,14 +388,16 @@ public class SpamFilter {
             //System.out.println("SPAM!!!");
             //System.out.println("Prob: " + probSpamWordNumer);
             this.strBufResults.append(probSpamWordNumer + ",");
-            return true;
+            //return true;
+            return new DoubleBooleanPair(probSpamWordNumer,true);
         }
         else //classified as ham
         {
             //System.out.println("HAM~~~");
             //System.out.println("Prob: " + probHamWordNumer);
             this.strBufResults.append(probHamWordNumer + ",");
-            return false;
+            //return false;
+            return new DoubleBooleanPair(probHamWordNumer,false);
         }
     }
 
