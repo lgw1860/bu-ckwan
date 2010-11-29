@@ -72,62 +72,26 @@ public class Utility {
         return !(stringBuffer.length() > 0);
     }
 
-    public static int numFilesInFolder(String folderPath)
-    {
-        try
-        {
-            File folder = new File(folderPath);
-            System.out.println(folder.getAbsolutePath());
-            File[] files = folder.listFiles();
-            ArrayList<File> goodFiles = new ArrayList<File>();
-            System.out.println("files length: " + files.length);
-            for(int i=0; i<files.length; i++)
-            {
-                System.out.println(files[i]);
-                File curFile = files[i];
-                if(curFile.isFile() && !curFile.isHidden())
-                {
-                    goodFiles.add(curFile);
-                }
-            }
-
-            System.out.println("good files length: " + goodFiles.size());
-            for(int j=0; j<goodFiles.size(); j++)
-            {
-                System.out.println(goodFiles.get(j));
-            }
-            return goodFiles.size();
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-            return -1;
-        }
-    }
-
+    /**
+     * Return an ArrayList of all the files in a folder.
+     * @param folderPath
+     * @return
+     */
     public static ArrayList<File> listOfFiles(String folderPath)
     {
         try
         {
             File folder = new File(folderPath);
-            System.out.println(folder.getAbsolutePath());
             File[] files = folder.listFiles();
             ArrayList<File> goodFiles = new ArrayList<File>();
-            System.out.println("files length: " + files.length);
+            //only take non-hidden files (not folders)
             for(int i=0; i<files.length; i++)
             {
-                System.out.println(files[i]);
                 File curFile = files[i];
                 if(curFile.isFile() && !curFile.isHidden())
                 {
                     goodFiles.add(curFile);
                 }
-            }
-
-            System.out.println("good files length: " + goodFiles.size());
-            for(int j=0; j<goodFiles.size(); j++)
-            {
-                System.out.println(goodFiles.get(j));
             }
             return goodFiles;
         }

@@ -289,14 +289,20 @@ public class SpamFilter {
     ArrayList<ArrayList<File>> listSpamBuckets;
     ArrayList<ArrayList<File>> listHamBuckets;
 
-    public void crossValidate(int k, String spamFolderPath, String hamFolderPath)
+    /**
+     * Randomly place spams and hams into k buckets for k-fold cross validation.
+     * @param k
+     * @param spamFolderPath
+     * @param hamFolderPath
+     */
+    public void randomlyPartitionEmails(int k, String spamFolderPath, String hamFolderPath)
     {
         //get number of files in spam and ham folders
         ArrayList<File> listSpamFiles = Utility.listOfFiles(spamFolderPath);
         ArrayList<File> listHamFiles = Utility.listOfFiles(hamFolderPath);
 
-        int spamFolderCount = listSpamFiles.size();//Utility.numFilesInFolder(spamFolderPath);
-        int hamFolderCount = listHamFiles.size(); //Utility.numFilesInFolder(hamFolderPath);
+        int spamFolderCount = listSpamFiles.size();
+        int hamFolderCount = listHamFiles.size();
 
         int spamBucketSize = (int)Math.ceil((double)spamFolderCount / (double)k);
         int hamBucketSize = (int)Math.ceil((double)hamFolderCount / (double)k);
@@ -458,10 +464,8 @@ public class SpamFilter {
 
         classifyWithGroundTruth(this.processEmailFile(filename),true);
 
-        Utility.numFilesInFolder("testdata/spam");
-
-        this.crossValidate(2, "testdata/spam", "testdata/ham");
-        //this.crossValidate(4, "testdata/spam", "testdata/ham");
+        this.randomlyPartitionEmails(2, "testdata/spam", "testdata/ham");
+        //this.randomlyPartitionEmails(4, "testdata/spam", "testdata/ham");
     }
 
     public void print()
