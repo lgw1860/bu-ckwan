@@ -603,7 +603,7 @@ public class SpamFilter {
         //output prob | actual class to text file
         //compute all those fun stats
         this.addStatsToStringBuffer();
-        this.writeStringBuffersToFiles();
+        this.outputStringBuffersToFiles();
         this.outputROCPointsForExcel();
     }
 
@@ -687,7 +687,10 @@ public class SpamFilter {
         this.crossValidate(10, "testdata/spam", "testdata/ham");
     }
 
-    public void writeStringBuffersToFiles()
+    /**
+     * Output results and stats to .csv files.
+     */
+    public void outputStringBuffersToFiles()
     {
         //System.out.println(this.strBufResults.toString());
         try
@@ -783,22 +786,20 @@ public class SpamFilter {
     {
         //sort points by probability in descending order
         Collections.sort(this.listROCPoints, Collections.reverseOrder());
-        
-        Iterator<DoubleBooleanPair> iter = this.listROCPoints.iterator();
-        while(iter.hasNext())
-        {
-            DoubleBooleanPair curDBP = iter.next();
-            System.out.println(curDBP);
-        }
 
         int totalTP = 0;
         int totalFP = 0;
         int totalTN = 0;
         int totalFN = 0;
-
         double lastProb = 1.0; //the previous threshold for plotting a point
 
+        StringBuffer strBufRoc = new StringBuffer();
+        //System.out.println("Prob,TP,FP,FN,TN,TPR,FPR");
+        strBufRoc.append("Prob,TP,FP,FN,TN,FPR,TPR\n");
+        
         //initially at prob 1, all emails are FN or TN
+        //we only find the total FN and TN once initially and then subtract
+        //from these totals when we consider probabilities < 1.0
         Iterator<DoubleBooleanPair> iterRoc = this.listROCPoints.iterator();
         while(iterRoc.hasNext())
         {
@@ -813,10 +814,6 @@ public class SpamFilter {
             }
         }
 
-        System.out.println("total emails: " + listROCPoints.size());
-        System.out.println("total FN: " + totalFN);
-        System.out.println("total TN: " + totalTN);
-
         //now go through the list, stopping at each distinct probability
         //count how many FN or TN will get converted to TP or FP respectively
         Iterator<DoubleBooleanPair> iterProb = listROCPoints.iterator();
@@ -827,11 +824,14 @@ public class SpamFilter {
             if(curProb != lastProb)
             {
                 //output lastProb + counts
-                System.out.println("Prob: " + lastProb + ", TP:" + totalTP +
-                        ", FP:" + totalFP + ", FN: " +
-                        totalFN + ", TN: " + totalTN +
-                        ", TPR: " + computeTPR(totalTP, totalFN) +
-                        ", FPR: " + computeFPR(totalFP, totalTN));
+//                System.out.println(lastProb + "," + totalTP + "," + totalFP +
+//                        "," + totalFN + "," + totalTN + "," +
+//                        computeTPR(totalTP, totalFN) + "," +
+//                        computeFPR(totalFP, totalTN));
+                strBufRoc.append(lastProb + "," + totalTP + "," + totalFP +
+                        "," + totalFN + "," + totalTN + "," +
+                        computeFPR(totalFP, totalTN) + "," +
+                        computeTPR(totalTP, totalFN) + "\n");
                 //update lastProb to this prob
                 lastProb = curProb;
             }
@@ -851,11 +851,34 @@ public class SpamFilter {
         }//end while
 
         //special case to print last element
-        System.out.println("Prob: " + lastProb + ", TP:" + totalTP +
-                        ", FP:" + totalFP + ", FN: " +
-                        totalFN + "TN: " + totalTN +
-                        ", TPR: " + computeTPR(totalTP, totalFN) +
-                        ", FPR: " + computeFPR(totalFP, totalTN));
+//        System.out.println(lastProb + "," + totalTP + "," + totalFP + "," +
+//                        totalFN + "," + totalTN + "," +
+//                        computeTPR(totalTP, totalFN) + "," +
+//                        computeFPR(totalFP, totalTN));
+        strBufRoc.append(lastProb + "," + totalTP + "," + totalFP + "," +
+                        totalFN + "," + totalTN + "," +
+                        computeFPR(totalFP, totalTN) + "," +
+                        computeTPR(totalTP, totalFN) + "\n");
+                        
+
+        //System.out.println(strBufRoc.toString());
+
+        //output ROC points to a .csv file for Excel
+        try
+        {
+            String filename = "rocpoints.csv";
+            BufferedWriter writer = new BufferedWriter(
+                    new FileWriter(filename));
+            writer.write(strBufRoc.toString());
+            writer.flush();
+            writer.close();
+            System.out.println("See <" + filename +
+                    "> for points to plot a ROC curve.");
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     public void print()
