@@ -215,30 +215,37 @@ public class SpamFilter {
         boolean result = classify(emailWordSet);
         if(isSpam) //email actually is spam
         {
+            System.out.println("Actual: Spam");
             if(result) //classified as spam
             {
                 this.truePositives++;
+                System.out.println("Classified: Spam");
                 System.out.println("TRUE POSITIVE");
             }
             else //classified as ham
             {
                 this.falseNegatives++;
+                System.out.println("Classified: Ham");
                 System.out.println("FALSE NEGATIVE");
             }
         }
         else //email actually is ham
         {
+            System.out.println("Actual: Ham");
             if(result) //classified as spam
             {
                 this.falsePositives++;
+                System.out.println("Classified: Spam");
                 System.out.println("FALSE POSITIVE");
             }
             else //classifed as ham
             {
                 this.trueNegatives++;
+                System.out.println("Classified: Ham");
                 System.out.println("TRUE NEGATIVE");
             }
         }
+        System.out.println("---");
     }
 
     /**
@@ -261,78 +268,51 @@ public class SpamFilter {
         double totalEmails = this.numSpamEmails + this.numHamEmails;
         double probSpam = (double)this.numSpamEmails/totalEmails; //P(Spam)
         double probHam = (double)this.numHamEmails/totalEmails; //P(Ham)
-        System.out.println("\nnumSpam: " + this.numSpamEmails);
-        System.out.println("numHam: " + this.numHamEmails);
-        System.out.println("probSpam: " + probSpam);
-        System.out.println("probHam: " + probHam);
+        //System.out.println("\nnumSpam: " + this.numSpamEmails);
+        //System.out.println("numHam: " + this.numHamEmails);
+        //System.out.println("probSpam: " + probSpam);
+        //System.out.println("probHam: " + probHam);
 
         double probAllWordsSpam = 1.0; //Product sum of P(Word_i | Spam)
         double probAllWordsHam = 1.0; //Product sum of P(Word_i | Ham)
-
-        double probAllWords = 1.0; //Product sum of P(Word_i)
 
         //for all words
         Iterator<String> iterEmail = emailWordSet.iterator();
         while(iterEmail.hasNext())
         {
             String word = iterEmail.next();
-            System.out.println("\t" + word + ": spam: " + probWordSpam(word)
-                    + " ham: " + probWordHam(word));
+            //System.out.println("\t" + word + ": spam: " + probWordSpam(word)
+            //        + " ham: " + probWordHam(word));
+
             //compute the prob of the word and incorporate it in product sum
             probAllWordsSpam = probAllWordsSpam * probWordSpam(word);
             probAllWordsHam = probAllWordsHam * probWordHam(word);
-
-//            int numSpamsWithWord = 1; //in case spam count is 0
-//            totalEmails = totalEmails + 1; //Laplacian correction
-//            if(this.mapSpam.containsKey(word)) //but if spam count is > 0
-//            {
-//                numSpamsWithWord = this.mapSpam.get(word);
-//                totalEmails = totalEmails - 1; //undo the Laplacian correction
-//            }
-//            int numHamsWithWord = 1;
-//            totalEmails = totalEmails + 1;
-//            if(this.mapHam.containsKey(word))
-//            {
-//                numHamsWithWord = this.mapHam.get(word);
-//                totalEmails = totalEmails - 1;
-//            }
-//
-//            double totalEmailsWithWord = numSpamsWithWord + numHamsWithWord;
-//            probAllWords = probAllWords *
-//                    (totalEmailsWithWord / totalEmails);
         }
-
-        System.out.println("probAllWordsSpam: " + probAllWordsSpam);
-        System.out.println("probAllWordsHam: " + probAllWordsHam);
-        System.out.println("probAllWords: " + probAllWords);
+        //System.out.println("probAllWordsSpam: " + probAllWordsSpam);
+        //System.out.println("probAllWordsHam: " + probAllWordsHam);
 
         //ProdSum[P(Word_i | Spam)] * P(Spam) <- we only look at the numerator
         double probSpamWordNumer = probAllWordsSpam * probSpam;
-        System.out.println("prob that email is SPAM is: " + probSpamWordNumer);
-        probSpamWordNumer = (probAllWordsSpam * probSpam) / probAllWords;
-        System.out.println("prob that email is SPAM is: " + probSpamWordNumer);
-
+        //System.out.println("prob that email is SPAM is: " + probSpamWordNumer);
+        
         //ProdSum[P(Word_i | Ham)] * P(Ham) <- we only look at the numerator
         double probHamWordNumer = probAllWordsHam * probHam;
-        System.out.println("prob that email is HAM is: " + probHamWordNumer);
-        probHamWordNumer = (probAllWordsHam * probHam) / probAllWords;
-        System.out.println("prob that email is HAM is: " + probHamWordNumer);
-
+        //System.out.println("prob that email is HAM is: " + probHamWordNumer);
+        
         //TODO return a probability
-
-        //P(W)
-        //double probWord = (double)()
 
         //condition is > not >= b/c in case they are equal, it is better to let
         //a spam through than to falsely classify a ham as spam
-        if(probSpamWordNumer > probHamWordNumer)
+        if(probSpamWordNumer > probHamWordNumer) //classified as spam
         {
-            System.out.println("SPAM!!!");
+            //System.out.println("SPAM!!!");
+            System.out.println("Prob: " + probSpamWordNumer);
             return true;
         }
-        else
+        else //classified as ham
         {
-            System.out.println("HAM~~~");
+            //System.out.println("HAM~~~");
+            System.out.println("Prob: " + probHamWordNumer);
             return false;
         }
     }
@@ -474,6 +454,7 @@ public class SpamFilter {
             while(iterTestSpam.hasNext())
             {
                 File testFileSpam = iterTestSpam.next();
+                System.out.println("File: " + testFileSpam);
                 this.classifyWithGroundTruth(this.processEmailFile(testFileSpam),true);
             }
 
@@ -483,6 +464,7 @@ public class SpamFilter {
             while(iterTestHam.hasNext())
             {
                 File testFileHam = iterTestHam.next();
+                System.out.println("File: " + testFileHam);
                 this.classifyWithGroundTruth(this.processEmailFile(testFileHam),false);
             }
 
