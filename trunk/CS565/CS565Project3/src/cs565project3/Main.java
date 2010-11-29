@@ -21,10 +21,11 @@ public class Main {
         //testStemmer();
         //testFileIO();
         //testEmailCleaner();
+        System.out.println("Please wait...");
         SpamFilter spamFilter = new SpamFilter();
         spamFilter.test();
-        //spamFilter.outputStats();
-        spamFilter.printStringBuffers();
+        //spamFilter.addStatsToStringBuffer();
+        //spamFilter.writeStringBuffersToFiles();
         //spamFilter.print();
 
 //        int k = 10;
