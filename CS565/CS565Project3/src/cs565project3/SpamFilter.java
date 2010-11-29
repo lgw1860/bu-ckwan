@@ -5,9 +5,11 @@
 
 package cs565project3;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.File;
 import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.ArrayList;
 import java.util.ArrayList;
@@ -506,7 +508,8 @@ public class SpamFilter {
         //TODO
         //output prob | actual class to text file
         //compute all those fun stats
-        this.outputStats();
+        this.addStatsToStringBuffer();
+        this.writeStringBuffersToFiles();
     }
 
     /**
@@ -586,44 +589,48 @@ public class SpamFilter {
 
     public void test()
     {
-        //classify("test"); //testing dividing by 0
-        
-        //String filename = "";
-        //filename = "2007_12_20071223-151359-customercare@cvs_com-Your_New_Account-1.eml";
-        //filename = "testalgo.txt";
-        //filename = "testturtles.txt";
-        //train(this.processEmailFile(filename),true);
-
-//        filename = "testalgo.txt";
-//        train(this.processEmailFile(filename),true);
-
-//        filename = "testalgo.txt";
-//        //filename = "testturtles.txt";
-//        train(this.processEmailFile(filename),true);
-
-//        //filename = "testturtles.txt";
-//        filename = "testalgo.txt";
-//        classifyWithGroundTruth(this.processEmailFile(filename),true);
-//
-//        classifyWithGroundTruth(this.processEmailFile(filename),true);
-
-        //this.randomlyPartitionEmails(2, "testdata/spam", "testdata/ham");
-        //this.randomlyPartitionEmails(4, "testdata/spam", "testdata/ham");
-
         this.crossValidate(10, "testdata/spam", "testdata/ham");
-
     }
 
-    public void printStringBuffers()
+    public void writeStringBuffersToFiles()
     {
-        System.out.println(this.strBufResults.toString());
-        System.out.println(this.strBufStats.toString());
+        //System.out.println(this.strBufResults.toString());
+        try
+        {
+            String filename = "results.csv";
+            BufferedWriter writer = new BufferedWriter(
+                    new FileWriter(filename));
+            writer.write(this.strBufResults.toString());
+            writer.flush();
+            writer.close();
+            System.out.println("See <" + filename + "> for classifier results on all emails.");
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        //System.out.println(this.strBufStats.toString());
+        try
+        {
+            String filename = "stats.csv";
+            BufferedWriter writer = new BufferedWriter(
+                    new FileWriter(filename));
+            writer.write(this.strBufStats.toString());
+            writer.flush();
+            writer.close();
+            System.out.println("See <" + filename + "> for classifier statistics.");
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     /**
      * Output statistics for the classifier.
      */
-    public void outputStats() {
+    public void addStatsToStringBuffer() {
         //System.out.println("TP: " + this.truePositives);
         this.strBufStats.append("True Positives," + this.truePositives + "\n");
 
@@ -640,19 +647,19 @@ public class SpamFilter {
         this.strBufStats.append("Accuracy," + this.accuracy() + "\n");
 
         //System.out.println("Precision: " + this.precision());
-        this.strBufStats.append("Precision: " + this.precision() + "\n");
+        this.strBufStats.append("Precision," + this.precision() + "\n");
 
         //System.out.println("Recall: " + this.recall());
-        this.strBufStats.append("Recall: " + this.recall() + "\n");
+        this.strBufStats.append("Recall," + this.recall() + "\n");
 
         //System.out.println("F-measure: " + this.fMeasure());
-        this.strBufStats.append("F-measure: " + this.fMeasure() + "\n");
+        this.strBufStats.append("F-measure," + this.fMeasure() + "\n");
 
         //System.out.println("True Positive Rate: " + this.truePositiveRate());
-        this.strBufStats.append("True Positive Rate: " + this.truePositiveRate() + "\n");
+        this.strBufStats.append("True Positive Rate," + this.truePositiveRate() + "\n");
 
         //System.out.println("False Positive Rate: " + this.falsePositiveRate());
-        this.strBufStats.append("False Positive Rate: " + this.falsePositiveRate() + "\n");
+        this.strBufStats.append("False Positive Rate," + this.falsePositiveRate() + "\n");
     }
 
     public void print()
