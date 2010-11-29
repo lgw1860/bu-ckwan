@@ -50,6 +50,11 @@ public class SpamFilter {
         train(set,isSpam);
     }
 
+    /**
+     * Process an email text file into a Set of Strings.
+     * @param file
+     * @return
+     */
     private Set<String> processEmailFile(File file)
     {
         try
@@ -582,6 +587,32 @@ public class SpamFilter {
 
     }
 
+    /**
+     * Print out statistics for the classifier.
+     */
+    public void printStats() {
+        System.out.println("TP: " + this.truePositives);
+        System.out.println("FP: " + this.falsePositives);
+        System.out.println("TN: " + this.trueNegatives);
+        System.out.println("FN: " + this.falseNegatives);
+        //for testing
+        //to delete
+        //        this.truePositives = 150;
+        //        this.trueNegatives = 250;
+        //        this.falsePositives = 60;
+        //        this.falseNegatives = 40;
+        //        this.truePositives = 250;
+        //        this.trueNegatives = 200;
+        //        this.falsePositives = 5;
+        //        this.falseNegatives = 45;
+        System.out.println("Accuracy: " + this.accuracy());
+        System.out.println("Precision: " + this.precision());
+        System.out.println("Recall: " + this.recall());
+        System.out.println("F-measure: " + this.fMeasure());
+        System.out.println("True Positive Rate: " + this.truePositiveRate());
+        System.out.println("False Positive Rate: " + this.falsePositiveRate());
+    }
+
     public void print()
     {
         System.out.println("num spam: " + this.numSpamEmails);
@@ -600,30 +631,6 @@ public class SpamFilter {
         {
             System.out.println(iterHam.next());
         }
-
-        System.out.println("TP: " + this.truePositives);
-        System.out.println("FP: " + this.falsePositives);
-        System.out.println("TN: " + this.trueNegatives);
-        System.out.println("FN: " + this.falseNegatives);
-
-        //for testing
-        //to delete
-//        this.truePositives = 150;
-//        this.trueNegatives = 250;
-//        this.falsePositives = 60;
-//        this.falseNegatives = 40;
-
-//        this.truePositives = 250;
-//        this.trueNegatives = 200;
-//        this.falsePositives = 5;
-//        this.falseNegatives = 45;
-
-        System.out.println("Accuracy: " + this.accuracy());
-        System.out.println("Precision: " + this.precision());
-        System.out.println("Recall: " + this.recall());
-        System.out.println("F-measure: " + this.fMeasure());
-        System.out.println("True Positive Rate: " + this.truePositiveRate());
-        System.out.println("False Positive Rate: " + this.falsePositiveRate());
     }
     
 }
