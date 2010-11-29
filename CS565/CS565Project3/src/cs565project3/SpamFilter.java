@@ -6,10 +6,16 @@
 package cs565project3;
 
 import java.io.File;
+import java.io.File;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.ArrayList;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map.Entry;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -280,19 +286,55 @@ public class SpamFilter {
     }
 
 
+    ArrayList<ArrayList<File>> listSpamBuckets;
+    ArrayList<ArrayList<File>> listHamBuckets;
 
     public void crossValidate(int k, String spamFolderPath, String hamFolderPath)
     {
-        //create k buckets
-
         //get number of files in spam and ham folders
-        int spamFolderCount = Utility.numFilesInFolder(spamFolderPath);
-        int hamFolderCount = Utility.numFilesInFolder(hamFolderPath);
+        ArrayList<File> listSpamFiles = Utility.listOfFiles(spamFolderPath);
+        ArrayList<File> listHamFiles = Utility.listOfFiles(hamFolderPath);
+
+        int spamFolderCount = listSpamFiles.size();//Utility.numFilesInFolder(spamFolderPath);
+        int hamFolderCount = listHamFiles.size(); //Utility.numFilesInFolder(hamFolderPath);
 
         int spamBucketSize = (int)Math.ceil((double)spamFolderCount / (double)k);
         int hamBucketSize = (int)Math.ceil((double)hamFolderCount / (double)k);
 
+        //create k spam and ham buckets
+        listSpamBuckets = new ArrayList<ArrayList<File>>(k);
+        listHamBuckets = new ArrayList<ArrayList<File>>(k);
+        for(int i=0; i<k; i++)
+        {
+            listSpamBuckets.add(new ArrayList<File>(spamBucketSize));
+            listHamBuckets.add(new ArrayList<File>(hamBucketSize));
+        }
 
+        //for each spam email file
+        //add it to a random bucket
+        Iterator<File> iterSpam = listSpamFiles.iterator();
+        while(iterSpam.hasNext())
+        {
+            File curFile = iterSpam.next();
+            boolean fileAddedInBucket = false;
+            while(!fileAddedInBucket)
+            {
+                Random rand = new Random();
+                int bucketIndex = rand.nextInt(k);
+                ArrayList<File> curBucket = listSpamBuckets.get(bucketIndex);
+                if(curBucket.size() < spamBucketSize)
+                {
+                    curBucket.add(curFile);
+                    fileAddedInBucket = true;
+                }
+            }
+        }//end while
+
+        //for each ham email file
+        //get a data structure of emails
+
+
+        System.out.println("test");
 
 
 
@@ -399,7 +441,8 @@ public class SpamFilter {
 
         Utility.numFilesInFolder("testdata/spam");
 
-        this.crossValidate(4, "testdata/spam", "testdata/ham");
+        this.crossValidate(2, "testdata/spam", "testdata/ham");
+        //this.crossValidate(4, "testdata/spam", "testdata/ham");
     }
 
     public void print()

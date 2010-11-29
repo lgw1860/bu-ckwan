@@ -6,6 +6,7 @@
 package cs565project3;
 
 import java.io.*;
+import java.util.Random;
 
 /**
  *
@@ -23,7 +24,17 @@ public class Main {
         SpamFilter spamFilter = new SpamFilter();
         spamFilter.test();
         //spamFilter.print();
+
+//        int k = 10;
+//        //Random rand = new Random();
+//        for(int i=0; i<50; i++)
+//        {
+//            Random rand = new Random();
+//            System.out.println(rand.nextInt(k));
+//        }
+
     }
+
 
     private static void testEmailCleaner() {
         //String filename = "2007_12_20071223-151359-customercare@cvs_com-Your_New_Account-1.eml";
