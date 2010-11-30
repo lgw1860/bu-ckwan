@@ -865,10 +865,28 @@ public class SpamFilter {
             System.out.println("Spam folder path: " + spamFolderPath);
             System.out.println("Ham folder path: " + hamFolderPath);
 
-            System.out.println("\nPlease wait...\n");
-            SpamFilter spamFilter = new SpamFilter();
-            spamFilter.crossValidate(10, spamFolderPath, hamFolderPath);
-            System.out.println("\nAll done.\n");
+            //check if both folders are valid before continuing
+            File spamFolder = new File(spamFolderPath);
+            File hamFolder = new File(hamFolderPath);
+            if(!spamFolder.exists() || !hamFolder.exists())
+            {
+                System.out.println("\nError!");
+                if(!spamFolder.exists())
+                {
+                    System.out.println("\tSpam folder path invalid, please try again.");
+                }
+                if(!hamFolder.exists())
+                {
+                    System.out.println("\tHam folder path invalid, please try again.");
+                }
+            }
+            else //folder paths are valid, start classifying!
+            {
+                System.out.println("\nPlease wait...\n");
+                SpamFilter spamFilter = new SpamFilter();
+                spamFilter.crossValidate(10, spamFolderPath, hamFolderPath);
+                System.out.println("\nAll done.\n");
+            }
         }
         else
         {
