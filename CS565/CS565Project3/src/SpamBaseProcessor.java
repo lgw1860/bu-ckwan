@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Scanner;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 /*
  * Christopher Kwan
@@ -70,21 +72,32 @@ public class SpamBaseProcessor {
         "edu"          ,
         "table"        ,
         "conference"   ,
+        ";"            ,
+        "("            ,
+        "["            ,
+        "!"            ,
+        "$"            ,
+        "#"            
     };
 
-    public static void fileToSet(String filepath)
+    /**
+     * Generate a new email file for every row in the SpamBase CSV file.
+     * @param filepath
+     */
+    public static void GenerateEmailFilesFromCSV(String filepath)
     {
         try
         {
             File file = new File(filepath);
-            SpamFilter spamFilter = new SpamFilter();
-            Set<String> fileList = spamFilter.processEmailFile(file);
-
-            Iterator<String> iter = fileList.iterator();
-            while(iter.hasNext())
+            Scanner scanner = new Scanner(file);
+            scanner.useDelimiter("\n");
+            int numForNextFile = 0; //file name for the next file to be created
+            while(scanner.hasNext()) //each line of the csv file becomes a new file
             {
-                String curString = iter.next();
-                System.out.println(curString);
+                String s = scanner.next();
+                String[] vals = s.split(",");
+                listToFile(vals,numForNextFile);
+                numForNextFile++;
             }
         }
         catch(Exception e)
@@ -93,19 +106,19 @@ public class SpamBaseProcessor {
         }
     }
 
-
     /**
      * Convert a list of doubles (a row in spambase.data)
      * into an email text file so it can be processed by SpamFilter.
      * @param list
      * @param fileNum
      */
-    public static void listToFile(ArrayList<Double> list, int fileNum)
+    private static void listToFile(String[] listWordFreq, int fileNum)
     {
         StringBuffer sb = new StringBuffer();
-        for(int i=0; i<list.size(); i++)
+        for(int i=0; i<listWordFreq.length; i++)
         {
-            if(list.get(i)>0)//word[i] is in the email
+            double curWordFreq = Double.parseDouble(listWordFreq[i]);
+            if(curWordFreq > 0)//word[i] is in the email
             {
                 //find the associated name and add it to the email
                 sb.append(names[i] + " ");
@@ -127,18 +140,4 @@ public class SpamBaseProcessor {
             e.printStackTrace();
         }
     }
-
-    public static void generateFiles(String sourceFilePath, String destFolderPath)
-    {
-        try
-        {
-
-
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
-
 }
