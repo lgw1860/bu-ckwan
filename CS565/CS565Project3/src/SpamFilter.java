@@ -136,7 +136,7 @@ public class SpamFilter {
         mapHam = new HashMap<String, Integer>();
 
         strBufResults = new StringBuffer();
-        strBufResults.append("File,Probability,Actual,Classified,Observation\n");
+        strBufResults.append("File,ProbSpam,ProbHam,Actual,Classified,Observation\n");
         
         strBufStats = new StringBuffer();
         strBufStats.append("Measure,Value\n");
@@ -392,23 +392,27 @@ public class SpamFilter {
         double probHamWordNumer = probAllWordsHam * probHam;
         //System.out.println("prob that email is HAM is: " + probHamWordNumer);
 
+        //normalize both probs by the sum of the probs to get
+        //a value between 0 and 1
+        double probSum = probSpamWordNumer + probHamWordNumer;
+        probSpamWordNumer = probSpamWordNumer / probSum;
+        probHamWordNumer = probHamWordNumer / probSum;
+
+        //add both probs to the report
+        this.strBufResults.append(probSpamWordNumer + ",");
+        this.strBufResults.append(probHamWordNumer + ",");
+
         //condition is > not >= b/c in case they are equal, it is better to let
         //a spam through than to falsely classify a ham as spam
         if(probSpamWordNumer > probHamWordNumer) //classified as spam
+            //spamprob is in: (0.5, 1]
         {
-            //System.out.println("SPAM!!!");
-            //System.out.println("Prob: " + probSpamWordNumer);
-            this.strBufResults.append(probSpamWordNumer + ",");
-            //return true;
             return new DoubleBooleanPair(probSpamWordNumer,true);
         }
-        else //classified as ham
+        else //classified as ham, spamprob is in: [0, 0.5]
         {
-            //System.out.println("HAM~~~");
-            //System.out.println("Prob: " + probHamWordNumer);
-            this.strBufResults.append(probHamWordNumer + ",");
-            //return false;
-            return new DoubleBooleanPair(probHamWordNumer,false);
+            //output the SPAM prob here for use with the ROC curve
+            return new DoubleBooleanPair(probSpamWordNumer,false);
         }
     }
 
@@ -857,96 +861,100 @@ public class SpamFilter {
      * usage: java SpamFilter <Spam folder path> <Ham folder path>
      * @param args the command line arguments
      */
-//    public static void main(String[] args) {
-//
-//        if(args.length == 2)
-//        {
-//            long startTime = System.currentTimeMillis();
-//
-//            String spamFolderPath = args[0];
-//            String hamFolderPath = args[1];
-//            System.out.println("Spam folder path: " + spamFolderPath);
-//            System.out.println("Ham folder path: " + hamFolderPath);
-//
-//            //check if both folders are valid before continuing
-//            File spamFolder = new File(spamFolderPath);
-//            File hamFolder = new File(hamFolderPath);
-//            if(!spamFolder.exists() || !hamFolder.exists())
-//            {
-//                System.out.println("\nError!");
-//                if(!spamFolder.exists())
-//                {
-//                    System.out.println("\tSpam folder path invalid, please try again.");
-//                }
-//                if(!hamFolder.exists())
-//                {
-//                    System.out.println("\tHam folder path invalid, please try again.");
-//                }
-//            }
-//            else //folder paths are valid, start classifying!
-//            {
-//                System.out.println("\nPlease wait...\n");
-//
-//                SpamFilter spamFilter = new SpamFilter();
-//                spamFilter.crossValidate(10, spamFolderPath, hamFolderPath);
-//
-//                System.out.println("\nAll done.");
-//                long elapsedTime = System.currentTimeMillis() - startTime;
-//                double elapsedSeconds = elapsedTime/1000.0;
-//                System.out.println("Elapsed time: " + elapsedSeconds + " seconds.\n");
-//
-//                try
-//                {
-//                    String filename = "elapsedtime.txt";
-//                    BufferedWriter writer = new BufferedWriter(
-//                        new FileWriter(filename));
-//                    writer.write("Elapsed time: " + elapsedSeconds + " seconds.\n");
-//                    writer.flush();
-//                    writer.close();
-//                }
-//                catch(Exception e)
-//                {
-//                    e.printStackTrace();
-//                }
-//
-//            }
-//        }
-//        else
-//        {
-//            System.out.println("Usage: java SpamFilter \"<Spam folder path>\" \"<Ham folder path>\"");
-//            System.out.println("Example: java SpamFilter \"testdata/spam\" \"testdata/ham\"");
-//        }
-//    }
+    public static void main(String[] args) {
 
-    public static void main(String[] args)
-    {
-        long startTime = System.currentTimeMillis();
-
-        //generate spam email files
-        SpamBaseProcessor.GenerateEmailFilesFromCSV("spambaseSpam.csv",
-                "spambaseprocessed/spam");
-
-        //generate ham email files
-        SpamBaseProcessor.GenerateEmailFilesFromCSV("spambaseHam.csv",
-                "spambaseprocessed/ham");
-
-        System.out.println("\nAll done.");
-        long elapsedTime = System.currentTimeMillis() - startTime;
-        double elapsedSeconds = elapsedTime/1000.0;
-        System.out.println("Elapsed time: " + elapsedSeconds + " seconds.\n");
-
-        try
+        if(args.length == 2)
         {
-            String filename = "elapsedtimeGeneratingEmails.txt";
-            BufferedWriter writer = new BufferedWriter(
-                new FileWriter(filename));
-            writer.write("Elapsed time: " + elapsedSeconds + " seconds.\n");
-            writer.flush();
-            writer.close();
+            long startTime = System.currentTimeMillis();
+
+            String spamFolderPath = args[0];
+            String hamFolderPath = args[1];
+            System.out.println("Spam folder path: " + spamFolderPath);
+            System.out.println("Ham folder path: " + hamFolderPath);
+
+            //check if both folders are valid before continuing
+            File spamFolder = new File(spamFolderPath);
+            File hamFolder = new File(hamFolderPath);
+            if(!spamFolder.exists() || !hamFolder.exists())
+            {
+                System.out.println("\nError!");
+                if(!spamFolder.exists())
+                {
+                    System.out.println("\tSpam folder path invalid, please try again.");
+                }
+                if(!hamFolder.exists())
+                {
+                    System.out.println("\tHam folder path invalid, please try again.");
+                }
+            }
+            else //folder paths are valid, start classifying!
+            {
+                System.out.println("\nPlease wait...\n");
+
+                SpamFilter spamFilter = new SpamFilter();
+                spamFilter.crossValidate(10, spamFolderPath, hamFolderPath);
+
+                System.out.println("\nAll done.");
+                long elapsedTime = System.currentTimeMillis() - startTime;
+                double elapsedSeconds = elapsedTime/1000.0;
+                System.out.println("Elapsed time: " + elapsedSeconds + " seconds.\n");
+
+                try
+                {
+                    String filename = "elapsedtime.txt";
+                    BufferedWriter writer = new BufferedWriter(
+                        new FileWriter(filename));
+                    writer.write("Elapsed time: " + elapsedSeconds + " seconds.\n");
+                    writer.flush();
+                    writer.close();
+                }
+                catch(Exception e)
+                {
+                    e.printStackTrace();
+                }
+
+            }
         }
-        catch(Exception e)
+        else
         {
-            e.printStackTrace();
+            System.out.println("Usage: java SpamFilter \"<Spam folder path>\" \"<Ham folder path>\"");
+            System.out.println("Example: java SpamFilter \"testdata/spam\" \"testdata/ham\"");
         }
     }
+
+    /**
+     * Alternate version of main that only creates the SpamBase email files.
+     * @param args
+     */
+//    public static void main(String[] args)
+//    {
+//        long startTime = System.currentTimeMillis();
+//
+//        //generate spam email files
+//        SpamBaseProcessor.GenerateEmailFilesFromCSV("spambaseSpam.csv",
+//                "spambaseprocessed/spam");
+//
+//        //generate ham email files
+//        SpamBaseProcessor.GenerateEmailFilesFromCSV("spambaseHam.csv",
+//                "spambaseprocessed/ham");
+//
+//        System.out.println("\nAll done.");
+//        long elapsedTime = System.currentTimeMillis() - startTime;
+//        double elapsedSeconds = elapsedTime/1000.0;
+//        System.out.println("Elapsed time: " + elapsedSeconds + " seconds.\n");
+//
+//        try
+//        {
+//            String filename = "elapsedtimeGeneratingEmails.txt";
+//            BufferedWriter writer = new BufferedWriter(
+//                new FileWriter(filename));
+//            writer.write("Elapsed time: " + elapsedSeconds + " seconds.\n");
+//            writer.flush();
+//            writer.close();
+//        }
+//        catch(Exception e)
+//        {
+//            e.printStackTrace();
+//        }
+//    }
 }
