@@ -920,15 +920,6 @@ public class SpamFilter {
 
     public static void main(String[] args)
     {
-//        for(int i=0; i<SpamBaseProcessor.names.length; i++)
-//        {
-//            System.out.println(SpamBaseProcessor.names[i]);
-//        }
-        SpamBaseProcessor.fileToSet("testsb.csv");
-        ArrayList<Double> list = new ArrayList<Double>();
-        list.add(9.0);
-        list.add(0.0);
-        list.add(0.001);
-        SpamBaseProcessor.listToFile(list, 8);
+        SpamBaseProcessor.GenerateEmailFilesFromCSV("testsb.csv");
     }
 }
