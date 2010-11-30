@@ -149,7 +149,7 @@ public class SpamFilter {
      * @param file
      * @return
      */
-    private Set<String> processEmailFile(File file)
+    public Set<String> processEmailFile(File file)
     {
         try
         {
@@ -857,49 +857,58 @@ public class SpamFilter {
      * usage: java SpamFilter <Spam folder path> <Ham folder path>
      * @param args the command line arguments
      */
-//    public static void main(String[] args) {
-//        if(args.length == 2)
-//        {
-//            String spamFolderPath = args[0];
-//            String hamFolderPath = args[1];
-//            System.out.println("Spam folder path: " + spamFolderPath);
-//            System.out.println("Ham folder path: " + hamFolderPath);
-//
-//            //check if both folders are valid before continuing
-//            File spamFolder = new File(spamFolderPath);
-//            File hamFolder = new File(hamFolderPath);
-//            if(!spamFolder.exists() || !hamFolder.exists())
-//            {
-//                System.out.println("\nError!");
-//                if(!spamFolder.exists())
-//                {
-//                    System.out.println("\tSpam folder path invalid, please try again.");
-//                }
-//                if(!hamFolder.exists())
-//                {
-//                    System.out.println("\tHam folder path invalid, please try again.");
-//                }
-//            }
-//            else //folder paths are valid, start classifying!
-//            {
-//                System.out.println("\nPlease wait...\n");
-//                SpamFilter spamFilter = new SpamFilter();
-//                spamFilter.crossValidate(10, spamFolderPath, hamFolderPath);
-//                System.out.println("\nAll done.\n");
-//            }
-//        }
-//        else
-//        {
-//            System.out.println("Usage: java SpamFilter \"<Spam folder path>\" \"<Ham folder path>\"");
-//            System.out.println("Example: java SpamFilter \"testdata/spam\" \"testdata/ham\"");
-//        }
-//    }
+    public static void main(String[] args) {
 
-    public static void main(String[] args)
-    {
-        for(int i=0; i<SpamBaseProcessor.names.length; i++)
+        if(args.length == 2)
         {
-            System.out.println(SpamBaseProcessor.names[i]);
+            long startTime = System.currentTimeMillis();
+
+            String spamFolderPath = args[0];
+            String hamFolderPath = args[1];
+            System.out.println("Spam folder path: " + spamFolderPath);
+            System.out.println("Ham folder path: " + hamFolderPath);
+
+            //check if both folders are valid before continuing
+            File spamFolder = new File(spamFolderPath);
+            File hamFolder = new File(hamFolderPath);
+            if(!spamFolder.exists() || !hamFolder.exists())
+            {
+                System.out.println("\nError!");
+                if(!spamFolder.exists())
+                {
+                    System.out.println("\tSpam folder path invalid, please try again.");
+                }
+                if(!hamFolder.exists())
+                {
+                    System.out.println("\tHam folder path invalid, please try again.");
+                }
+            }
+            else //folder paths are valid, start classifying!
+            {
+                System.out.println("\nPlease wait...\n");
+
+                SpamFilter spamFilter = new SpamFilter();
+                spamFilter.crossValidate(10, spamFolderPath, hamFolderPath);
+
+                System.out.println("\nAll done.");
+                long elapsedTime = System.currentTimeMillis() - startTime;
+                double elapsedSeconds = elapsedTime/1000.0;
+                System.out.println("Elapsed time: " + elapsedSeconds + " seconds.\n");
+            }
+        }
+        else
+        {
+            System.out.println("Usage: java SpamFilter \"<Spam folder path>\" \"<Ham folder path>\"");
+            System.out.println("Example: java SpamFilter \"testdata/spam\" \"testdata/ham\"");
         }
     }
+
+//    public static void main(String[] args)
+//    {
+////        for(int i=0; i<SpamBaseProcessor.names.length; i++)
+////        {
+////            System.out.println(SpamBaseProcessor.names[i]);
+////        }
+//        SpamBaseProcessor.fileToSet("testsb.csv");
+//    }
 }

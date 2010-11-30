@@ -1,3 +1,8 @@
+
+import java.io.File;
+import java.util.Iterator;
+import java.util.Set;
+
 /*
  * Christopher Kwan
  * ckwan (at) cs.bu.edu
@@ -12,6 +17,7 @@
  */
 public class SpamBaseProcessor {
 
+    //words used as features in the spambase dataset
     public static String[] names = {
         "make"         ,
         "address"      ,
@@ -62,5 +68,39 @@ public class SpamBaseProcessor {
         "table"        ,
         "conference"   ,
     };
+
+    public static void fileToSet(String filepath)
+    {
+        try
+        {
+            File file = new File(filepath);
+            SpamFilter spamFilter = new SpamFilter();
+            Set<String> fileList = spamFilter.processEmailFile(file);
+
+            Iterator<String> iter = fileList.iterator();
+            while(iter.hasNext())
+            {
+                String curString = iter.next();
+                System.out.println(curString);
+            }
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public static void generateFiles(String sourceFilePath, String destFolderPath)
+    {
+        try
+        {
+
+
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
 
 }
