@@ -5,7 +5,7 @@
  * Programming Project 3: Classifying Spam
  */
 
-package cs565project3;
+
 
 import java.io.BufferedWriter;
 import java.io.File;
