@@ -37,6 +37,10 @@ public class SpamFilter {
     private int trueNegatives = 0;
     private int falseNegatives = 0;
 
+    //buckets for k-fold Cross Validation
+    private ArrayList<ArrayList<File>> listSpamBuckets;
+    private ArrayList<ArrayList<File>> listHamBuckets;
+
     private StringBuffer strBufResults; //results of classification on all files
     private StringBuffer strBufStats; //statistics about the classifier
 
@@ -121,8 +125,13 @@ public class SpamFilter {
         }
     }
 
+    /**
+     * Create a new Spam Filter.
+     */
     public SpamFilter()
     {
+        //initialize class variables
+
         mapSpam = new HashMap<String, Integer>();
         mapHam = new HashMap<String, Integer>();
 
@@ -135,6 +144,7 @@ public class SpamFilter {
         listROCPoints = new ArrayList<DoubleBooleanPair>();
     }
 
+    //TODO delete?
     //TODO change this to take in a file
     public void train(String word, boolean isSpam)
     {
@@ -174,6 +184,7 @@ public class SpamFilter {
         }
     }
 
+    //TODO Delete?
     /**
      * Convert an email text file into a Set of Strings.
      * @param filename
@@ -205,7 +216,11 @@ public class SpamFilter {
         }
     }
 
-
+    /**
+     * Train the classifier on an email (a set of words).
+     * @param emailWordSet
+     * @param isSpam
+     */
     public void train(Set<String> emailWordSet, boolean isSpam)
     {
         //choose the correct map and counter to add to
@@ -237,7 +252,6 @@ public class SpamFilter {
             }
         }
     }
-
 
     /**
      * Return P(Word | Class), ie the probability of that word given 
@@ -418,8 +432,6 @@ public class SpamFilter {
         //ProdSum[P(Word_i | Ham)] * P(Ham) <- we only look at the numerator
         double probHamWordNumer = probAllWordsHam * probHam;
         //System.out.println("prob that email is HAM is: " + probHamWordNumer);
-        
-        //TODO return a probability
 
         //condition is > not >= b/c in case they are equal, it is better to let
         //a spam through than to falsely classify a ham as spam
@@ -447,10 +459,6 @@ public class SpamFilter {
         set.add(word);
         classify(set);
     }
-
-
-    private ArrayList<ArrayList<File>> listSpamBuckets;
-    private ArrayList<ArrayList<File>> listHamBuckets;
 
     /**
      * Randomly place spams and hams into k buckets for k-fold cross validation.
@@ -523,7 +531,7 @@ public class SpamFilter {
     /**
      * Reset classifier by removing all data from training.
      */
-    private void resetClassifier()
+    public void resetClassifier()
     {
         this.mapSpam.clear();
         this.mapHam.clear();
@@ -531,16 +539,16 @@ public class SpamFilter {
         this.numHamEmails = 0;
     }
 
-
-
+    /**
+     * Perform k-Fold Cross Validation on the data.
+     * @param k
+     * @param spamFolderPath
+     * @param hamFolderPath
+     */
     public void crossValidate(int k, String spamFolderPath, String hamFolderPath)
     {
-
         //randomly partition all emails into k buckets
         this.randomlyPartitionEmails(k, spamFolderPath, hamFolderPath);
-
-        //for each of k buckets in listBuckets
-        //for each file in the bucket
 
         //for all k buckets
         //train on all k-1 buckets and classify the last one
@@ -601,9 +609,7 @@ public class SpamFilter {
             this.resetClassifier();
         }//end for i
 
-        //TODO
-        //output prob | actual class to text file
-        //compute all those fun stats
+        //output results, stats and roc curve points
         this.addStatsToStringBuffer();
         this.outputStringBuffersToFiles();
         this.outputROCPointsForExcel();
@@ -684,11 +690,6 @@ public class SpamFilter {
         return fpr;
     }
 
-    public void test()
-    {
-        this.crossValidate(10, "testdata/spam", "testdata/ham");
-    }
-
     /**
      * Output results and stats to .csv files.
      */
@@ -730,7 +731,7 @@ public class SpamFilter {
     /**
      * Output statistics for the classifier.
      */
-    public void addStatsToStringBuffer() {
+    private void addStatsToStringBuffer() {
         //System.out.println("TP: " + this.truePositives);
         this.strBufStats.append("True Positives," + this.truePositives + "\n");
 
@@ -784,6 +785,9 @@ public class SpamFilter {
         return fpr;
     }
 
+    /**
+     * Output (TPR, FPR) points in a .csv to graph in Excel.
+     */
     public void outputROCPointsForExcel()
     {
         //sort points by probability in descending order
@@ -796,7 +800,6 @@ public class SpamFilter {
         double lastProb = 1.0; //the previous threshold for plotting a point
 
         StringBuffer strBufRoc = new StringBuffer();
-        //System.out.println("Prob,TP,FP,FN,TN,TPR,FPR");
         strBufRoc.append("Prob,TP,FP,FN,TN,FPR,TPR\n");
         
         //initially at prob 1, all emails are FN or TN
@@ -826,10 +829,6 @@ public class SpamFilter {
             if(curProb != lastProb)
             {
                 //output lastProb + counts
-//                System.out.println(lastProb + "," + totalTP + "," + totalFP +
-//                        "," + totalFN + "," + totalTN + "," +
-//                        computeTPR(totalTP, totalFN) + "," +
-//                        computeFPR(totalFP, totalTN));
                 strBufRoc.append(lastProb + "," + totalTP + "," + totalFP +
                         "," + totalFN + "," + totalTN + "," +
                         computeFPR(totalFP, totalTN) + "," +
@@ -853,16 +852,11 @@ public class SpamFilter {
         }//end while
 
         //special case to print last element
-//        System.out.println(lastProb + "," + totalTP + "," + totalFP + "," +
-//                        totalFN + "," + totalTN + "," +
-//                        computeTPR(totalTP, totalFN) + "," +
-//                        computeFPR(totalFP, totalTN));
         strBufRoc.append(lastProb + "," + totalTP + "," + totalFP + "," +
                         totalFN + "," + totalTN + "," +
                         computeFPR(totalFP, totalTN) + "," +
                         computeTPR(totalTP, totalFN) + "\n");
                         
-
         //System.out.println(strBufRoc.toString());
 
         //output ROC points to a .csv file for Excel
@@ -883,6 +877,9 @@ public class SpamFilter {
         }
     }
 
+    /**
+     * Print out the hash map containing training data values for debugging.
+     */
     public void print()
     {
         System.out.println("num spam: " + this.numSpamEmails);
@@ -909,7 +906,7 @@ public class SpamFilter {
     public static void main(String[] args) {
         System.out.println("Please wait...");
         SpamFilter spamFilter = new SpamFilter();
-        spamFilter.test();
+        spamFilter.crossValidate(10, "testdata/spam", "testdata/ham");
     }
     
 }
