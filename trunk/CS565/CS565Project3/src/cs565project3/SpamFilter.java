@@ -858,10 +858,23 @@ public class SpamFilter {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        System.out.println("Please wait...");
-        SpamFilter spamFilter = new SpamFilter();
-        spamFilter.crossValidate(10, "testdata/spam", "testdata/ham");
-        System.out.println("All done.");
+        if(args.length == 2)
+        {
+            String spamFolderPath = args[0];
+            String hamFolderPath = args[1];
+            System.out.println("Spam folder path: " + spamFolderPath);
+            System.out.println("Ham folder path: " + hamFolderPath);
+
+            System.out.println("\nPlease wait...\n");
+            SpamFilter spamFilter = new SpamFilter();
+            spamFilter.crossValidate(10, spamFolderPath, hamFolderPath);
+            System.out.println("\nAll done.\n");
+        }
+        else
+        {
+            System.out.println("Usage: java SpamFilter \"<Spam folder path>\" \"<Ham folder path>\"");
+            System.out.println("Example: java SpamFilter \"testdata/spam\" \"testdata/ham\"");
+        }
     }
     
 }
