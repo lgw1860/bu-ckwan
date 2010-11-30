@@ -1,5 +1,8 @@
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -83,6 +86,41 @@ public class SpamBaseProcessor {
                 String curString = iter.next();
                 System.out.println(curString);
             }
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * Convert a list of doubles (a row in spambase.data)
+     * into an email text file so it can be processed by SpamFilter.
+     * @param list
+     * @param fileNum
+     */
+    public static void listToFile(ArrayList<Double> list, int fileNum)
+    {
+        StringBuffer sb = new StringBuffer();
+        for(int i=0; i<list.size(); i++)
+        {
+            if(list.get(i)>0)//word[i] is in the email
+            {
+                //find the associated name and add it to the email
+                sb.append(names[i] + " ");
+            }
+        }
+        
+        //System.out.println(sb.toString());
+        try
+        {
+            String filename = fileNum + ".spambaseemail";
+            BufferedWriter writer = new BufferedWriter(
+                new FileWriter(filename));
+            writer.write(sb.toString());
+            writer.flush();
+            writer.close();
         }
         catch(Exception e)
         {
