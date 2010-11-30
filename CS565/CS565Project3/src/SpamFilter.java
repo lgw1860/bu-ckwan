@@ -890,8 +890,8 @@ public class SpamFilter {
         }
         else
         {
-            System.out.println("Usage: java cs565project3/SpamFilter \"<Spam folder path>\" \"<Ham folder path>\"");
-            System.out.println("Example: java cs565project3/SpamFilter \"testdata/spam\" \"testdata/ham\"");
+            System.out.println("Usage: java SpamFilter \"<Spam folder path>\" \"<Ham folder path>\"");
+            System.out.println("Example: java SpamFilter \"testdata/spam\" \"testdata/ham\"");
         }
     }
     
