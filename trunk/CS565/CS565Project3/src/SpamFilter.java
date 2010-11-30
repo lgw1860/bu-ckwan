@@ -918,7 +918,7 @@ public class SpamFilter {
         else
         {
             System.out.println("Usage: java SpamFilter \"<Spam folder path>\" \"<Ham folder path>\"");
-            System.out.println("Example: java SpamFilter \"testdata/spam\" \"testdata/ham\"");
+            System.out.println("Example: java SpamFilter \"SpamBaseInput/spam\" \"SpamBaseInput/ham\"");
         }
     }
 
