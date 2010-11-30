@@ -894,6 +894,21 @@ public class SpamFilter {
                 long elapsedTime = System.currentTimeMillis() - startTime;
                 double elapsedSeconds = elapsedTime/1000.0;
                 System.out.println("Elapsed time: " + elapsedSeconds + " seconds.\n");
+
+                try
+                {
+                    String filename = "elapsedtime.txt";
+                    BufferedWriter writer = new BufferedWriter(
+                        new FileWriter(filename));
+                    writer.write("Elapsed time: " + elapsedSeconds + " seconds.\n");
+                    writer.flush();
+                    writer.close();
+                }
+                catch(Exception e)
+                {
+                    e.printStackTrace();
+                }
+
             }
         }
         else
