@@ -17,7 +17,8 @@ import java.util.regex.Pattern;
 
 
 /**
- *
+ * Ad-hoc class to convert modified (by me) SpamBase datasets back into email
+ * files so they can be used with SpamFilter.
  * @author Chris
  */
 public class SpamBaseProcessor {
@@ -79,12 +80,12 @@ public class SpamBaseProcessor {
         "$"            ,
         "#"            
     };
-
+    
     /**
      * Generate a new email file for every row in the SpamBase CSV file.
      * @param filepath
      */
-    public static void GenerateEmailFilesFromCSV(String filepath)
+    public static void GenerateEmailFilesFromCSV(String filepath, String destFolderPath)
     {
         try
         {
@@ -96,7 +97,7 @@ public class SpamBaseProcessor {
             {
                 String s = scanner.next();
                 String[] vals = s.split(",");
-                listToFile(vals,numForNextFile);
+                listToFile(vals,numForNextFile,destFolderPath);
                 numForNextFile++;
             }
         }
@@ -112,7 +113,7 @@ public class SpamBaseProcessor {
      * @param list
      * @param fileNum
      */
-    private static void listToFile(String[] listWordFreq, int fileNum)
+    private static void listToFile(String[] listWordFreq, int fileNum, String destFolderPath)
     {
         StringBuffer sb = new StringBuffer();
         for(int i=0; i<listWordFreq.length; i++)
@@ -128,7 +129,7 @@ public class SpamBaseProcessor {
         //System.out.println(sb.toString());
         try
         {
-            String filename = fileNum + ".spambaseemail";
+            String filename = destFolderPath + "/" + fileNum + ".spambaseemail";
             BufferedWriter writer = new BufferedWriter(
                 new FileWriter(filename));
             writer.write(sb.toString());

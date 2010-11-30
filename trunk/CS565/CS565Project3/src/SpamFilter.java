@@ -920,6 +920,33 @@ public class SpamFilter {
 
     public static void main(String[] args)
     {
-        SpamBaseProcessor.GenerateEmailFilesFromCSV("testsb.csv");
+        long startTime = System.currentTimeMillis();
+
+        //generate spam email files
+        SpamBaseProcessor.GenerateEmailFilesFromCSV("spambaseSpam.csv",
+                "spambaseprocessed/spam");
+
+        //generate ham email files
+        SpamBaseProcessor.GenerateEmailFilesFromCSV("spambaseHam.csv",
+                "spambaseprocessed/ham");
+
+        System.out.println("\nAll done.");
+        long elapsedTime = System.currentTimeMillis() - startTime;
+        double elapsedSeconds = elapsedTime/1000.0;
+        System.out.println("Elapsed time: " + elapsedSeconds + " seconds.\n");
+
+        try
+        {
+            String filename = "elapsedtimeGeneratingEmails.txt";
+            BufferedWriter writer = new BufferedWriter(
+                new FileWriter(filename));
+            writer.write("Elapsed time: " + elapsedSeconds + " seconds.\n");
+            writer.flush();
+            writer.close();
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 }
