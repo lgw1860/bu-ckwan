@@ -1,6 +1,8 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Christopher Kwan
+ * ckwan (at) cs.bu.edu
+ * CS 565 | Terzi | Fall 2010
+ * Programming Project 3: Classifying Spam
  */
 
 package cs565project3;
