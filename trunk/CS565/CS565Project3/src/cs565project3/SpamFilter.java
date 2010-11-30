@@ -144,15 +144,6 @@ public class SpamFilter {
         listROCPoints = new ArrayList<DoubleBooleanPair>();
     }
 
-    //TODO delete?
-    //TODO change this to take in a file
-    public void train(String word, boolean isSpam)
-    {
-        Set<String> set = new HashSet<String>();
-        set.add(word);
-        train(set,isSpam);
-    }
-
     /**
      * Process an email text file into a Set of Strings.
      * @param file
@@ -164,38 +155,6 @@ public class SpamFilter {
         {
             Set<String> set = new HashSet<String>();
             Scanner scanner = new Scanner(file);
-            scanner.useDelimiter(Pattern.compile("\\s|\\W"));
-            while(scanner.hasNext())
-            {
-                String s = scanner.next();
-                s = Utility.stem(s);
-                //ignore words < 3 chars and words that are only numbers
-                if(s.length() > 2 && !Utility.isOnlyNumeric(s))
-                {
-                    set.add(s);
-                }
-            }
-            return set;
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    //TODO Delete?
-    /**
-     * Convert an email text file into a Set of Strings.
-     * @param filename
-     * @return
-     */
-    private Set<String> processEmailFile(String filename)
-    {
-        try
-        {
-            Set<String> set = new HashSet<String>();
-            Scanner scanner = new Scanner(new File(filename));
             scanner.useDelimiter(Pattern.compile("\\s|\\W"));
             while(scanner.hasNext())
             {
@@ -451,13 +410,6 @@ public class SpamFilter {
             //return false;
             return new DoubleBooleanPair(probHamWordNumer,false);
         }
-    }
-
-    public void classify(String word)
-    {
-        Set<String> set = new HashSet<String>();
-        set.add(word);
-        classify(set);
     }
 
     /**
@@ -901,12 +853,15 @@ public class SpamFilter {
     }
 
     /**
+     * Train and test the Spam Filter on emails in two folders: Spam and Ham.
+     * usage: java SpamFilter <Spam folder path> <Ham folder path>
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         System.out.println("Please wait...");
         SpamFilter spamFilter = new SpamFilter();
         spamFilter.crossValidate(10, "testdata/spam", "testdata/ham");
+        System.out.println("All done.");
     }
     
 }
